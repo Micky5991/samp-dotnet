@@ -1,6 +1,6 @@
 {
 	"user": "Micky5991",
-	"repo": "mplaying",
+	"repo": "samp-dotnet",
 	"entry": "src/main.pwn",
 	"output": "gamemodes/main.amx",
 	"dependencies": [
@@ -9,7 +9,7 @@
 	"runtime": {
 		"port": 7777,
 		"plugins": [
-			"mplaying"
+			"samp-dotnet"
 		]
 	},
 	"local": true
