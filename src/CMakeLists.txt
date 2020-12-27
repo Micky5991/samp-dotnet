@@ -1,1 +1,1 @@
-add_subdirectory(mplaying)
+add_subdirectory(samp-dotnet)
