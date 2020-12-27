@@ -16,6 +16,7 @@ add_samp_plugin(samp-dotnet
         samp-dotnet.cpp
         samp-dotnet.def
         sampgdk.c
+        clr_manager.cpp
         ${SAMPSDK_DIR}/amxplugin.cpp
         )
 

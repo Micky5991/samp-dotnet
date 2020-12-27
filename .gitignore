@@ -3,8 +3,9 @@ build/*
 runtime/
 
 
-# Created by https://www.toptal.com/developers/gitignore/api/cmake,jetbrains+all,vscode,c++
-# Edit at https://www.toptal.com/developers/gitignore?templates=cmake,jetbrains+all,vscode,c++
+
+# Created by https://www.toptal.com/developers/gitignore/api/c++,cmake,vscode,jetbrains+all,dotnetcore
+# Edit at https://www.toptal.com/developers/gitignore?templates=c++,cmake,vscode,jetbrains+all,dotnetcore
 
 ### C++ ###
 # Prerequisites
@@ -63,6 +64,15 @@ CMakeUserPresets.json
 ### CMake Patch ###
 # External projects
 *-prefix/
+
+### DotnetCore ###
+# .NET Core build folders
+bin/
+obj/
+
+# Common node modules locations
+/node_modules
+/wwwroot/node_modules
 
 ### JetBrains+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -161,4 +171,5 @@ modules.xml
 !.vscode/extensions.json
 *.code-workspace
 
-# End of https://www.toptal.com/developers/gitignore/api/cmake,jetbrains+all,vscode,c++
+# End of https://www.toptal.com/developers/gitignore/api/c++,cmake,vscode,jetbrains+all,dotnetcore
+
