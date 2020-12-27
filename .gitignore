@@ -1,5 +1,8 @@
 build/*
 
+samp/dotnet/runtime/
+samp/dotnet/gamemodes/
+
 runtime/
 
 

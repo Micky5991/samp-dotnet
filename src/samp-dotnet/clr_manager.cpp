@@ -23,12 +23,19 @@ bool ClrManager::start(const std::string& gamemode) {
     gamemodes_path /= "gamemodes";
     runtime_path /= "runtime";
     assembly_path /= "gamemodes";
+    assembly_path /= gamemode;
+
+    std::cout << "Starting gamemode " << gamemode << std::endl;
 
     if(coreclr->initialize(runtime_path, gamemodes_path) == false) {
         return false;
     }
 
-    if(coreclr->start(assembly_path, 0, nullptr) == false) {
+    const char** arguments = {
+
+    };
+
+    if(coreclr->start(assembly_path, 0, arguments) == false) {
         return false;
     }
 

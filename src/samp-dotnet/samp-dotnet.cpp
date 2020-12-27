@@ -53,7 +53,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
     }
 
     clr_manager = new ClrManager();
-    clr_manager->start("");
+    clr_manager->start("Micky5991.Samp.Net.Example.dll");
 
     return loaded;
 }

@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Example
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Here we go");
+            Console.WriteLine("Ah shit, here we go again.");
         }
     }
 }

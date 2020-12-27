@@ -4,7 +4,7 @@
         <TargetFramework>net5.0</TargetFramework>
         <OutputType>Exe</OutputType>
         <Configurations>Debug;Release;Debug - Local</Configurations>
-        <Platforms>AnyCPU</Platforms>
+        <Platforms></Platforms>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug - Local' ">
