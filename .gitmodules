@@ -1,0 +1,9 @@
+[submodule "cmake/cmake-modules"]
+	path = cmake/cmake-modules
+	url = https://github.com/Zeex/cmake-modules
+[submodule "thirdparty/samp-plugin-sdk"]
+	path = thirdparty/samp-plugin-sdk
+	url = https://github.com/Zeex/samp-plugin-sdk
+[submodule "thirdparty/host-coreclr"]
+	path = thirdparty/host-coreclr
+	url = https://github.com/Micky5991/host-coreclr

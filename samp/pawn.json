@@ -1,0 +1,16 @@
+{
+	"user": "Micky5991",
+	"repo": "mplaying",
+	"entry": "src/main.pwn",
+	"output": "gamemodes/main.amx",
+	"dependencies": [
+		"sampctl/samp-stdlib"
+	],
+	"runtime": {
+		"port": 7777,
+		"plugins": [
+			"mplaying"
+		]
+	},
+	"local": true
+}
