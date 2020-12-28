@@ -13,6 +13,7 @@ add_definitions(-DSAMPGDK_AMALGAMATION)
 add_definitions(-DSAMPGDK_CPP_WRAPPERS)
 
 add_samp_plugin(samp-dotnet
+        plugin.cpp
         samp-dotnet.cpp
         samp-dotnet.def
         sampgdk.c

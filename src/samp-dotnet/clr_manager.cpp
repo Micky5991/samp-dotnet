@@ -16,13 +16,12 @@ ClrManager::~ClrManager() {
 }
 
 bool ClrManager::start(const std::string& gamemode) {
-    std::filesystem::path gamemodes_path = sampdotnet::get_base_path();
-    std::filesystem::path runtime_path = sampdotnet::get_base_path();
+    std::filesystem::path gamemodes_path = sampdotnet::get_dotnet_gamemodes_path();
+    std::filesystem::path plugins_path = sampdotnet::get_samp_plugins_path();
+
+    std::filesystem::path runtime_path = sampdotnet::get_dotnet_runtime_path();
     std::filesystem::path assembly_path = gamemodes_path;
 
-    gamemodes_path /= "gamemodes";
-    runtime_path /= "runtime";
-    assembly_path /= "gamemodes";
     assembly_path /= gamemode;
 
     std::cout << "Starting gamemode " << gamemode << std::endl;
@@ -31,9 +30,7 @@ bool ClrManager::start(const std::string& gamemode) {
         return false;
     }
 
-    const char** arguments = {
-
-    };
+    const char** arguments = nullptr;
 
     if(coreclr->start(assembly_path, 0, arguments) == false) {
         return false;
