@@ -23,10 +23,13 @@ bool ClrManager::start(const std::string& gamemode) {
     std::filesystem::path assembly_path = gamemodes_path;
 
     assembly_path /= gamemode;
+    const std::vector<std::filesystem::path> native_search_paths = {
+            plugins_path
+    };
 
     std::cout << "Starting gamemode " << gamemode << std::endl;
 
-    if(coreclr->initialize(runtime_path, gamemodes_path) == false) {
+    if(coreclr->initialize(runtime_path, gamemodes_path, native_search_paths) == false) {
         return false;
     }
 
