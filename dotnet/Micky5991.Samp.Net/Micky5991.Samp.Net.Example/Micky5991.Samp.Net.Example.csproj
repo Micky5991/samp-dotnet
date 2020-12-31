@@ -4,13 +4,21 @@
         <TargetFramework>net5.0</TargetFramework>
         <OutputType>Exe</OutputType>
         <Configurations>Debug;Release;Debug - Local</Configurations>
-        <Platforms></Platforms>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug - Local' ">
       <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
       <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
-      <OutputPath>$(OutputPath)</OutputPath>
+      <OutputPath>../../../samp/dotnet/gamemodes/</OutputPath>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>

@@ -4,3 +4,7 @@ EXPORTS
 	Unload
 	ProcessTick
 	OnGameModeInit
+	InvokeNative
+	OnPublicCall
+    AmxLoad
+    AmxUnload
