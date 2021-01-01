@@ -26,16 +26,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="natives.txt" />
-      <AdditionalFiles Include="natives.a_samp.idl" />
-        <None Remove="a_players.idl" />
-        <AdditionalFiles Include="natives.a_players.idl" />
-        <None Remove="a_actor.idl" />
-        <AdditionalFiles Include="natives.a_actor.idl" />
-        <None Remove="a_objects.idl" />
-        <AdditionalFiles Include="natives.a_objects.idl" />
-        <None Remove="a_vehicles.idl" />
-        <AdditionalFiles Include="natives.a_vehicles.idl" />
+      <AdditionalFiles Include="Definitions\natives.a_vehicles.idl" />
+      <AdditionalFiles Include="Definitions\natives.a_actor.idl" />
+      <AdditionalFiles Include="Definitions\natives.a_objects.idl" />
+      <AdditionalFiles Include="Definitions\natives.a_players.idl" />
+      <AdditionalFiles Include="Definitions\natives.a_samp.idl" />
     </ItemGroup>
 
 </Project>
