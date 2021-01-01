@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Micky5991.Samp.Net.Generators\Micky5991.Samp.Net.Generators.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="natives.a_samp.idl">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2"></PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="natives.a_players.idl">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
