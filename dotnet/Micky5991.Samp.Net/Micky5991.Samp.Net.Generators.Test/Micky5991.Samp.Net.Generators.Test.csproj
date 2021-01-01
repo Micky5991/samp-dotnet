@@ -29,9 +29,6 @@
       <None Include="natives.a_actor.idl">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Include="natives.a_http.idl">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
       <None Include="natives.a_objects.idl">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
