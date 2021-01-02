@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Micky5991.Samp.Net.Core.Native;
+using Micky5991.Samp.Net.Core;
+using Micky5991.Samp.Net.Core.Interop;
 
 namespace Micky5991.Samp.Net.Example
 {
@@ -8,7 +9,9 @@ namespace Micky5991.Samp.Net.Example
     {
         public static void Main(string[] args)
         {
-            CallNative("CreateVehicle", "iffffiiib", 541, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
+            SampNatives.Vehicles.CreateVehicle(411, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
+
+            // CallNative("CreateVehicle", "iffffiiib", 541, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
         }
 
         public static unsafe int CallNative(string native, string format, params object[] arguments)

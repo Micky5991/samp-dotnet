@@ -9,7 +9,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
 {
     public abstract class FunctionBuildStrategy : IElementBuildStrategy
     {
-        private readonly ParameterBuildStrategy parameterBuildStrategy;
+        protected readonly ParameterBuildStrategy parameterBuildStrategy;
 
         protected readonly Regex functionExpression;
 
@@ -70,14 +70,11 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                 }
             }
 
+            this.BuildFunctionBody(function, bodyBuilder, indent + 1);
+
             if (bodyBuilder.Length == 0)
             {
-                bodyBuilder.Append("throw new System.NotImplementedException();".Indent(indent + 1));
-            }
-            else
-            {
-                bodyBuilder.AppendLine();
-                bodyBuilder.Append("return default;".Indent(indent + 1));
+                bodyBuilder.Append("throw new System.NotImplementedException();".Indent(indent));
             }
 
             functionBuilder.AppendLine($"public static {this.MapReturnType(function.ReturnType)} {function.Name}({parametersBuilder})".Indent(indent));
@@ -87,6 +84,11 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
 
             functionBuilder.AppendLine("}".Indent(indent));
             functionBuilder.AppendLine();
+        }
+
+        public virtual void BuildFunctionBody(IdlFunction function, StringBuilder bodyBuilder, int indent)
+        {
+            // empty
         }
 
         protected string MapReturnType(string type)

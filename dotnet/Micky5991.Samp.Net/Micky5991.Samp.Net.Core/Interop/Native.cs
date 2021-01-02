@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Micky5991.Samp.Net.Core.Native
+namespace Micky5991.Samp.Net.Core.Interop
 {
     public static class Native
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Micky5991.Samp.Net.Core.Native
+namespace Micky5991.Samp.Net.Core.Interop
 {
     public unsafe class NativeTypeConverter
     {
@@ -23,6 +23,24 @@ namespace Micky5991.Samp.Net.Core.Native
             };
         }
 
+        public IntPtr BuildNativeArgumentPointer(object[] arguments)
+        {
+            var location = Marshal.AllocHGlobal(sizeof(IntPtr) * arguments.Length);
+
+            for (var i = 0; i < arguments.Length; i++)
+            {
+                var (success, argumentLocation) = this.ConvertTypeToNative(arguments[i]);
+                if (success == false)
+                {
+                    return default;
+                }
+
+                Marshal.WriteIntPtr(location, i * sizeof(IntPtr), argumentLocation);
+            }
+
+            return location;
+        }
+
         public (bool Success, IntPtr Value) ConvertTypeToNative(object value)
         {
             if (this.converters.TryGetValue(value.GetType(), out var converter) == false)
@@ -33,17 +51,17 @@ namespace Micky5991.Samp.Net.Core.Native
             return (true, converter(value));
         }
 
-        private IntPtr ConvertTypeToNative(int value)
+        public IntPtr ConvertTypeToNative(int value)
         {
             return this.ConvertTypeToNative(BitConverter.GetBytes(value));
         }
 
-        private IntPtr ConvertTypeToNative(float value)
+        public IntPtr ConvertTypeToNative(float value)
         {
             return this.ConvertTypeToNative(BitConverter.GetBytes(value));
         }
 
-        private IntPtr ConvertTypeToNative(bool value)
+        public IntPtr ConvertTypeToNative(bool value)
         {
             // Explicitly use single byte bool, because C# bool is 4 bytes long instead of 1 byte
             byte[] buffer =
@@ -54,7 +72,7 @@ namespace Micky5991.Samp.Net.Core.Native
             return this.ConvertTypeToNative(buffer);
         }
 
-        private IntPtr ConvertTypeToNative(IntPtr value)
+        public IntPtr ConvertTypeToNative(IntPtr value)
         {
             // Explicitly use single byte bool, because C# bool is 4 bytes long instead of 1 byte
             var location = Marshal.AllocHGlobal(sizeof(IntPtr));
@@ -64,7 +82,7 @@ namespace Micky5991.Samp.Net.Core.Native
             return location;
         }
 
-        private IntPtr ConvertTypeToNative(string value)
+        public IntPtr ConvertTypeToNative(string value)
         {
             var buffer = new byte[value.Length + 1];
             Encoding.Default.GetBytes(value, 0, value.Length, buffer, 0);
@@ -76,7 +94,7 @@ namespace Micky5991.Samp.Net.Core.Native
             return location;
         }
 
-        private IntPtr ConvertTypeToNative(byte[] buffer)
+        public IntPtr ConvertTypeToNative(byte[] buffer)
         {
             var location = Marshal.AllocHGlobal(buffer.Length);
             Marshal.Copy(buffer, 0, location, buffer.Length);

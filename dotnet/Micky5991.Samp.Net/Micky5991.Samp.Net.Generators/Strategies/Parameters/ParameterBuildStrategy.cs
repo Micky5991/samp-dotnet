@@ -43,9 +43,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
 
         private void BuildBodyInstructions(IdlFunctionParameter parameter, StringBuilder bodyBuilder, int indent)
         {
-            var isOut = parameter.Attribute.TryGetValue("out", out _);
-
-            if (isOut)
+            if (parameter.Attribute.IsOut())
             {
                 bodyBuilder.AppendLine($"{this.BuildParameterName(parameter.Name)} = default;".Indent(indent));
             }
@@ -53,7 +51,15 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
 
         private void BuildParameterDeclaration(IdlFunctionParameter parameter, StringBuilder parametersBuilder)
         {
-            if (parameter.Attribute.TryGetValue("out", out _))
+            if (parameter.Attribute.IsInAndOut())
+            {
+                parametersBuilder.Append("ref ");
+            }
+            else if (parameter.Attribute.IsIn())
+            {
+                parametersBuilder.Append("in ");
+            }
+            else if (parameter.Attribute.IsOut())
             {
                 parametersBuilder.Append("out ");
             }
@@ -61,7 +67,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
             parametersBuilder.Append($"{this.BuildParameterType(parameter.Type)} {this.BuildParameterName(parameter.Name)}");
         }
 
-        private string BuildParameterType(string type)
+        public string BuildParameterType(string type)
         {
             return type switch
             {
@@ -71,7 +77,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
             };
         }
 
-        private string BuildParameterName(string name)
+        public string BuildParameterName(string name)
         {
             name = name switch
             {

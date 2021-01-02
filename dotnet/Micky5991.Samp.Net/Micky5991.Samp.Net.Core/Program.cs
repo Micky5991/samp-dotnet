@@ -1,4 +1,5 @@
 ﻿using System;
+using Micky5991.Samp.Net.Core.Interop;
 
 namespace Micky5991.Samp.Net.Core
 {
@@ -6,7 +7,9 @@ namespace Micky5991.Samp.Net.Core
     {
         public static void test()
         {
-            SampNatives.Samp.GetNetworkStats(out var ret, 2);
+
+
+
         }
     }
 }

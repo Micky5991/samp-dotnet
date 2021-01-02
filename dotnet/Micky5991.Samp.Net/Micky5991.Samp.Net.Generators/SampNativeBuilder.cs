@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Micky5991.Samp.Net.Generators.Contracts;
+using Micky5991.Samp.Net.Generators.Extensions;
 using Micky5991.Samp.Net.Generators.Strategies;
 using Micky5991.Samp.Net.Generators.Strategies.NamespaceElements;
 using Micky5991.Samp.Net.Generators.Strategies.Parameters;
@@ -46,12 +47,16 @@ namespace Micky5991.Samp.Net.Generators
 
             var sourceBuilder = new StringBuilder();
             sourceBuilder.Append(@"using System;
+using Micky5991.Samp.Net.Core.Interop;
 
 namespace Micky5991.Samp.Net.Core
 { 
     public static class SampNatives
     {
 ");
+
+            sourceBuilder.AppendLine("private static NativeTypeConverter typeConverter = new NativeTypeConverter();"
+                                         .Indent(2));
 
             sourceBuilder.Append(namespacesStringBuilder.ToString());
 

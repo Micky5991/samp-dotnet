@@ -17,12 +17,8 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             // return function.Attribute.TryGetValue("callback", out _);
         }
 
-        public override void BuildFunction(
-            IdlFunction function,
-            StringBuilder typesBuilder,
-            StringBuilder delegateBuilder,
-            StringBuilder functionBuilder,
-            int indent)
+        public override void BuildFunction(IdlFunction function, StringBuilder typesBuilder, StringBuilder delegateBuilder,
+                                           StringBuilder functionBuilder, int indent)
         {
 
         }
