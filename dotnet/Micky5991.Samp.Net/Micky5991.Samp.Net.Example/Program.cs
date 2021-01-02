@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using Micky5991.Samp.Net.Core;
 using Micky5991.Samp.Net.Core.Interop;
 
@@ -7,42 +6,28 @@ namespace Micky5991.Samp.Net.Example
 {
     public class Program
     {
+        public static NativeTypeConverter typeConverter = new NativeTypeConverter();
+
         public static void Main(string[] args)
-        {
-            SampNatives.Vehicles.CreateVehicle(411, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
-
-            // CallNative("CreateVehicle", "iffffiiib", 541, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
-        }
-
-        public static unsafe int CallNative(string native, string format, params object[] arguments)
         {
             try
             {
-                var converter = new NativeTypeConverter();
-                var location = Marshal.AllocHGlobal(sizeof(IntPtr) * arguments.Length);
+                var vehicle = SampNatives.Vehicles.CreateVehicle(411, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
+                Console.WriteLine($"Created vehicle: {vehicle}");
 
-                for (int i = 0; i < arguments.Length; i++)
-                {
-                    var (success, argumentLocation) = converter.ConvertTypeToNative(arguments[i]);
-                    if (success == false)
-                    {
-                        return default;
-                    }
+                var result = SampNatives.Vehicles.GetVehicleZAngle(vehicle, out var zAngle);
+                Console.WriteLine($"ZANGLE ({result}): {vehicle} -> {zAngle}");
 
-                    Marshal.WriteIntPtr(location, i * sizeof(IntPtr), argumentLocation);
-                }
+                SampNatives.Vehicles.SetVehicleNumberPlate(vehicle, "LUL");
 
-                var result = Native.InvokeNative(native, format, location);
+                SampNatives.Samp.SetGameModeText("MPlaying Test");
 
-                Console.WriteLine($"Result: {result:X}");
-
-                return result;
+                // CallNative("CreateVehicle", "iffffiiib", 541, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
             }
             catch (Exception e)
             {
-                Console.WriteLine($"ERROR: {e.Message} {e.StackTrace}");
-
-                return default;
+                Console.WriteLine($"ERROR: {e.Message}");
+                Console.WriteLine(e.StackTrace);
             }
         }
     }

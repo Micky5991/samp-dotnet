@@ -51,6 +51,9 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
 
         private void BuildParameterDeclaration(IdlFunctionParameter parameter, StringBuilder parametersBuilder)
         {
+            var type = this.BuildParameterType(parameter.Type);
+            var name = this.BuildParameterName(parameter.Name);
+
             if (parameter.Attribute.IsInAndOut())
             {
                 parametersBuilder.Append("ref ");
@@ -64,7 +67,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
                 parametersBuilder.Append("out ");
             }
 
-            parametersBuilder.Append($"{this.BuildParameterType(parameter.Type)} {this.BuildParameterName(parameter.Name)}");
+            parametersBuilder.Append($"{type} {name}");
         }
 
         public string BuildParameterType(string type)

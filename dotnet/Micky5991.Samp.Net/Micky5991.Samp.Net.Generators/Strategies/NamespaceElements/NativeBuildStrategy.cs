@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Micky5991.Samp.Net.Generators.Data;
 using Micky5991.Samp.Net.Generators.Extensions;
@@ -16,24 +17,67 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
 
         protected override bool IsFunctionAccepted(IdlFunction function)
         {
-            return function.Attribute.TryGetValue("native", out _);
+            return function.Attribute.TryGetValue("native", out _) && function.Attribute.TryGetValue("noimpl", out _) == false;
         }
 
         public override void BuildFunctionBody(IdlFunction function, StringBuilder bodyBuilder, int indent)
         {
             var expectsResult = function.ReturnType != "void";
 
-            bodyBuilder.AppendLine("var arguments = typeConverter.BuildNativeArgumentPointer(new object[] {".Indent(indent));
+            bodyBuilder.AppendLine("var (arguments, elements) = typeConverter.BuildNativeArgumentPointer(new (object Value, int Size)[] {".Indent(indent));
 
-            foreach (var parameter in function.Parameters)
+            for (var i = 0; i < function.Parameters.Count; i++)
             {
-                bodyBuilder.AppendLine($"{this.parameterBuildStrategy.BuildParameterName(parameter.Name)},".Indent(indent + 1));
+                var parameter = function.Parameters[i];
+
+                var name = this.parameterBuildStrategy.BuildParameterName(parameter.Name);
+                var type = this.parameterBuildStrategy.BuildParameterType(parameter.Type);
+
+                var size = $"sizeof({type})";
+
+                if (type == "string")
+                {
+                    var followingParameter = function.Parameters.ElementAtOrDefault(i + 1);
+                    if (parameter.Attribute.IsOut() &&
+                        followingParameter != null &&
+                        this.parameterBuildStrategy.BuildParameterType(followingParameter.Type) == "int")
+                    {
+                        var followingParameterName = this.parameterBuildStrategy.BuildParameterName(followingParameter.Name);
+
+                        size = $"{followingParameterName}";
+                    }
+                    else
+                    {
+                        size = $"{name}.Length + 1";
+                    }
+                }
+
+
+                bodyBuilder.AppendLine($"({name}, {size}),".Indent(indent + 1));
             }
 
             bodyBuilder.AppendLine("});".Indent(indent));
             bodyBuilder.AppendLine();
 
             bodyBuilder.AppendLine($"var nativeResult = Native.InvokeNative(\"{function.Name}\", \"{BuildNativeInvokeFormat(function.Parameters)}\", arguments);".Indent(indent));
+            bodyBuilder.AppendLine();
+
+            bodyBuilder.AppendLine("var data = typeConverter.ReadPassedArgumentsAfterNative(elements);".Indent(indent));
+            bodyBuilder.AppendLine();
+
+            for (var i = 0; i < function.Parameters.Count; i++)
+            {
+                var parameter = function.Parameters[i];
+                if (parameter.Attribute.IsOut() == false)
+                {
+                    continue;
+                }
+
+                var name = this.parameterBuildStrategy.BuildParameterName(parameter.Name);
+                var type = this.parameterBuildStrategy.BuildParameterType(parameter.Type);
+
+                bodyBuilder.AppendLine($"{name} = ({type}) data[{i}];".Indent(indent));
+            }
 
             if (expectsResult == false)
             {
@@ -50,12 +94,16 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
         {
             var formatBuilder = new StringBuilder();
 
-            for (int i = 0; i < parameters.Count; i++)
+            for (var i = 0; i < parameters.Count; i++)
             {
                 var parameter = parameters[i];
 
                 switch (parameter.Type)
                 {
+                    case "string":
+                        formatBuilder.Append(parameter.Attribute.IsOut() == false ? "s" : $"S[*{i + 2}]");
+
+                        break;
                     case "int":
                         formatBuilder.Append("i");
 

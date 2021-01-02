@@ -1,5 +1,7 @@
 #pragma once
 
+#include "sampgdk.h"
+
 struct NativeArgument {
     union {
         int* int_value;
