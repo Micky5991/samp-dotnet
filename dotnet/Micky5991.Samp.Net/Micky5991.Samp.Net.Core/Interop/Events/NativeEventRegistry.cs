@@ -18,7 +18,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
             Native.RegisterEvent(name, format);
         }
 
-        public void InvokeEvent(string name, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? arguments, int argumentAmount)
+        public void InvokeEvent(string name, CallbackArgument[]? arguments, int argumentAmount)
         {
             try
             {
@@ -35,8 +35,6 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
                 }
 
                 var convertedArguments = arguments.Select(x => x.GetValue()).ToArray();
-
-                Console.WriteLine($"Calling {name} with {convertedArguments.Length} arguments");
 
                 var eventInstance = builder(convertedArguments);
 

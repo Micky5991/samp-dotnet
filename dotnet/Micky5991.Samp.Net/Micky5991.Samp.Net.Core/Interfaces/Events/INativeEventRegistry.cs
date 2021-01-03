@@ -11,7 +11,7 @@ namespace Micky5991.Samp.Net.Core.Interfaces.Events
 
         public void RegisterEvent(string name, string format, BuildEventDelegate builder);
 
-        public void InvokeEvent(string name, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[] arguments, int argumentAmount);
+        public void InvokeEvent(string name, CallbackArgument[]? arguments, int argumentAmount);
 
     }
 }
