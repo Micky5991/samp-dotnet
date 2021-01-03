@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Micky5991.Samp.Net.Example": {
+      "commandName": "Executable",
+      "executablePath": "G:\\git\\MPlaying-CPP\\samp\\samp-server.exe",
+      "workingDirectory": "G:\\git\\MPlaying-CPP\\samp",
+      "nativeDebugging": true
+    }
+  }
+}

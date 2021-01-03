@@ -12,7 +12,7 @@ namespace Micky5991.Samp.Net.Example
         {
             try
             {
-                var vehicle = SampNatives.Vehicles.CreateVehicle(411, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
+                var vehicle = SampNatives.Vehicles.CreateVehicle(411, 0f, 0f, 0f, 268.8108f, 0, 0, 0, true);
                 Console.WriteLine($"Created vehicle: {vehicle}");
 
                 var result = SampNatives.Vehicles.GetVehicleZAngle(vehicle, out var zAngle);

@@ -11,8 +11,12 @@ namespace Micky5991.Samp.Net.Core.Interop
 
         [DllImport(_plugin, CallingConvention = _callingConvention)]
         public static extern int InvokeNative([MarshalAs(UnmanagedType.LPStr)] string nativeName,
-                                               [MarshalAs(UnmanagedType.LPStr)] string format,
-                                               IntPtr arguments);
+                                              [MarshalAs(UnmanagedType.LPStr)] string format,
+                                              IntPtr arguments);
+
+        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        public static extern int RegisterEvent([MarshalAs(UnmanagedType.LPStr)] string eventName,
+                                               [MarshalAs(UnmanagedType.LPStr)] string format);
 
     }
 }

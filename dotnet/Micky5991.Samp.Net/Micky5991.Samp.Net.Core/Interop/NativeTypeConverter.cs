@@ -1,29 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
+using Micky5991.Samp.Net.Core.Interop.Converters;
 
 namespace Micky5991.Samp.Net.Core.Interop
 {
     public unsafe class NativeTypeConverter
     {
-        private delegate IntPtr NativeWriteDelegate(object value, int size);
-        private delegate object NativeReadDelegate(IntPtr value, int size);
-
-        private readonly Dictionary<Type, (NativeWriteDelegate Writer, NativeReadDelegate Reader)> converters;
+        private readonly Dictionary<Type, INativeTypeConverter> converters;
 
         public NativeTypeConverter()
         {
-            this.converters = new Dictionary<Type, (NativeWriteDelegate Writer, NativeReadDelegate Reader)>
-            {
-                {typeof(int), ((x, y) => this.ConvertTypeToNative((int) x, y), this.ConvertNativeToInt)},
-                {typeof(bool), ((x, y) => this.ConvertTypeToNative((bool) x, y), this.ConvertNativeToBool)},
-                {typeof(float), ((x, y) => this.ConvertTypeToNative((float) x, y), this.ConvertNativeToSingle)},
-                {typeof(double), ((x, y) => this.ConvertTypeToNative(Convert.ToSingle((double) x), y), (x, y) => Convert.ToDouble(this.ConvertNativeToSingle(x, y)))},
-                {typeof(IntPtr), ((x, y) => this.ConvertTypeToNative((IntPtr) x, y), this.ConvertNativeToPointer)},
-                {typeof(string), ((x, y) => this.ConvertTypeToNative((string) x, y), this.ConvertNativeToString)},
-                // {typeof(byte[]), ((x, y) => this.ConvertTypeToNative((byte[]) x), x => this.ConvertNativeToBytes(x))},
-            };
+            this.converters = new Dictionary<Type, INativeTypeConverter>();
+
+            this.AddConverter(new IntegerNativeConverter());
+            this.AddConverter(new FloatNativeConverter());
+            this.AddConverter(new BoolNativeConverter());
+            this.AddConverter(new StringNativeConverter());
+        }
+
+        private void AddConverter(INativeTypeConverter converter)
+        {
+            this.converters[converter.Type] = converter;
         }
 
         public (IntPtr arguments, Func<object>[] elements) BuildNativeArgumentPointer((object Value, int Size)[] arguments)
@@ -72,102 +70,9 @@ namespace Micky5991.Samp.Net.Core.Interop
                 return (false, IntPtr.Zero, null);
             }
 
-            var location = converter.Writer(value, size);
+            var location = converter.WriteValue(value, size);
 
-            return (true, location, () => converter.Reader(location, size));
-        }
-
-        public IntPtr ConvertTypeToNative(int value, int size)
-        {
-            return this.ConvertTypeToNative(BitConverter.GetBytes(value));
-        }
-
-        public object ConvertNativeToInt(IntPtr location, int size)
-        {
-            var buffer = this.ConvertNativeToBytes(location, size);
-
-            return BitConverter.ToInt32(buffer, 0);
-        }
-
-        public IntPtr ConvertTypeToNative(float value, int size)
-        {
-            return this.ConvertTypeToNative(BitConverter.GetBytes(value));
-        }
-
-        public object ConvertNativeToSingle(IntPtr location, int size)
-        {
-            var buffer = this.ConvertNativeToBytes(location, size);
-
-            return BitConverter.ToSingle(buffer, 0);
-        }
-
-        public IntPtr ConvertTypeToNative(bool value, int size)
-        {
-            // Explicitly use single byte bool, because C# bool is 4 bytes long instead of 1 byte
-            byte[] buffer =
-            {
-                value ? (byte) 1 : (byte) 0
-            };
-
-            return this.ConvertTypeToNative(buffer);
-        }
-
-        public object ConvertNativeToBool(IntPtr location, int size)
-        {
-            var buffer = this.ConvertNativeToBytes(location, 1);
-
-            return buffer[0] == 1;
-        }
-
-        public IntPtr ConvertTypeToNative(IntPtr value, int size)
-        {
-            var location = Marshal.AllocHGlobal(size);
-
-            Marshal.WriteIntPtr(location, 0, value);
-
-            return location;
-        }
-
-        public object ConvertNativeToPointer(IntPtr location, int size)
-        {
-            var result = Marshal.ReadIntPtr(location);
-
-            Marshal.FreeHGlobal(location);
-
-            return result;
-        }
-
-        public IntPtr ConvertTypeToNative(string value, int size)
-        {
-            var buffer = new byte[size];
-            Encoding.ASCII.GetBytes(value, 0, value.Length, buffer, 0);
-
-            return this.ConvertTypeToNative(buffer);
-        }
-
-        public object ConvertNativeToString(IntPtr location, int size)
-        {
-            var buffer = this.ConvertNativeToBytes(location, size);
-
-            return Encoding.ASCII.GetString(buffer);
-        }
-
-        public IntPtr ConvertTypeToNative(byte[] buffer)
-        {
-            var location = Marshal.AllocHGlobal(buffer.Length);
-            Marshal.Copy(buffer, 0, location, buffer.Length);
-
-            return location;
-        }
-
-        public byte[] ConvertNativeToBytes(IntPtr location, int size)
-        {
-            var buffer = new byte[size];
-
-            Marshal.Copy(location, buffer, 0, buffer.Length);
-            Marshal.FreeHGlobal(location);
-
-            return buffer;
+            return (true, location, () => converter.ReadValue(location, size));
         }
     }
 }
