@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using JetBrains.Annotations;
 using Micky5991.Samp.Net.Core.Interfaces.Interop;
 using Micky5991.Samp.Net.Core.Interop.Converters;
 
@@ -25,14 +26,15 @@ namespace Micky5991.Samp.Net.Core.Interop
             this.converters[converter.Type] = converter;
         }
 
-        public (IntPtr arguments, Func<object>[] elements) BuildNativeArgumentPointer((object Value, int Size)[] arguments)
+        [UsedImplicitly]
+        public (IntPtr arguments, Func<object>[] elements) WriteNativeArguments((object Value, int Size)[] arguments)
         {
             var elements = new Func<object>[arguments.Length];
             var location = Marshal.AllocHGlobal(sizeof(IntPtr) * arguments.Length);
 
             for (var i = 0; i < arguments.Length; i++)
             {
-                var (success, argumentLocation, reader) = this.ConvertObjectToNative(arguments[i].Value, arguments[i].Size);
+                var (success, argumentLocation, reader) = this.ConvertObjectToNativeArgument(arguments[i].Value, arguments[i].Size);
                 if (success == false)
                 {
                     return default;
@@ -46,7 +48,8 @@ namespace Micky5991.Samp.Net.Core.Interop
             return (location, elements);
         }
 
-        public object[]? ReadPassedArgumentsAfterNative(Func<object>[] elements)
+        [UsedImplicitly]
+        public object[]? ReadNativeArguments(Func<object>[] elements)
         {
             var arguments = new object[elements.Length];
 
@@ -64,7 +67,7 @@ namespace Micky5991.Samp.Net.Core.Interop
             return arguments;
         }
 
-        public (bool Success, IntPtr Value, Func<object> Reader) ConvertObjectToNative(object value, int size)
+        public (bool Success, IntPtr Value, Func<object> Reader) ConvertObjectToNativeArgument(object value, int size)
         {
             if (this.converters.TryGetValue(value.GetType(), out var converter) == false)
             {

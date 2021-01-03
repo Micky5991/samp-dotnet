@@ -24,7 +24,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
         {
             var expectsResult = function.ReturnType != "void";
 
-            bodyBuilder.AppendLine("var (arguments, elements) = typeConverter.BuildNativeArgumentPointer(new (object Value, int Size)[] {".Indent(indent));
+            bodyBuilder.AppendLine("var (arguments, elements) = typeConverter.WriteNativeArguments(new (object Value, int Size)[] {".Indent(indent));
 
             for (var i = 0; i < function.Parameters.Count; i++)
             {
@@ -62,7 +62,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             bodyBuilder.AppendLine($"var nativeResult = Native.InvokeNative(\"{function.Name}\", \"{BuildNativeInvokeFormat(function.Parameters)}\", arguments);".Indent(indent));
             bodyBuilder.AppendLine();
 
-            bodyBuilder.AppendLine("var data = typeConverter.ReadPassedArgumentsAfterNative(elements);".Indent(indent));
+            bodyBuilder.AppendLine("var data = typeConverter.ReadNativeArguments(elements);".Indent(indent));
             bodyBuilder.AppendLine();
 
             for (var i = 0; i < function.Parameters.Count; i++)

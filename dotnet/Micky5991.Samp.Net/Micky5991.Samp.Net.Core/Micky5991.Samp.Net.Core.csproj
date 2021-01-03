@@ -35,6 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" PrivateAssets="all" />
       <PackageReference Include="Micky5991.EventAggregator" Version="1.2.0" />
     </ItemGroup>
 
