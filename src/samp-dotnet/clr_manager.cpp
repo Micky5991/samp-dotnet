@@ -27,14 +27,11 @@ bool ClrManager::start(const std::string& gamemode) {
             plugins_path
     };
 
-    std::cout << "Starting gamemode " << gamemode << std::endl;
-
     if(coreclr->initialize(runtime_path, gamemodes_path, native_search_paths) == false) {
         return false;
     }
 
     const char** arguments = nullptr;
-
     if(coreclr->start(assembly_path, 0, arguments) == false) {
         return false;
     }

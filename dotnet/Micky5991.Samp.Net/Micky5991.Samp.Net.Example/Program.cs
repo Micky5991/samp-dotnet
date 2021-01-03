@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Micky5991.Samp.Net.Core;
 using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Interop.Events;
@@ -10,6 +11,8 @@ namespace Micky5991.Samp.Net.Example
     {
         public static NativeTypeConverter typeConverter = new NativeTypeConverter();
 
+        private static GCHandle handle;
+
         public static void Main(string[] args)
         {
             try
@@ -18,6 +21,13 @@ namespace Micky5991.Samp.Net.Example
 
                 var sampEvents = new SampEventCollection(eventRegistry);
                 sampEvents.RegisterEvents();
+
+                Native.PublicEventCallback callback = eventRegistry.InvokeEvent;
+                var pointer = Marshal.GetFunctionPointerForDelegate(callback);
+
+                handle = GCHandle.Alloc(callback);
+
+                Native.AttachEventHandler(pointer);
 
                 IVehiclesNatives vehiclesNatives = new VehiclesNatives(typeConverter);
                 var sampNatives = new SampNatives(typeConverter);

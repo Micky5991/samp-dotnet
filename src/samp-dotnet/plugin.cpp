@@ -3,19 +3,14 @@
 
 #include "sampgdk/sampgdk.h"
 #include "samp-dotnet/clr_manager.h"
-#include "samp-dotnet/NativeArgument.h"
+#include "samp-dotnet/event_manager.h"
 
 extern void *pAMXFunctions;
 
 ClrManager* clr_manager = nullptr;
+EventManager* event_manager = nullptr;
+
 bool started = false;
-
-PLUGIN_EXPORT bool PLUGIN_CALL OnGameModeInit() {
-    sampgdk::AddPlayerClass(0, 1958.3783f, 1343.1572f, 15.3746f, 269.1425f,
-                            0, 0, 0, 0, 0, 0);
-
-    return true;
-}
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
     return sampgdk::Supports() | SUPPORTS_PROCESS_TICK | SUPPORTS_AMX_NATIVES;
@@ -30,6 +25,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
     }
 
     clr_manager = new ClrManager();
+    event_manager = new EventManager();
 
     return loaded;
 }
@@ -47,6 +43,12 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX* amx) {
     std::cout << "AMX UNLOAD" << std::endl;
     started = false;
 
+    delete clr_manager;
+    delete event_manager;
+
+    clr_manager = nullptr;
+    event_manager = nullptr;
+
     return AMX_ERR_NONE;
 }
 
@@ -56,6 +58,14 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload() {
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick() {
     sampgdk::ProcessTick();
+}
+
+PLUGIN_EXPORT bool PLUGIN_CALL RegisterEvent(const char* event_name, const char* format) {
+    return event_manager->register_event(std::string(event_name), std::string(format));
+}
+
+PLUGIN_EXPORT void PLUGIN_CALL AttachEventHandler(event_handler callback) {
+    event_manager->attach_event_handler(callback);
 }
 
 PLUGIN_EXPORT cell PLUGIN_CALL InvokeNative(const char* native_name, const char* format, void** native_args) {
@@ -76,42 +86,16 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* pa
         return true;
     }
 
-    if(std::string(name) == "OnPlayerUpdate") {
-//        std::cout << "--- Ignored public call " << name << std::endl;
+    CallbackArgument* arguments = nullptr;
+    int argument_amount = 0;
 
-        return true;
+    auto success = event_manager->format_event(amx, name, params, &arguments, &argument_amount);
+
+    event_manager->dispatch_event(name, arguments, argument_amount);
+
+    if(arguments != nullptr) {
+        delete arguments;
     }
 
-    auto parameter_amount = params[0] / sizeof(cell);
-
-    std::stringstream sstream;
-    sstream << name << "[" << parameter_amount << "](";
-
-    for (int i = 1; i <= parameter_amount; ++i) {
-        sstream << params[i];
-
-        sstream << ", ";
-    }
-
-    sstream << ") -> " << (*retval);
-
-    if(std::string(name) == "OnPlayerText") {
-        unsigned char text[128];
-        cell* location;
-        amx_GetAddr(amx, params[2], &location);
-
-        amx_GetString((char*)text, location, false, sizeof(text));
-
-        std::cout << "STRINGä: " << text << std::endl;
-
-        for(auto value : text) {
-            std::cout << (int) value << " ";
-        }
-
-        std::cout << std::endl;
-
-    }
-
-    std::cout << sstream.str() << std::endl;
     return true;
 }

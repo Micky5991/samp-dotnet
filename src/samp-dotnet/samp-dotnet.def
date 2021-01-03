@@ -3,7 +3,8 @@ EXPORTS
 	Load
 	Unload
 	ProcessTick
-	OnGameModeInit
+    RegisterEvent
+    AttachEventHandler
 	InvokeNative
 	OnPublicCall
     AmxLoad
