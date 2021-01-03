@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core;
 using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Interop.Events;
@@ -23,11 +24,10 @@ namespace Micky5991.Samp.Net.Example
                 sampEvents.RegisterEvents();
 
                 Native.PublicEventCallback callback = eventRegistry.InvokeEvent;
-                var pointer = Marshal.GetFunctionPointerForDelegate(callback);
 
                 handle = GCHandle.Alloc(callback);
 
-                Native.AttachEventHandler(pointer);
+                Native.AttachEventHandler(callback);
 
                 IVehiclesNatives vehiclesNatives = new VehiclesNatives(typeConverter);
                 var sampNatives = new SampNatives(typeConverter);

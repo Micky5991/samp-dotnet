@@ -16,6 +16,8 @@ enum CallbackArgumentType : int {
 struct CallbackArgument {
     CallbackArgumentType type;
 
+    int size;
+
     union {
         int int_value;
 
@@ -27,6 +29,43 @@ struct CallbackArgument {
 
         char* string_value;
     };
+
+    CallbackArgument() = default;
+
+    explicit CallbackArgument(int value) : CallbackArgument() {
+        type = CallbackArgumentType::Integer;
+        size = sizeof(int);
+
+        int_value = value;
+    }
+
+    explicit CallbackArgument(bool value) : CallbackArgument() {
+        type = CallbackArgumentType::Bool;
+        size = sizeof(bool);
+
+        bool_value = value;
+    }
+
+    explicit CallbackArgument(float value) : CallbackArgument() {
+        type = CallbackArgumentType::Float;
+        size = sizeof(float);
+
+        float_value = value;
+    }
+
+    explicit CallbackArgument(cell* value) : CallbackArgument() {
+        type = CallbackArgumentType::Cell;
+        size = sizeof(cell*);
+
+        cell_value = value;
+    }
+
+    explicit CallbackArgument(char* value, int value_size) : CallbackArgument() {
+        type = CallbackArgumentType::String;
+        size = value_size;
+
+        string_value = value;
+    }
 
     ~CallbackArgument() {
         if(type == CallbackArgumentType::String) {

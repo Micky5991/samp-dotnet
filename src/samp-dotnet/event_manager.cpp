@@ -58,18 +58,20 @@ bool EventManager::format_event(AMX* amx, const std::string& event_name, const c
 
         switch (format[i]) {
             case 'i': {
-                argument.type = CallbackArgumentType::Integer;
-                argument.int_value = (int) value;
 
-                result[i] = argument;
+                result[i] = CallbackArgument((int) value);
 
                 break;
             }
-            case 'f': {
-                argument.type = CallbackArgumentType::Float;
-                argument.float_value = (float) value;
 
-                result[i] = argument;
+            case 'b': {
+                result[i] = CallbackArgument((bool) value);
+
+                break;
+            }
+
+            case 'f': {
+                result[i] = CallbackArgument((float) value);
 
                 break;
             }
@@ -87,10 +89,7 @@ bool EventManager::format_event(AMX* amx, const std::string& event_name, const c
 
                 amx_GetString(text, address, false, length);
 
-                argument.type = CallbackArgumentType::String;
-                argument.string_value = text;
-
-                result[i] = argument;
+                result[i] = CallbackArgument((char*) text, length);
 
                 break;
             }

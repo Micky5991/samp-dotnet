@@ -58,7 +58,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             var functionTargets = new BuilderTargetCollection
             {
                 BuilderTarget.Parameters,
-                BuilderTarget.Body,
+                BuilderTarget.FunctionBody,
             };
 
             functionTargets.Parent = builderTargets;
@@ -75,11 +75,11 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                 }
             }
 
-            this.BuildFunctionBody(function, functionTargets[BuilderTarget.Body], indent + 1);
+            this.BuildFunctionBody(function, functionTargets[BuilderTarget.FunctionBody], indent + 1);
 
-            if (functionTargets[BuilderTarget.Body].Length == 0)
+            if (functionTargets[BuilderTarget.FunctionBody].Length == 0)
             {
-                functionTargets[BuilderTarget.Body].Append("throw new System.NotImplementedException();".Indent(indent));
+                functionTargets[BuilderTarget.FunctionBody].Append("throw new System.NotImplementedException();".Indent(indent));
             }
 
             var signature = $"{this.MapReturnType(function.ReturnType)} {function.Name}({functionTargets[BuilderTarget.Parameters]})";
@@ -89,7 +89,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             builderTargets[BuilderTarget.Functions].AppendLine($"public virtual {signature}".Indent(indent));
             builderTargets[BuilderTarget.Functions].AppendLine("{".Indent(indent));
 
-            builderTargets[BuilderTarget.Functions].AppendLine(functionTargets[BuilderTarget.Body].ToString());
+            builderTargets[BuilderTarget.Functions].AppendLine(functionTargets[BuilderTarget.FunctionBody].ToString());
 
             builderTargets[BuilderTarget.Functions].AppendLine("}".Indent(indent));
             builderTargets[BuilderTarget.Functions].AppendLine();

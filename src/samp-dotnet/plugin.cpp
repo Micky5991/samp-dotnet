@@ -93,9 +93,5 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* pa
 
     event_manager->dispatch_event(name, arguments, argument_amount);
 
-    if(arguments != nullptr) {
-        delete arguments;
-    }
-
     return true;
 }

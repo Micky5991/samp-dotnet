@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Core.Interop
 {
     public static class Native
     {
-        public delegate void PublicEventCallback(string eventName, CallbackArgument[] argments, int argumentAmount);
+        public delegate void PublicEventCallback(string eventName, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? argments, int argumentAmount);
 
         private const CallingConvention _callingConvention = CallingConvention.StdCall;
 
@@ -22,7 +22,7 @@ namespace Micky5991.Samp.Net.Core.Interop
                                                [MarshalAs(UnmanagedType.LPStr)] string format);
 
         [DllImport(_plugin, CallingConvention = _callingConvention)]
-        public static extern int AttachEventHandler(IntPtr callback);
+        public static extern int AttachEventHandler([MarshalAs(UnmanagedType.FunctionPtr)] PublicEventCallback callback);
 
     }
 }

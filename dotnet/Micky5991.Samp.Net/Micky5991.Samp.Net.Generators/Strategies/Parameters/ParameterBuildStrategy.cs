@@ -37,8 +37,25 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
 
         public void Build(IdlFunctionParameter parameter, IdlFunction function, BuilderTargetCollection functionTargets, int indent)
         {
-            this.BuildParameterDeclaration(parameter, functionTargets[BuilderTarget.Parameters]);
-            this.BuildBodyInstructions(parameter, functionTargets[BuilderTarget.Body], indent);
+            if (functionTargets.TryGetValue(BuilderTarget.Parameters, out var parameterTarget))
+            {
+                this.BuildParameterDeclaration(parameter, parameterTarget);
+            }
+
+            if (functionTargets.TryGetValue(BuilderTarget.FunctionBody, out var bodyTarget))
+            {
+                this.BuildBodyInstructions(parameter, bodyTarget, indent);
+            }
+
+            if (functionTargets.TryGetValue(BuilderTarget.EventProperties, out var propertyTarget))
+            {
+                this.BuildEventProperties(parameter, propertyTarget, indent);
+            }
+
+            if (functionTargets.TryGetValue(BuilderTarget.EventBody, out var eventBodyTarget))
+            {
+                this.BuildPropertyAssignment(parameter, eventBodyTarget, indent + 1);
+            }
         }
 
         private void BuildBodyInstructions(IdlFunctionParameter parameter, StringBuilder bodyBuilder, int indent)
@@ -47,6 +64,16 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
             {
                 bodyBuilder.AppendLine($"{this.BuildParameterName(parameter.Name)} = default;".Indent(indent));
             }
+        }
+
+        private void BuildEventProperties(IdlFunctionParameter parameter, StringBuilder propertyBuilder, int indent)
+        {
+            propertyBuilder.AppendLine($"public {this.BuildParameterType(parameter.Type)} {this.BuildPropertyName(parameter.Name)} {{ get; }}".Indent(indent));
+        }
+
+        private void BuildPropertyAssignment(IdlFunctionParameter parameter, StringBuilder propertyBuilder, int indent)
+        {
+            propertyBuilder.AppendLine($"this.{this.BuildPropertyName(parameter.Name)} = {this.BuildParameterName(parameter.Name)};".Indent(indent));
         }
 
         private void BuildParameterDeclaration(IdlFunctionParameter parameter, StringBuilder parametersBuilder)
@@ -90,6 +117,18 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
             };
 
             return name.ConvertToCamelCase();
+        }
+
+        public string BuildPropertyName(string name)
+        {
+            name = name switch
+            {
+                "string" => "value",
+                "param" => "parameters",
+                _ => name,
+            };
+
+            return name.ConvertToPascalCase();
         }
     }
 }
