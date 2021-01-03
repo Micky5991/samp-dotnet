@@ -35,10 +35,10 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
             return result;
         }
 
-        public void Build(IdlFunctionParameter parameter, IdlFunction function, StringBuilder parametersBuilder, StringBuilder bodyBuilder, int indent)
+        public void Build(IdlFunctionParameter parameter, IdlFunction function, BuilderTargetCollection functionTargets, int indent)
         {
-            this.BuildParameterDeclaration(parameter, parametersBuilder);
-            this.BuildBodyInstructions(parameter, bodyBuilder, indent);
+            this.BuildParameterDeclaration(parameter, functionTargets[BuilderTarget.Parameters]);
+            this.BuildBodyInstructions(parameter, functionTargets[BuilderTarget.Body], indent);
         }
 
         private void BuildBodyInstructions(IdlFunctionParameter parameter, StringBuilder bodyBuilder, int indent)

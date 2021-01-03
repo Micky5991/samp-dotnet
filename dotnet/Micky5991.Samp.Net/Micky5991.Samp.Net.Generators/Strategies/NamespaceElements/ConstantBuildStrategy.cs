@@ -24,13 +24,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             throw new System.NotImplementedException();
         }
 
-        public void Build(
-            IdlNamespaceElement element,
-            StringBuilder typesBuilder,
-            StringBuilder delegateBuilder,
-            StringBuilder interfaceSignaturesBuilder,
-            StringBuilder functionBuilder,
-            int indent)
+        public void Build(IdlNamespaceElement element, BuilderTargetCollection builderTargets, int indent)
         {
             throw new System.NotImplementedException();
         }

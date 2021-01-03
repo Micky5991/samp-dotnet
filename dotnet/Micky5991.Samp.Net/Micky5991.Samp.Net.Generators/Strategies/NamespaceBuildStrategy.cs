@@ -53,24 +53,29 @@ namespace Micky5991.Samp.Net.Generators.Strategies
 
         public void Build(StringBuilder stringBuilder, IdlNamespace idlNamespace, int indent)
         {
-            var typesBuilder = new StringBuilder();
-            var interfaceSignaturesBuilder = new StringBuilder();
-            var delegateBuilder = new StringBuilder();
-            var functionBuilder = new StringBuilder();
+            var targets = new BuilderTargetCollection
+            {
+                BuilderTarget.Types,
+                BuilderTarget.InterfaceSignatures,
+                BuilderTarget.Delegates,
+                BuilderTarget.Functions,
+            };
 
             foreach (var (strategy, element) in idlNamespace.Elements)
             {
-                strategy.Build(element, typesBuilder, delegateBuilder, interfaceSignaturesBuilder, functionBuilder, indent + 1);
+                strategy.Build(element, targets, indent + 1);
             }
 
+            // Interface
             stringBuilder.AppendLine($"public interface I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
 
-            stringBuilder.Append(interfaceSignaturesBuilder.ToString());
+            stringBuilder.Append(targets[BuilderTarget.InterfaceSignatures].ToString());
 
             stringBuilder.AppendLine("}".Indent(indent));
             stringBuilder.AppendLine();
 
+            // Class
             stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}Natives : I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
 
@@ -88,9 +93,9 @@ namespace Micky5991.Samp.Net.Generators.Strategies
             stringBuilder.AppendLine();
 
             // Body
-            stringBuilder.Append(typesBuilder.ToString());
-            stringBuilder.Append(delegateBuilder.ToString());
-            stringBuilder.Append(functionBuilder.ToString());
+            stringBuilder.Append(targets[BuilderTarget.Types].ToString());
+            stringBuilder.Append(targets[BuilderTarget.Delegates].ToString());
+            stringBuilder.Append(targets[BuilderTarget.Functions].ToString());
 
             stringBuilder.AppendLine("}".Indent(indent));
             stringBuilder.AppendLine();

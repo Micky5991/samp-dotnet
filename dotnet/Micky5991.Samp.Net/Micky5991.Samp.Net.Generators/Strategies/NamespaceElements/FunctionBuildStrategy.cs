@@ -48,46 +48,49 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             return new IdlFunction(name, returnType, new IdlAttribute(attribute), this.parameterBuildStrategy.Parse(parameters));
         }
 
-        public virtual void Build(IdlNamespaceElement element, StringBuilder typesBuilder, StringBuilder delegateBuilder, StringBuilder signaturesBuilder, StringBuilder functionBuilder, int indent)
+        public virtual void Build(IdlNamespaceElement element, BuilderTargetCollection builderTargets, int indent)
         {
-            this.BuildFunction((IdlFunction) element, typesBuilder, delegateBuilder, signaturesBuilder, functionBuilder, indent);
+            this.BuildFunction((IdlFunction) element, builderTargets, indent);
         }
 
-        public virtual void BuildFunction(IdlFunction function, StringBuilder typesBuilder, StringBuilder delegateBuilder, StringBuilder interfaceSignaturesBuilder, StringBuilder functionBuilder, int indent)
+        public virtual void BuildFunction(IdlFunction function, BuilderTargetCollection builderTargets, int indent)
         {
-            var parametersBuilder = new StringBuilder();
-            var bodyBuilder = new StringBuilder();
+            var functionTargets = new BuilderTargetCollection
+            {
+                BuilderTarget.Parameters,
+                BuilderTarget.Body,
+            };
 
             for (var i = 0; i < function.Parameters.Count; i++)
             {
                 var parameter = function.Parameters[i];
 
-                this.parameterBuildStrategy.Build(parameter, function, parametersBuilder, bodyBuilder, indent + 1);
+                this.parameterBuildStrategy.Build(parameter, function, functionTargets, indent + 1);
 
                 if (i < function.Parameters.Count - 1)
                 {
-                    parametersBuilder.Append(", ");
+                    functionTargets[BuilderTarget.Parameters].Append(", ");
                 }
             }
 
-            this.BuildFunctionBody(function, bodyBuilder, indent + 1);
+            this.BuildFunctionBody(function, functionTargets[BuilderTarget.Body], indent + 1);
 
-            if (bodyBuilder.Length == 0)
+            if (functionTargets[BuilderTarget.Body].Length == 0)
             {
-                bodyBuilder.Append("throw new System.NotImplementedException();".Indent(indent));
+                functionTargets[BuilderTarget.Body].Append("throw new System.NotImplementedException();".Indent(indent));
             }
 
-            var signature = $"{this.MapReturnType(function.ReturnType)} {function.Name}({parametersBuilder})";
+            var signature = $"{this.MapReturnType(function.ReturnType)} {function.Name}({functionTargets[BuilderTarget.Parameters]})";
 
-            interfaceSignaturesBuilder.AppendLine($"{signature};".Indent(indent));
+            builderTargets[BuilderTarget.InterfaceSignatures].AppendLine($"{signature};".Indent(indent));
 
-            functionBuilder.AppendLine($"public virtual {signature}".Indent(indent));
-            functionBuilder.AppendLine("{".Indent(indent));
+            builderTargets[BuilderTarget.Functions].AppendLine($"public virtual {signature}".Indent(indent));
+            builderTargets[BuilderTarget.Functions].AppendLine("{".Indent(indent));
 
-            functionBuilder.AppendLine(bodyBuilder.ToString());
+            builderTargets[BuilderTarget.Functions].AppendLine(functionTargets[BuilderTarget.Body].ToString());
 
-            functionBuilder.AppendLine("}".Indent(indent));
-            functionBuilder.AppendLine();
+            builderTargets[BuilderTarget.Functions].AppendLine("}".Indent(indent));
+            builderTargets[BuilderTarget.Functions].AppendLine();
         }
 
         public virtual void BuildFunctionBody(IdlFunction function, StringBuilder bodyBuilder, int indent)

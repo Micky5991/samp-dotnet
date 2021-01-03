@@ -9,12 +9,6 @@ namespace Micky5991.Samp.Net.Generators.Contracts
 
         IdlNamespaceElement Parse(string line);
 
-        void Build(
-            IdlNamespaceElement element,
-            StringBuilder typesBuilder,
-            StringBuilder delegateBuilder,
-            StringBuilder interfaceSignaturesBuilder,
-            StringBuilder functionBuilder,
-            int indent);
+        void Build(IdlNamespaceElement element, BuilderTargetCollection builderTargets, int indent);
     }
 }
