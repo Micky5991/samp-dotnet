@@ -54,17 +54,40 @@ namespace Micky5991.Samp.Net.Generators.Strategies
         public void Build(StringBuilder stringBuilder, IdlNamespace idlNamespace, int indent)
         {
             var typesBuilder = new StringBuilder();
+            var interfaceSignaturesBuilder = new StringBuilder();
             var delegateBuilder = new StringBuilder();
             var functionBuilder = new StringBuilder();
 
             foreach (var (strategy, element) in idlNamespace.Elements)
             {
-                strategy.Build(element, typesBuilder, delegateBuilder, functionBuilder, indent + 1);
+                strategy.Build(element, typesBuilder, delegateBuilder, interfaceSignaturesBuilder, functionBuilder, indent + 1);
             }
 
-            stringBuilder.AppendLine($"public static class {idlNamespace.Name.ConvertToPascalCase()}".Indent(indent));
+            stringBuilder.AppendLine($"public interface I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
 
+            stringBuilder.Append(interfaceSignaturesBuilder.ToString());
+
+            stringBuilder.AppendLine("}".Indent(indent));
+            stringBuilder.AppendLine();
+
+            stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}Natives : I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
+            stringBuilder.AppendLine("{".Indent(indent));
+
+            // Field
+            stringBuilder.AppendLine("private NativeTypeConverter typeConverter;".Indent(indent + 1));
+            stringBuilder.AppendLine();
+
+            // Constructor
+            stringBuilder.AppendLine($@"public {idlNamespace.Name.ConvertToPascalCase()}Natives(NativeTypeConverter typeConverter)".Indent(indent + 1));
+            stringBuilder.AppendLine("{".Indent(indent + 1));
+
+            stringBuilder.AppendLine("this.typeConverter = typeConverter;".Indent(indent + 2));
+
+            stringBuilder.AppendLine("}".Indent(indent + 1));
+            stringBuilder.AppendLine();
+
+            // Body
             stringBuilder.Append(typesBuilder.ToString());
             stringBuilder.Append(delegateBuilder.ToString());
             stringBuilder.Append(functionBuilder.ToString());

@@ -48,12 +48,12 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             return new IdlFunction(name, returnType, new IdlAttribute(attribute), this.parameterBuildStrategy.Parse(parameters));
         }
 
-        public virtual void Build(IdlNamespaceElement element, StringBuilder typesBuilder, StringBuilder delegateBuilder, StringBuilder functionBuilder, int indent)
+        public virtual void Build(IdlNamespaceElement element, StringBuilder typesBuilder, StringBuilder delegateBuilder, StringBuilder signaturesBuilder, StringBuilder functionBuilder, int indent)
         {
-            this.BuildFunction((IdlFunction) element, typesBuilder, delegateBuilder, functionBuilder, indent);
+            this.BuildFunction((IdlFunction) element, typesBuilder, delegateBuilder, signaturesBuilder, functionBuilder, indent);
         }
 
-        public virtual void BuildFunction(IdlFunction function, StringBuilder typesBuilder, StringBuilder delegateBuilder, StringBuilder functionBuilder, int indent)
+        public virtual void BuildFunction(IdlFunction function, StringBuilder typesBuilder, StringBuilder delegateBuilder, StringBuilder interfaceSignaturesBuilder, StringBuilder functionBuilder, int indent)
         {
             var parametersBuilder = new StringBuilder();
             var bodyBuilder = new StringBuilder();
@@ -77,7 +77,11 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                 bodyBuilder.Append("throw new System.NotImplementedException();".Indent(indent));
             }
 
-            functionBuilder.AppendLine($"public static {this.MapReturnType(function.ReturnType)} {function.Name}({parametersBuilder})".Indent(indent));
+            var signature = $"{this.MapReturnType(function.ReturnType)} {function.Name}({parametersBuilder})";
+
+            interfaceSignaturesBuilder.AppendLine($"{signature};".Indent(indent));
+
+            functionBuilder.AppendLine($"public virtual {signature}".Indent(indent));
             functionBuilder.AppendLine("{".Indent(indent));
 
             functionBuilder.AppendLine(bodyBuilder.ToString());

@@ -42,27 +42,21 @@ namespace Micky5991.Samp.Net.Generators
 
                 var idlNamespace = namespaceBuildStrategy.Parse(path, stream);
 
-                namespaceBuildStrategy.Build(namespacesStringBuilder, idlNamespace, 2);
+                namespaceBuildStrategy.Build(namespacesStringBuilder, idlNamespace, 1);
             }
 
             var sourceBuilder = new StringBuilder();
             sourceBuilder.Append(@"using System;
 using Micky5991.Samp.Net.Core.Interop;
 
-namespace Micky5991.Samp.Net.Core
+namespace Micky5991.Samp.Net.Core.Natives
 { 
-    public static class SampNatives
-    {
 ");
 
-            sourceBuilder.AppendLine("private static NativeTypeConverter typeConverter = new NativeTypeConverter();"
-                                         .Indent(2));
-
+            // ReSharper disable once RedundantToStringCall
             sourceBuilder.Append(namespacesStringBuilder.ToString());
 
-            sourceBuilder.Append(@"
-    }
-}");
+            sourceBuilder.AppendLine("}");
 
             return sourceBuilder.ToString();
         }

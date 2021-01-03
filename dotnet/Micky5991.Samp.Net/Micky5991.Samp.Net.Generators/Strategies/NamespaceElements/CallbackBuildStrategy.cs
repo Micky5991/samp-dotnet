@@ -18,7 +18,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
         }
 
         public override void BuildFunction(IdlFunction function, StringBuilder typesBuilder, StringBuilder delegateBuilder,
-                                           StringBuilder functionBuilder, int indent)
+                                           StringBuilder interfaceSignaturesBuilder, StringBuilder functionBuilder, int indent)
         {
 
         }
