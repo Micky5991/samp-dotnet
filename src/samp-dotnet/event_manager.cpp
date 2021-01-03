@@ -21,8 +21,6 @@ bool EventManager::attach_event_handler(event_handler event_handler) {
 }
 
 bool EventManager::dispatch_event(const std::string& event_name, const CallbackArgument* arguments, int argument_amount) {
-    std::cout << "Dispatching event " << event_name << std::endl;
-
     _event_handler(event_name.c_str(), arguments, argument_amount);
 
     return true;

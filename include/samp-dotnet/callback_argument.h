@@ -27,5 +27,11 @@ struct CallbackArgument {
 
         char* string_value;
     };
+
+    ~CallbackArgument() {
+        if(type == CallbackArgumentType::String) {
+            delete string_value;
+        }
+    }
 };
 #pragma pack(pop)
