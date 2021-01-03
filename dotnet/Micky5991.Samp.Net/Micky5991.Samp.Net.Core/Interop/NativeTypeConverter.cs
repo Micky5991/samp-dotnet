@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Micky5991.Samp.Net.Core.Interfaces.Interop;
 using Micky5991.Samp.Net.Core.Interop.Converters;
 
 namespace Micky5991.Samp.Net.Core.Interop

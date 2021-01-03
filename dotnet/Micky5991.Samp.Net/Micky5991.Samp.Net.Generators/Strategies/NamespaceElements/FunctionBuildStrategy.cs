@@ -61,6 +61,8 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                 BuilderTarget.Body,
             };
 
+            functionTargets.Parent = builderTargets;
+
             for (var i = 0; i < function.Parameters.Count; i++)
             {
                 var parameter = function.Parameters[i];

@@ -1,6 +1,7 @@
 ﻿using System;
 using Micky5991.Samp.Net.Core;
 using Micky5991.Samp.Net.Core.Interop;
+using Micky5991.Samp.Net.Core.Interop.Events;
 using Micky5991.Samp.Net.Core.Natives;
 
 namespace Micky5991.Samp.Net.Example
@@ -13,6 +14,11 @@ namespace Micky5991.Samp.Net.Example
         {
             try
             {
+                var eventRegistry = new NativeEventRegistry();
+
+                var sampEvents = new SampEventCollection(eventRegistry);
+                sampEvents.RegisterEvents();
+
                 IVehiclesNatives vehiclesNatives = new VehiclesNatives(typeConverter);
                 var sampNatives = new SampNatives(typeConverter);
 

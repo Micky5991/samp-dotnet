@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -51,37 +52,53 @@ namespace Micky5991.Samp.Net.Generators.Strategies
             return elements;
         }
 
-        public void Build(StringBuilder stringBuilder, IdlNamespace idlNamespace, int indent)
+        public void Build(BuilderTargetCollection builderTargets, IdlNamespace idlNamespace, int indent)
         {
-            var targets = new BuilderTargetCollection
+            var namespaceBuilderTargets = new BuilderTargetCollection
             {
-                BuilderTarget.Types,
                 BuilderTarget.InterfaceSignatures,
                 BuilderTarget.Delegates,
                 BuilderTarget.Functions,
+                BuilderTarget.Events
             };
+
+            namespaceBuilderTargets.Parent = builderTargets;
 
             foreach (var (strategy, element) in idlNamespace.Elements)
             {
-                strategy.Build(element, targets, indent + 1);
+                strategy.Build(element, namespaceBuilderTargets, indent + 1);
             }
 
-            // Interface
-            stringBuilder.AppendLine($"public interface I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
+            this.BuildNamespaceEventsClass(namespaceBuilderTargets, idlNamespace, indent);
+            this.BuildNamespaceNativesInterface(namespaceBuilderTargets, idlNamespace, indent);
+            this.BuildNamespaceNativesClass(namespaceBuilderTargets, idlNamespace, indent);
+        }
+
+        private void BuildNamespaceNativesInterface(BuilderTargetCollection buildTargets, IdlNamespace idlNamespace, int indent)
+        {
+            var stringBuilder = buildTargets.Parent[BuilderTarget.Types];
+
+            stringBuilder.AppendLine($"public interface I{idlNamespace.Name.ConvertToPascalCase()}Natives : INatives".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
 
-            stringBuilder.Append(targets[BuilderTarget.InterfaceSignatures].ToString());
+            stringBuilder.Append(buildTargets[BuilderTarget.InterfaceSignatures].ToString());
 
             stringBuilder.AppendLine("}".Indent(indent));
             stringBuilder.AppendLine();
+        }
 
-            // Class
+        private void BuildNamespaceNativesClass(BuilderTargetCollection buildTargets, IdlNamespace idlNamespace, int indent)
+        {
+            var stringBuilder = buildTargets.Parent[BuilderTarget.Types];
+
             stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}Natives : I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
 
             // Field
             stringBuilder.AppendLine("private NativeTypeConverter typeConverter;".Indent(indent + 1));
             stringBuilder.AppendLine();
+
+            stringBuilder.Append(buildTargets[BuilderTarget.Delegates].ToString());
 
             // Constructor
             stringBuilder.AppendLine($@"public {idlNamespace.Name.ConvertToPascalCase()}Natives(NativeTypeConverter typeConverter)".Indent(indent + 1));
@@ -93,9 +110,40 @@ namespace Micky5991.Samp.Net.Generators.Strategies
             stringBuilder.AppendLine();
 
             // Body
-            stringBuilder.Append(targets[BuilderTarget.Types].ToString());
-            stringBuilder.Append(targets[BuilderTarget.Delegates].ToString());
-            stringBuilder.Append(targets[BuilderTarget.Functions].ToString());
+            stringBuilder.Append(buildTargets[BuilderTarget.Functions].ToString());
+
+            stringBuilder.AppendLine("}".Indent(indent));
+            stringBuilder.AppendLine();
+        }
+
+        private void BuildNamespaceEventsClass(BuilderTargetCollection buildTargets, IdlNamespace idlNamespace, int indent)
+        {
+            var stringBuilder = buildTargets.Parent[BuilderTarget.Types];
+
+            stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}EventCollection : Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventCollection".Indent(indent));
+            stringBuilder.AppendLine("{".Indent(indent));
+
+            // Field
+            stringBuilder.AppendLine("private Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventRegistry nativeEventRegistry;".Indent(indent + 1));
+            stringBuilder.AppendLine();
+
+            // Constructor
+            stringBuilder.AppendLine($@"public {idlNamespace.Name.ConvertToPascalCase()}EventCollection(Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventRegistry nativeEventRegistry)".Indent(indent + 1));
+            stringBuilder.AppendLine("{".Indent(indent + 1));
+
+            stringBuilder.AppendLine("this.nativeEventRegistry = nativeEventRegistry;".Indent(indent + 2));
+
+            stringBuilder.AppendLine("}".Indent(indent + 1));
+            stringBuilder.AppendLine();
+
+            // Body
+
+            stringBuilder.AppendLine($@"public virtual void RegisterEvents()".Indent(indent + 1));
+            stringBuilder.AppendLine("{".Indent(indent + 1));
+
+            stringBuilder.Append(buildTargets[BuilderTarget.Events].ToString());
+
+            stringBuilder.AppendLine("}".Indent(indent + 1));
 
             stringBuilder.AppendLine("}".Indent(indent));
             stringBuilder.AppendLine();

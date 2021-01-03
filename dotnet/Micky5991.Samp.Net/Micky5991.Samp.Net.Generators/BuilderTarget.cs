@@ -9,5 +9,6 @@ namespace Micky5991.Samp.Net.Generators
         Functions,
         Parameters,
         Body,
+        Events
     }
 }

@@ -7,8 +7,6 @@ namespace Micky5991.Samp.Net.Core
     {
         public static void test()
         {
-
-
         }
     }
 }

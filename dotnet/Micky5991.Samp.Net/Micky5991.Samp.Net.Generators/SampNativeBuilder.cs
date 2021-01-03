@@ -35,26 +35,31 @@ namespace Micky5991.Samp.Net.Generators
             };
             var namespaceBuildStrategy = new NamespaceBuildStrategy(elementBuildStrategies);
 
-            var namespacesStringBuilder = new StringBuilder();
+            var builderTargets = new BuilderTargetCollection
+            {
+                BuilderTarget.Types
+            };
+
             foreach (var path in filePaths)
             {
                 using var stream = new StreamReader(path);
 
                 var idlNamespace = namespaceBuildStrategy.Parse(path, stream);
 
-                namespaceBuildStrategy.Build(namespacesStringBuilder, idlNamespace, 1);
+                namespaceBuildStrategy.Build(builderTargets, idlNamespace, 1);
             }
 
             var sourceBuilder = new StringBuilder();
             sourceBuilder.Append(@"using System;
 using Micky5991.Samp.Net.Core.Interop;
+using Micky5991.Samp.Net.Core.Interfaces.Natives;
 
 namespace Micky5991.Samp.Net.Core.Natives
 { 
 ");
 
             // ReSharper disable once RedundantToStringCall
-            sourceBuilder.Append(namespacesStringBuilder.ToString());
+            sourceBuilder.Append(builderTargets[BuilderTarget.Types].ToString());
 
             sourceBuilder.AppendLine("}");
 

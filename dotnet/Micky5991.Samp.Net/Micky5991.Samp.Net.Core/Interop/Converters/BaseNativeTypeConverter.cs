@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using Micky5991.Samp.Net.Core.Interfaces.Interop;
 
 namespace Micky5991.Samp.Net.Core.Interop.Converters
 {

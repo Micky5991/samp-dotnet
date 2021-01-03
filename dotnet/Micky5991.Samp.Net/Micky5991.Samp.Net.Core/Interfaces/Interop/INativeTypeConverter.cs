@@ -1,6 +1,6 @@
 using System;
 
-namespace Micky5991.Samp.Net.Core.Interop
+namespace Micky5991.Samp.Net.Core.Interfaces.Interop
 {
     public interface INativeTypeConverter
     {
