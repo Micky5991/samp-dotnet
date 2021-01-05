@@ -25,7 +25,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
 
         public override void BuildFunction(IdlFunction function, BuilderTargetCollection builderTargets, int indent)
         {
-            this.BuildEventRegistration(function, builderTargets, indent + 1);
+            this.BuildEventRegistration(function, builderTargets, indent + 2);
             this.BuildEventClass(function, builderTargets, indent - 1);
         }
 
@@ -82,7 +82,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                 }
             }
 
-            eventList.AppendLine($"this.nativeEventRegistry.RegisterEvent(\"{function.Name}\", \"{format}\", x => new {name}({parameterNames}));".Indent(indent));
+            eventList.AppendLine($"{{ \"{function.Name}\", \"{format}\", x => new {name}({parameterNames}) }},".Indent(indent));
         }
 
         private void BuildEventClass(IdlFunction function, BuilderTargetCollection builderTargets, int indent)

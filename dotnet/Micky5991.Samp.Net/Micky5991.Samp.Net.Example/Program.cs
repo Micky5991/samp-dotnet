@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Threading;
 using Micky5991.EventAggregator.Extensions;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
 using Micky5991.Samp.Net.Core.Interop;
-using Micky5991.Samp.Net.Core.Interop.Converters;
 using Micky5991.Samp.Net.Core.Interop.Events;
-using Micky5991.Samp.Net.Core.NativeEvents;
 using Micky5991.Samp.Net.Core.Natives;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 
 namespace Micky5991.Samp.Net.Example
 {
@@ -31,11 +27,11 @@ namespace Micky5991.Samp.Net.Example
                                         .AddTransient<NativeTypeConverter>()
                                         .AddSingleton<INativeEventRegistry, NativeEventRegistry>()
 
-                                        .AddTransient<INativeEventCollection, SampEventCollection>()
-                                        .AddTransient<INativeEventCollection, VehiclesEventCollection>()
-                                        .AddTransient<INativeEventCollection, PlayersEventCollection>()
-                                        .AddTransient<INativeEventCollection, ActorEventCollection>()
-                                        .AddTransient<INativeEventCollection, ObjectsEventCollection>()
+                                        .AddTransient<INativeEventCollectionFactory, SampEventCollectionFactory>()
+                                        .AddTransient<INativeEventCollectionFactory, VehiclesEventCollectionFactory>()
+                                        .AddTransient<INativeEventCollectionFactory, PlayersEventCollectionFactory>()
+                                        .AddTransient<INativeEventCollectionFactory, ActorEventCollectionFactory>()
+                                        .AddTransient<INativeEventCollectionFactory, ObjectsEventCollectionFactory>()
 
                                         .AddTransient<ISampNatives, SampNatives>()
                                         .AddTransient<IVehiclesNatives, VehiclesNatives>()
@@ -45,17 +41,14 @@ namespace Micky5991.Samp.Net.Example
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();
 
-                foreach (var eventCollection in serviceProvider.GetServices<INativeEventCollection>())
-                {
-                    eventCollection.RegisterEvents();
-                }
-
                 var eventRegistry = serviceProvider.GetRequiredService<INativeEventRegistry>();
                 var eventAggregator = serviceProvider.GetRequiredService<IEventAggregator>();
 
-                Native.PublicEventCallback callback = eventRegistry.InvokeEvent;
-                handle = GCHandle.Alloc(callback);
-                Native.AttachEventHandler(callback);
+                eventRegistry.AttachEventInvoker();
+                foreach (var factory in serviceProvider.GetServices<INativeEventCollectionFactory>())
+                {
+                    eventRegistry.RegisterEvents(factory.Build());
+                }
 
                 var sampNatives = serviceProvider.GetRequiredService<ISampNatives>();
                 var vehiclesNatives = serviceProvider.GetRequiredService<IVehiclesNatives>();

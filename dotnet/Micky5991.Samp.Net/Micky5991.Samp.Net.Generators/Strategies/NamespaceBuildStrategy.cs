@@ -120,29 +120,18 @@ namespace Micky5991.Samp.Net.Generators.Strategies
         {
             var stringBuilder = buildTargets.Parent[BuilderTarget.Types];
 
-            stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}EventCollection : Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventCollection".Indent(indent));
+            stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}EventCollectionFactory : Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventCollectionFactory".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
 
-            // Field
-            stringBuilder.AppendLine("private Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventRegistry nativeEventRegistry;".Indent(indent + 1));
-            stringBuilder.AppendLine();
-
             // Constructor
-            stringBuilder.AppendLine($@"public {idlNamespace.Name.ConvertToPascalCase()}EventCollection(Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventRegistry nativeEventRegistry)".Indent(indent + 1));
+            stringBuilder.AppendLine($@"public Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventCollection Build()".Indent(indent + 1));
             stringBuilder.AppendLine("{".Indent(indent + 1));
 
-            stringBuilder.AppendLine("this.nativeEventRegistry = nativeEventRegistry;".Indent(indent + 2));
-
-            stringBuilder.AppendLine("}".Indent(indent + 1));
-            stringBuilder.AppendLine();
-
-            // Body
-
-            stringBuilder.AppendLine($@"public virtual void RegisterEvents()".Indent(indent + 1));
-            stringBuilder.AppendLine("{".Indent(indent + 1));
+            stringBuilder.AppendLine("return new Micky5991.Samp.Net.Core.Interop.Events.NativeEventCollection {".Indent(indent + 2));
 
             stringBuilder.Append(buildTargets[BuilderTarget.Events].ToString());
 
+            stringBuilder.AppendLine("};".Indent(indent + 2));
             stringBuilder.AppendLine("}".Indent(indent + 1));
 
             stringBuilder.AppendLine("}".Indent(indent));

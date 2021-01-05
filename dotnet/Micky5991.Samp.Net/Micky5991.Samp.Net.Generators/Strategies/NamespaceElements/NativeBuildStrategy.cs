@@ -44,7 +44,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                     {
                         var followingParameterName = this.parameterBuildStrategy.BuildParameterName(followingParameter.Name);
 
-                        size = $"{followingParameterName} + 1";
+                        size = $"{followingParameterName}";
                     }
                     else
                     {

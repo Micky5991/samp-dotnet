@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using JetBrains.Annotations;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
 
@@ -11,22 +12,50 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
     {
         private readonly IEventAggregator eventAggregator;
 
-        private readonly IDictionary<string, INativeEventRegistry.BuildEventDelegate> builders =
-            new Dictionary<string, INativeEventRegistry.BuildEventDelegate>();
+        private readonly IDictionary<string, INativeEventRegistry.BuildEventDelegate> builders;
+
+        private GCHandle nativeEventInvoker;
 
         public NativeEventRegistry(IEventAggregator eventAggregator)
         {
             this.eventAggregator = eventAggregator;
+
+            this.builders = new Dictionary<string, INativeEventRegistry.BuildEventDelegate>();
         }
 
-        public void RegisterEvent(string name, string format, INativeEventRegistry.BuildEventDelegate builder)
+        public virtual void RegisterEvent(string name, string format, INativeEventRegistry.BuildEventDelegate builder)
         {
             this.builders[name] = builder;
 
             Native.RegisterEvent(name, format);
         }
 
-        public void InvokeEvent(string name, CallbackArgument[]? arguments, int argumentAmount)
+        public void RegisterEvents(INativeEventCollection collection)
+        {
+            foreach (var definition in collection.Values)
+            {
+                this.RegisterEvent(definition.Name, definition.Format, definition.Builder);
+            }
+        }
+
+        public void RegisterEvents(IEnumerable<INativeEventCollection> collections)
+        {
+            foreach (var collection in collections)
+            {
+                this.RegisterEvents(collection);
+            }
+        }
+
+        public void AttachEventInvoker()
+        {
+            INativeEventRegistry.EventInvokerDelegate invoker = this.InvokeEvent;
+
+            this.nativeEventInvoker = GCHandle.Alloc(invoker);
+
+            Native.AttachEventHandler(invoker);
+        }
+
+        public virtual void InvokeEvent(string name, CallbackArgument[]? arguments, int argumentAmount)
         {
             try
             {
@@ -53,6 +82,13 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
                 Console.WriteLine($"Error: {e.Message}");
                 Console.WriteLine(e.StackTrace);
             }
+        }
+
+        public void Dispose()
+        {
+            this.nativeEventInvoker.Free();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

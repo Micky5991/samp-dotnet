@@ -1,13 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
-using Micky5991.Samp.Net.Core.Interop.Events;
+using Micky5991.Samp.Net.Core.Interfaces.Events;
 
 namespace Micky5991.Samp.Net.Core.Interop
 {
     public static class Native
     {
-        public delegate void PublicEventCallback(string eventName, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? argments, int argumentAmount);
-
         private const CallingConvention _callingConvention = CallingConvention.StdCall;
 
         private const string _plugin = "samp-dotnet";
@@ -22,7 +20,7 @@ namespace Micky5991.Samp.Net.Core.Interop
                                                [MarshalAs(UnmanagedType.LPStr)] string format);
 
         [DllImport(_plugin, CallingConvention = _callingConvention)]
-        public static extern int AttachEventHandler([MarshalAs(UnmanagedType.FunctionPtr)] PublicEventCallback callback);
+        public static extern int AttachEventHandler([MarshalAs(UnmanagedType.FunctionPtr)] INativeEventRegistry.EventInvokerDelegate callback);
 
     }
 }
