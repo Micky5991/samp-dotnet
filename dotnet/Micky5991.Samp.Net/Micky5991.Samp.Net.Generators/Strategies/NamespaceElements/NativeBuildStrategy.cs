@@ -44,7 +44,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                     {
                         var followingParameterName = this.parameterBuildStrategy.BuildParameterName(followingParameter.Name);
 
-                        size = $"{followingParameterName}";
+                        size = $"{followingParameterName} + 1";
                     }
                     else
                     {
@@ -101,7 +101,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                 switch (parameter.Type)
                 {
                     case "string":
-                        formatBuilder.Append(parameter.Attribute.IsOut() == false ? "s" : $"S[*{i + 2}]");
+                        formatBuilder.Append(parameter.Attribute.IsOut() == false ? "s" : $"S[*{i + 1}]");
 
                         break;
                     case "int":

@@ -2,14 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
 
 namespace Micky5991.Samp.Net.Core.Interop.Events
 {
     public class NativeEventRegistry : INativeEventRegistry
     {
+        private readonly IEventAggregator eventAggregator;
+
         private readonly IDictionary<string, INativeEventRegistry.BuildEventDelegate> builders =
             new Dictionary<string, INativeEventRegistry.BuildEventDelegate>();
+
+        public NativeEventRegistry(IEventAggregator eventAggregator)
+        {
+            this.eventAggregator = eventAggregator;
+        }
 
         public void RegisterEvent(string name, string format, INativeEventRegistry.BuildEventDelegate builder)
         {
@@ -38,7 +46,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
 
                 var eventInstance = builder(convertedArguments);
 
-                Console.WriteLine("C#: Invoke event " + name + " -> " + arguments.Length);
+                this.eventAggregator.PublishSync(eventInstance);
             }
             catch (Exception e)
             {

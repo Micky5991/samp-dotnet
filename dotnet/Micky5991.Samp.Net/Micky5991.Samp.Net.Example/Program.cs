@@ -1,48 +1,95 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
+using Micky5991.EventAggregator.Extensions;
 using Micky5991.EventAggregator.Interfaces;
-using Micky5991.Samp.Net.Core;
+using Micky5991.Samp.Net.Core.Interfaces.Events;
 using Micky5991.Samp.Net.Core.Interop;
+using Micky5991.Samp.Net.Core.Interop.Converters;
 using Micky5991.Samp.Net.Core.Interop.Events;
+using Micky5991.Samp.Net.Core.NativeEvents;
 using Micky5991.Samp.Net.Core.Natives;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Micky5991.Samp.Net.Example
 {
     public class Program
     {
-        public static NativeTypeConverter typeConverter = new NativeTypeConverter();
-
         private static GCHandle handle;
 
         public static void Main(string[] args)
         {
             try
             {
-                var eventRegistry = new NativeEventRegistry();
 
-                var sampEvents = new SampEventCollection(eventRegistry);
-                sampEvents.RegisterEvents();
+                var serviceCollection = new ServiceCollection()
+                                        .AddEventAggregator()
+                                        .AddLogging(builder => builder.AddConsole())
+
+                                        .AddTransient<NativeTypeConverter>()
+                                        .AddSingleton<INativeEventRegistry, NativeEventRegistry>()
+
+                                        .AddTransient<INativeEventCollection, SampEventCollection>()
+                                        .AddTransient<INativeEventCollection, VehiclesEventCollection>()
+                                        .AddTransient<INativeEventCollection, PlayersEventCollection>()
+                                        .AddTransient<INativeEventCollection, ActorEventCollection>()
+                                        .AddTransient<INativeEventCollection, ObjectsEventCollection>()
+
+                                        .AddTransient<ISampNatives, SampNatives>()
+                                        .AddTransient<IVehiclesNatives, VehiclesNatives>()
+                                        .AddTransient<IPlayersNatives, PlayersNatives>()
+                                        .AddTransient<IActorNatives, ActorNatives>()
+                                        .AddTransient<IObjectsNatives, ObjectsNatives>();
+
+                var serviceProvider = serviceCollection.BuildServiceProvider();
+
+                foreach (var eventCollection in serviceProvider.GetServices<INativeEventCollection>())
+                {
+                    eventCollection.RegisterEvents();
+                }
+
+                var eventRegistry = serviceProvider.GetRequiredService<INativeEventRegistry>();
+                var eventAggregator = serviceProvider.GetRequiredService<IEventAggregator>();
 
                 Native.PublicEventCallback callback = eventRegistry.InvokeEvent;
-
                 handle = GCHandle.Alloc(callback);
-
                 Native.AttachEventHandler(callback);
 
-                IVehiclesNatives vehiclesNatives = new VehiclesNatives(typeConverter);
-                var sampNatives = new SampNatives(typeConverter);
+                var sampNatives = serviceProvider.GetRequiredService<ISampNatives>();
+                var vehiclesNatives = serviceProvider.GetRequiredService<IVehiclesNatives>();
+                var playersNatives = serviceProvider.GetRequiredService<IPlayersNatives>();
 
-                var vehicle = vehiclesNatives.CreateVehicle(411, 0f, 0f, 0f, 268.8108f, 0, 0, 0, true);
-                Console.WriteLine($"Created vehicle: {vehicle}");
+                sampNatives.SetGameModeText("C# Test");
 
-                var result = vehiclesNatives.GetVehicleZAngle(vehicle, out var zAngle);
-                Console.WriteLine($"ZANGLE ({result}): {vehicle} -> {zAngle}");
+                var vehicle = vehiclesNatives.CreateVehicle(541, 0, 0, 0, 268.8108f, 0, 0, 0, true);
 
                 vehiclesNatives.SetVehicleNumberPlate(vehicle, "LUL");
 
-                sampNatives.SetGameModeText("MPlaying Test");
+                eventAggregator.SubscribeSync<NativePlayerConnectEvent>(x =>
+                {
+                    playersNatives.GetPlayerName(x.Playerid, out var name, 25);
+                    if (name == null)
+                    {
+                        Console.WriteLine("NAME NULL");
 
-                // CallNative("CreateVehicle", "iffffiiib", 541, 2036.1937f, 1344.1145f, 10.8203f, 268.8108f, 0, 0, 0, true);
+                        return;
+                    }
+
+                    Console.WriteLine($"Player {name} joined.");
+                });
+
+                eventAggregator.SubscribeSync<NativePlayerEnterVehicleEvent>(x =>
+                {
+                    playersNatives.GetPlayerName(x.Playerid, out var name, 25);
+                    if (name == null)
+                    {
+                        Console.WriteLine("Null");
+                    }
+
+                    Console.WriteLine($"Player {x.Playerid} entered vehicle as {(x.Ispassenger ? "Passenger" : "Driver")}");
+                });
             }
             catch (Exception e)
             {

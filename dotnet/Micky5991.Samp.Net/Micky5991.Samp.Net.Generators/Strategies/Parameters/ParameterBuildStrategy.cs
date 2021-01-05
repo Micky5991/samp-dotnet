@@ -60,9 +60,23 @@ namespace Micky5991.Samp.Net.Generators.Strategies.Parameters
 
         private void BuildBodyInstructions(IdlFunctionParameter parameter, StringBuilder bodyBuilder, int indent)
         {
+            var name = this.BuildParameterName(parameter.Name);
+            var type = this.BuildParameterType(parameter.Type);
+
             if (parameter.Attribute.IsOut())
             {
-                bodyBuilder.AppendLine($"{this.BuildParameterName(parameter.Name)} = default;".Indent(indent));
+                switch (type)
+                {
+                    case "string":
+                        bodyBuilder.AppendLine($"{name} = string.Empty;".Indent(indent));
+
+                        break;
+
+                    default:
+                        bodyBuilder.AppendLine($"{name} = default;".Indent(indent));
+
+                        break;
+                }
             }
         }
 
