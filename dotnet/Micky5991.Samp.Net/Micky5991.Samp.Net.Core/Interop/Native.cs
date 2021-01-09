@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
+using Micky5991.Samp.Net.Core.Interop.Events;
 
 namespace Micky5991.Samp.Net.Core.Interop
 {
@@ -9,6 +10,10 @@ namespace Micky5991.Samp.Net.Core.Interop
         private const CallingConvention _callingConvention = CallingConvention.StdCall;
 
         private const string _plugin = "samp-dotnet";
+
+        public delegate void EventInvokerDelegate(string eventName, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? argments, int argumentAmount);
+
+        public delegate void PluginTickDelegate();
 
         [DllImport(_plugin, CallingConvention = _callingConvention)]
         public static extern int InvokeNative([MarshalAs(UnmanagedType.LPStr)] string nativeName,
@@ -20,7 +25,10 @@ namespace Micky5991.Samp.Net.Core.Interop
                                                [MarshalAs(UnmanagedType.LPStr)] string format);
 
         [DllImport(_plugin, CallingConvention = _callingConvention)]
-        public static extern int AttachEventHandler([MarshalAs(UnmanagedType.FunctionPtr)] INativeEventRegistry.EventInvokerDelegate callback);
+        public static extern int AttachEventHandler([MarshalAs(UnmanagedType.FunctionPtr)] EventInvokerDelegate callback);
+
+        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        public static extern int AttachTickHandler([MarshalAs(UnmanagedType.FunctionPtr)] PluginTickDelegate callback);
 
     }
 }

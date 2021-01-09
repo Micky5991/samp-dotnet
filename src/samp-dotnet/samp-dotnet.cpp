@@ -1,9 +1,12 @@
 #include <string>
+#include <iostream>
 
 #include "sampgdk/sampgdk.h"
 #include "samp-dotnet/samp-dotnet.h"
 
 namespace sampdotnet {
+
+    tick_handler _tick_handler = nullptr;
 
     std::filesystem::path get_absolute_path(const std::string& addition,
                                             std::filesystem::path base_path = std::filesystem::current_path()) {
@@ -31,5 +34,19 @@ namespace sampdotnet {
     std::filesystem::path get_samp_gamemodes_path() {
         return get_absolute_path(SAMP_GAMEMODES_PATH);
     }
+
+    void attach_tick_handler(tick_handler callback) {
+        _tick_handler = callback;
+    }
+
+    void execute_tick() {
+        if(_tick_handler == nullptr) {
+            return;
+        }
+
+        _tick_handler();
+    }
+
+
 
 }

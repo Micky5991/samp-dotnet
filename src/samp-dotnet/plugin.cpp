@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "sampgdk/sampgdk.h"
+#include "samp-dotnet/samp-dotnet.h"
 #include "samp-dotnet/clr_manager.h"
 #include "samp-dotnet/event_manager.h"
 
@@ -58,6 +59,11 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload() {
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick() {
     sampgdk::ProcessTick();
+    sampdotnet::execute_tick();
+}
+
+PLUGIN_EXPORT void PLUGIN_CALL AttachTickHandler(tick_handler callback) {
+    sampdotnet::attach_tick_handler(callback);
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL RegisterEvent(const char* event_name, const char* format) {

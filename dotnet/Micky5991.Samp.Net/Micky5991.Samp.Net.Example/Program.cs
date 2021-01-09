@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Micky5991.EventAggregator.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 using Micky5991.EventAggregator.Interfaces;
+using Micky5991.EventAggregator.Services;
+using Micky5991.Samp.Net.Core;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
 using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Interop.Events;
@@ -15,14 +19,25 @@ namespace Micky5991.Samp.Net.Example
     {
         private static GCHandle handle;
 
+        private static SampSynchronizationContext context;
+
         public static void Main(string[] args)
         {
+            context = SampSynchronizationContext.Setup();
+
+            Native.PluginTickDelegate callback = Tick;
+
+            GCHandle.Alloc(callback);
+
+            Native.AttachTickHandler(callback);
+
             try
             {
 
                 var serviceCollection = new ServiceCollection()
-                                        .AddEventAggregator()
                                         .AddLogging(builder => builder.AddConsole())
+
+                                        .AddSingleton<IEventAggregator, EventAggregatorService>()
 
                                         .AddTransient<NativeTypeConverter>()
                                         .AddSingleton<INativeEventRegistry, NativeEventRegistry>()
@@ -43,6 +58,7 @@ namespace Micky5991.Samp.Net.Example
 
                 var eventRegistry = serviceProvider.GetRequiredService<INativeEventRegistry>();
                 var eventAggregator = serviceProvider.GetRequiredService<IEventAggregator>();
+                eventAggregator.SetMainThreadSynchronizationContext(SynchronizationContext.Current);
 
                 eventRegistry.AttachEventInvoker();
                 foreach (var factory in serviceProvider.GetServices<INativeEventCollectionFactory>())
@@ -60,35 +76,56 @@ namespace Micky5991.Samp.Net.Example
 
                 vehiclesNatives.SetVehicleNumberPlate(vehicle, "LUL");
 
-                eventAggregator.SubscribeSync<NativePlayerConnectEvent>(x =>
+                eventAggregator.Subscribe<NativeGameModeInitEvent>(async x =>
+                {
+                    var context = SynchronizationContext.Current;
+
+                    Console.WriteLine($"INIT Context: {(context == null ? "NULL" : "NOT NULL")}");
+
+                    Console.WriteLine($"A1 - {Thread.CurrentThread.ManagedThreadId}");
+                    await Task.Run(() => Console.WriteLine($"B - {Thread.CurrentThread.ManagedThreadId}"));
+                    Console.WriteLine($"A2 - {Thread.CurrentThread.ManagedThreadId}");
+                });
+
+                eventAggregator.Subscribe<NativePlayerConnectEvent>(x =>
                 {
                     playersNatives.GetPlayerName(x.Playerid, out var name, 25);
-                    if (name == null)
-                    {
-                        Console.WriteLine("NAME NULL");
-
-                        return;
-                    }
 
                     Console.WriteLine($"Player {name} joined.");
                 });
 
-                eventAggregator.SubscribeSync<NativePlayerEnterVehicleEvent>(x =>
+                eventAggregator.Subscribe<NativePlayerEnterVehicleEvent>(x =>
                 {
                     playersNatives.GetPlayerName(x.Playerid, out var name, 25);
-                    if (name == null)
-                    {
-                        Console.WriteLine("Null");
-                    }
 
                     Console.WriteLine($"Player {x.Playerid} entered vehicle as {(x.Ispassenger ? "Passenger" : "Driver")}");
                 });
+
+                // Console.WriteLine($"A1 - {Thread.CurrentThread.ManagedThreadId}");
+                //
+                // await RunSomething();
+                //
+                // Console.WriteLine($"A2 - {Thread.CurrentThread.ManagedThreadId}");
             }
             catch (Exception e)
             {
                 Console.WriteLine($"ERROR: {e.Message}");
                 Console.WriteLine(e.StackTrace);
             }
+        }
+
+        public static async Task RunSomething()
+        {
+            Console.WriteLine($"B1 - {Thread.CurrentThread.ManagedThreadId}");
+
+            await Task.Delay(1000);
+
+            Console.WriteLine($"B2 - {Thread.CurrentThread.ManagedThreadId}");
+        }
+
+        public static void Tick()
+        {
+            context.Run();
         }
     }
 }

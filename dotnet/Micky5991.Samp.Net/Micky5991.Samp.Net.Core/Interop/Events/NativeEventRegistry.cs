@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using JetBrains.Annotations;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
 
@@ -48,7 +47,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
 
         public void AttachEventInvoker()
         {
-            INativeEventRegistry.EventInvokerDelegate invoker = this.InvokeEvent;
+            Native.EventInvokerDelegate invoker = this.InvokeEvent;
 
             this.nativeEventInvoker = GCHandle.Alloc(invoker);
 
@@ -75,7 +74,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
 
                 var eventInstance = builder(convertedArguments);
 
-                this.eventAggregator.PublishSync(eventInstance);
+                this.eventAggregator.Publish(eventInstance);
             }
             catch (Exception e)
             {

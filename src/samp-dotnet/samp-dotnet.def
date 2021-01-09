@@ -3,6 +3,7 @@ EXPORTS
 	Load
 	Unload
 	ProcessTick
+	AttachTickHandler
     RegisterEvent
     AttachEventHandler
 	InvokeNative
