@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using Micky5991.Samp.Net.Core.Interfaces.Events;
+using Micky5991.Samp.Net.Core.Interop.Data;
 using Micky5991.Samp.Net.Core.Interop.Events;
 
 namespace Micky5991.Samp.Net.Core.Interop
@@ -11,7 +11,7 @@ namespace Micky5991.Samp.Net.Core.Interop
 
         private const string _plugin = "samp-dotnet";
 
-        public delegate void EventInvokerDelegate(string eventName, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? argments, int argumentAmount);
+        public delegate EventInvokeResult EventInvokerDelegate(string eventName, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? argments, int argumentAmount);
 
         public delegate void PluginTickDelegate();
 

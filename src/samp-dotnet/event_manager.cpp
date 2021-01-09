@@ -20,10 +20,8 @@ bool EventManager::attach_event_handler(event_handler event_handler) {
     return true;
 }
 
-bool EventManager::dispatch_event(const std::string& event_name, const CallbackArgument* arguments, int argument_amount) {
-    _event_handler(event_name.c_str(), arguments, argument_amount);
-
-    return true;
+EventInvokeResult EventManager::dispatch_event(const std::string& event_name, const CallbackArgument* arguments, int argument_amount) {
+    return _event_handler(event_name.c_str(), arguments, argument_amount);
 }
 
 bool EventManager::format_event(AMX* amx, const std::string& event_name, const cell* params, CallbackArgument** arguments, int* argument_amount) {

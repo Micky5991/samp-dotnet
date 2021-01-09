@@ -10,7 +10,6 @@
 #define SAMP_PLUGINS_PATH "plugins"
 #define SAMP_GAMEMODES_PATH "gamemodes"
 
-typedef void (PLUGIN_CALL *event_handler)(const char* event_name, const CallbackArgument* arguments, int argument_amount);
 typedef void (PLUGIN_CALL *tick_handler)();
 
 namespace sampdotnet {

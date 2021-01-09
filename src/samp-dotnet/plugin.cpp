@@ -97,9 +97,14 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* pa
 
     auto success = event_manager->format_event(amx, name, params, &arguments, &argument_amount);
 
-    if(success) {
-        event_manager->dispatch_event(name, arguments, argument_amount);
+    if(success == false) {
+        return true;
     }
 
-    return true;
+    EventInvokeResult result = event_manager->dispatch_event(name, arguments, argument_amount);
+    if(retval != nullptr) {
+        *retval = (cell) result.return_value;
+    }
+
+    return result.allow_execute;
 }

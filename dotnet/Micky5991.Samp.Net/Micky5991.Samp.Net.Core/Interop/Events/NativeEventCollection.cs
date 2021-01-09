@@ -6,9 +6,9 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
 {
     public class NativeEventCollection : Dictionary<string, NativeEventDefinition>, INativeEventCollection
     {
-        public void Add(string name, string format, INativeEventRegistry.BuildEventDelegate builderDelegate)
+        public void Add(string name, string format, INativeEventRegistry.BuildEventDelegate builderDelegate, bool badReturnValue)
         {
-            this.Add(name, new NativeEventDefinition(name, format, builderDelegate));
+            this.Add(name, new NativeEventDefinition(name, format, builderDelegate, badReturnValue));
         }
     }
 }

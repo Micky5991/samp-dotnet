@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
+using Micky5991.Samp.Net.Core.Interop.Data;
 
 namespace Micky5991.Samp.Net.Core.Interop.Events
 {
@@ -11,7 +12,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
     {
         private readonly IEventAggregator eventAggregator;
 
-        private readonly IDictionary<string, INativeEventRegistry.BuildEventDelegate> builders;
+        private readonly IDictionary<string, (INativeEventRegistry.BuildEventDelegate Builder, bool BadReturnValue)> builders;
 
         private GCHandle nativeEventInvoker;
 
@@ -19,12 +20,12 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
         {
             this.eventAggregator = eventAggregator;
 
-            this.builders = new Dictionary<string, INativeEventRegistry.BuildEventDelegate>();
+            this.builders = new Dictionary<string, (INativeEventRegistry.BuildEventDelegate Builder, bool defaultReturnValue)>();
         }
 
-        public virtual void RegisterEvent(string name, string format, INativeEventRegistry.BuildEventDelegate builder)
+        public virtual void RegisterEvent(string name, string format, INativeEventRegistry.BuildEventDelegate builder, bool defaultReturnValue)
         {
-            this.builders[name] = builder;
+            this.builders[name] = (builder, defaultReturnValue);
 
             Native.RegisterEvent(name, format);
         }
@@ -33,7 +34,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
         {
             foreach (var definition in collection.Values)
             {
-                this.RegisterEvent(definition.Name, definition.Format, definition.Builder);
+                this.RegisterEvent(definition.Name, definition.Format, definition.Builder, definition.BadReturnValue);
             }
         }
 
@@ -54,7 +55,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
             Native.AttachEventHandler(invoker);
         }
 
-        public virtual void InvokeEvent(string name, CallbackArgument[]? arguments, int argumentAmount)
+        public virtual EventInvokeResult InvokeEvent(string name, CallbackArgument[]? arguments, int argumentAmount)
         {
             try
             {
@@ -63,24 +64,33 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
                     arguments = new CallbackArgument[0];
                 }
 
-                if (this.builders.TryGetValue(name, out var builder) == false)
+                if (this.builders.TryGetValue(name, out var definition) == false)
                 {
                     Console.WriteLine($"Unable to find builder for event {name}.");
 
-                    return;
+                    return new EventInvokeResult(true, false);
                 }
 
                 var convertedArguments = arguments.Select(x => x.GetValue()).ToArray();
+                var (builder, badReturnValue) = definition;
 
                 var eventInstance = builder(convertedArguments);
 
                 this.eventAggregator.Publish(eventInstance);
+                if (eventInstance is ICancellableEvent { Cancelled: true })
+                {
+                    return new EventInvokeResult(false, badReturnValue);
+                }
+
+                return new EventInvokeResult(true, badReturnValue == false);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Error: {e.Message}");
                 Console.WriteLine(e.StackTrace);
             }
+
+            return new EventInvokeResult(true, false);
         }
 
         public void Dispose()

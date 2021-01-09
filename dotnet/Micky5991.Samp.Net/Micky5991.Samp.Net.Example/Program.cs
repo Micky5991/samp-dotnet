@@ -101,6 +101,12 @@ namespace Micky5991.Samp.Net.Example
                     Console.WriteLine($"Player {x.Playerid} entered vehicle as {(x.Ispassenger ? "Passenger" : "Driver")}");
                 });
 
+                eventAggregator.Subscribe<NativePlayerTextEvent>(x =>
+                {
+                    x.Cancelled = true;
+                    Console.WriteLine($"CHAT {x.Playerid}: {x.Text}");
+                });
+
                 // Console.WriteLine($"A1 - {Thread.CurrentThread.ManagedThreadId}");
                 //
                 // await RunSomething();

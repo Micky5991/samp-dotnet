@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using Micky5991.Samp.Net.Generators.Data;
@@ -61,12 +62,23 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             return format.ToString();
         }
 
+        private string BuildDefaultReturnValue(IdlAttribute attribute)
+        {
+            if (attribute.TryGetValue("badret", out var badReturnValue) == false)
+            {
+                return "false";
+            }
+
+            return badReturnValue;
+        }
+
         private void BuildEventRegistration(IdlFunction function, BuilderTargetCollection builderTargets, int indent)
         {
             var eventList = builderTargets[BuilderTarget.Events];
 
             var format = this.BuildNativeInvokeFormat(function.Parameters);
             var name = this.BuildEventName(function.Name);
+            var defaultReturnValue = this.BuildDefaultReturnValue(function.Attribute);
 
             var parameterNames = new StringBuilder();
 
@@ -82,7 +94,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                 }
             }
 
-            eventList.AppendLine($"{{ \"{function.Name}\", \"{format}\", x => new {name}({parameterNames}) }},".Indent(indent));
+            eventList.AppendLine($"{{ \"{function.Name}\", \"{format}\", x => new {name}({parameterNames}), {defaultReturnValue} }},".Indent(indent));
         }
 
         private void BuildEventClass(IdlFunction function, BuilderTargetCollection builderTargets, int indent)
@@ -99,6 +111,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             var typesTarget = builderTargets.Parent[BuilderTarget.Types];
 
             var typeName = this.BuildEventName(function.Name);
+            var cancellable = function.Attribute.TryGetValue("badret", out _);
 
             for (var i = 0; i < function.Parameters.Count; i++)
             {
@@ -112,7 +125,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
                 }
             }
 
-            typesTarget.AppendLine($"public class {typeName} : Micky5991.Samp.Net.Core.NativeEvents.NativeEvent".Indent(indent));
+            typesTarget.AppendLine($"public class {typeName} : Micky5991.Samp.Net.Core.NativeEvents.{(cancellable ? "CancellableNativeEvent" : "NativeEvent")}".Indent(indent));
             typesTarget.AppendLine("{".Indent(indent));
 
             typesTarget.AppendLine(functionTargets[BuilderTarget.EventProperties].ToString());
