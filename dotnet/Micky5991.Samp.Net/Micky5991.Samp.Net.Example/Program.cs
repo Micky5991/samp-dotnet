@@ -101,9 +101,18 @@ namespace Micky5991.Samp.Net.Example
                     Console.WriteLine($"Player {x.Playerid} entered vehicle as {(x.Ispassenger ? "Passenger" : "Driver")}");
                 });
 
+                eventAggregator.Subscribe<NativeIncomingConnectionEvent>(x =>
+                {
+                    x.Cancelled = true;
+
+                    Console.WriteLine($"Incoming: {x.IpAddress}");
+                });
+
                 eventAggregator.Subscribe<NativePlayerTextEvent>(x =>
                 {
                     x.Cancelled = true;
+
+                    sampNatives.SendClientMessage(x.Playerid, -1, $"Du hast folgendes geschrieben: {x.Text}");
                     Console.WriteLine($"CHAT {x.Playerid}: {x.Text}");
                 });
 

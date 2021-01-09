@@ -96,12 +96,17 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* pa
     int argument_amount = 0;
 
     auto success = event_manager->format_event(amx, name, params, &arguments, &argument_amount);
-
     if(success == false) {
         return true;
     }
 
     EventInvokeResult result = event_manager->dispatch_event(name, arguments, argument_amount);
+
+    for (int i = 0; i < argument_amount; ++i) {
+        arguments[i].dispose();
+    }
+    delete arguments;
+
     if(retval != nullptr) {
         *retval = (cell) result.return_value;
     }

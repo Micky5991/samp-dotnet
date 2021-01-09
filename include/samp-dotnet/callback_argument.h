@@ -67,9 +67,9 @@ struct CallbackArgument {
         string_value = value;
     }
 
-    ~CallbackArgument() {
+    void dispose() const {
         if(type == CallbackArgumentType::String) {
-            delete string_value;
+            delete[] string_value;
         }
     }
 };

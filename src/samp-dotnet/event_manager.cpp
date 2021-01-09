@@ -83,6 +83,8 @@ bool EventManager::format_event(AMX* amx, const std::string& event_name, const c
                     amx_StrLen(address, &length);
                 }
 
+                length += 1;
+
                 auto text = new char[length];
 
                 amx_GetString(text, address, false, length);
