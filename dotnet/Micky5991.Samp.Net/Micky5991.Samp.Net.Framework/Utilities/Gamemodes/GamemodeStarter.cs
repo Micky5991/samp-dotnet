@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
-using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Threading;
 using Micky5991.Samp.Net.Framework.Interfaces;
 
@@ -42,12 +38,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 
         private void StartSynchronizationContext()
         {
-            SynchronizationContext.SetSynchronizationContext(this.synchronizationContext);
-
-            Native.PluginTickDelegate callback = this.synchronizationContext.Run;
-            GCHandle.Alloc(callback);
-
-            Native.AttachTickHandler(callback);
+            this.synchronizationContext.Setup();
         }
 
         protected void StartEventAggregator()

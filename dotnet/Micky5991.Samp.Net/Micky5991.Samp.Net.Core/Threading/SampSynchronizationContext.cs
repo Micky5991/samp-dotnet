@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Concurrent;
+using System.Runtime.InteropServices;
 using System.Threading;
+using Micky5991.Samp.Net.Core.Interop;
 
 namespace Micky5991.Samp.Net.Core.Threading
 {
@@ -45,6 +47,16 @@ namespace Micky5991.Samp.Net.Core.Threading
             {
                 entry.Continuation(entry.State);
             }
+        }
+
+        public virtual void Setup()
+        {
+            SetSynchronizationContext(this);
+
+            Native.PluginTickDelegate callback = this.Run;
+            GCHandle.Alloc(callback);
+
+            Native.AttachTickHandler(callback);
         }
     }
 }
