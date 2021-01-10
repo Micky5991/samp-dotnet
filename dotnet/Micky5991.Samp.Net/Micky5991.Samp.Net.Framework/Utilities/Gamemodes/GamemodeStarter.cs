@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Micky5991.EventAggregator.Interfaces;
@@ -15,19 +17,19 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 
         private readonly INativeEventRegistry eventRegistry;
 
-        private readonly IEnumerable<INativeEventCollection> eventCollections;
+        private readonly IEnumerable<INativeEventCollectionFactory> eventCollectionsFactories;
 
         private readonly SampSynchronizationContext synchronizationContext;
 
         public GamemodeStarter(
             IEventAggregator eventAggregator,
             INativeEventRegistry eventRegistry,
-            IEnumerable<INativeEventCollection> eventCollections,
+            IEnumerable<INativeEventCollectionFactory> eventCollectionsFactories,
             SampSynchronizationContext synchronizationContext)
         {
             this.eventAggregator = eventAggregator;
             this.eventRegistry = eventRegistry;
-            this.eventCollections = eventCollections;
+            this.eventCollectionsFactories = eventCollectionsFactories;
             this.synchronizationContext = synchronizationContext;
         }
 
@@ -56,7 +58,11 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         protected virtual void StartEvents()
         {
             this.eventRegistry.AttachEventInvoker();
-            this.eventRegistry.RegisterEvents(this.eventCollections);
+
+            foreach (var nativeEventCollectionFactory in this.eventCollectionsFactories)
+            {
+                this.eventRegistry.RegisterEvents(nativeEventCollectionFactory.Build());
+            }
         }
     }
 }
