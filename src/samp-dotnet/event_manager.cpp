@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "samp-dotnet/event_manager.h"
-#include "sampgdk.h"
 
 EventManager::EventManager() {
     _registered_events = std::unordered_map<std::string, std::string>();

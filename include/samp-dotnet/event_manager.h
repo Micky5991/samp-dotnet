@@ -5,7 +5,6 @@
 
 #include "samp-dotnet/callback_argument.h"
 #include "samp-dotnet/event_invoke_result.h"
-#include "sampgdk/sampgdk.h"
 
 typedef EventInvokeResult (PLUGIN_CALL *event_handler)(const char* event_name, const CallbackArgument* arguments, int argument_amount);
 

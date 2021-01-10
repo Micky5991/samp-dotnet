@@ -1,7 +1,6 @@
 #include <string>
-#include <iostream>
+#include <cstdarg>
 
-#include "sampgdk/sampgdk.h"
 #include "subhook/subhook.h"
 #include "samp-dotnet/samp-dotnet.h"
 

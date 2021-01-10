@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sampgdk.h"
+#include "sampgdk/types.h"
 
 enum CallbackArgumentType : int {
     None = 0,

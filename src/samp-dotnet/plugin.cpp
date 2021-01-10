@@ -1,7 +1,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "sampgdk/sampgdk.h"
+#include "sampgdk/interop.h"
+#include "sampgdk/sdk.h"
+#include "sampgdk/core.h"
 #include "samp-dotnet/samp-dotnet.h"
 #include "samp-dotnet/clr_manager.h"
 #include "samp-dotnet/event_manager.h"

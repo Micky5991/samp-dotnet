@@ -4,6 +4,7 @@ samp/dotnet/runtime/
 samp/dotnet/gamemodes/
 
 runtime/
+tmp/
 
 
 

@@ -16,7 +16,6 @@ add_samp_plugin(samp-dotnet
         plugin.cpp
         samp-dotnet.cpp
         samp-dotnet.def
-        sampgdk.c
         clr_manager.cpp
         event_manager.cpp
         ${SAMPSDK_DIR}/amxplugin.cpp
@@ -24,7 +23,7 @@ add_samp_plugin(samp-dotnet
 
 target_compile_features(samp-dotnet PUBLIC cxx_std_17)
 
-target_link_libraries(samp-dotnet PRIVATE coreclr subhook)
+target_link_libraries(samp-dotnet PRIVATE coreclr subhook sampgdk)
 
 if(WIN32)
 install(FILES ${CMAKE_BINARY_DIR}/src/samp-dotnet/samp-dotnet.dll DESTINATION "${CMAKE_SOURCE_DIR}/samp/plugins")
