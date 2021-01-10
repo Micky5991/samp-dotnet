@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>9</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NLog" Version="4.7.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Micky5991.Samp.Net.Core\Micky5991.Samp.Net.Core.csproj" />
+    </ItemGroup>
+
+</Project>

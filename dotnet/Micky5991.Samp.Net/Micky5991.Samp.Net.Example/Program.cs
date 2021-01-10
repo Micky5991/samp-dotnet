@@ -1,9 +1,10 @@
 ﻿using System;
-using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
+using Micky5991.Samp.Net.NLogTarget;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Example
 {
@@ -13,8 +14,14 @@ namespace Micky5991.Samp.Net.Example
         {
             try
             {
+                SampLogTarget.Register();
+
                 var serviceCollection = new ServiceCollection()
-                    .AddLogging(builder => builder.AddConsole());
+                    .AddLogging(builder =>
+                    {
+                        builder.SetMinimumLevel(LogLevel.Trace);
+                        builder.AddNLog();
+                    });
 
                 new GamemodeBuilder()
                     .AddServices(serviceCollection);
@@ -24,7 +31,7 @@ namespace Micky5991.Samp.Net.Example
                 var starter = serviceProvider.GetRequiredService<IGamemodeStarter>();
 
                 starter
-                    // .StartLogRedirection()
+                    .StartLogRedirection()
                     .Start();
             }
             catch (Exception e)
