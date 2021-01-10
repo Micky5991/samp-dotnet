@@ -6,6 +6,7 @@ EXPORTS
 	AttachTickHandler
     RegisterEvent
     AttachEventHandler
+    AttachLoggerHandler
 	InvokeNative
 	OnPublicCall
     AmxLoad

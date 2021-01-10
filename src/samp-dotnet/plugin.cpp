@@ -20,6 +20,9 @@ PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
     pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
 
+    auto samp_logger = reinterpret_cast<logprintf>(ppData[PLUGIN_DATA_LOGPRINTF]);
+    sampdotnet::hook_logger(samp_logger);
+
     bool loaded = sampgdk::Load(ppData);
     if(loaded == false) {
         return false;
@@ -32,7 +35,6 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX* amx) {
-    std::cout << "AMX LOAD" << std::endl;
     started = true;
 
     clr_manager->start("net5.0/Micky5991.Samp.Net.Example.dll");
@@ -41,7 +43,6 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX* amx) {
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX* amx) {
-    std::cout << "AMX UNLOAD" << std::endl;
     started = false;
 
     delete clr_manager;
@@ -72,6 +73,12 @@ PLUGIN_EXPORT bool PLUGIN_CALL RegisterEvent(const char* event_name, const char*
 
 PLUGIN_EXPORT void PLUGIN_CALL AttachEventHandler(event_handler callback) {
     event_manager->attach_event_handler(callback);
+}
+
+PLUGIN_EXPORT void PLUGIN_CALL AttachLoggerHandler(log_handler callback) {
+    sampdotnet::print_samp("[sampdotnet] Log-redirection has been enabled!");
+
+    sampdotnet::attach_logger(callback);
 }
 
 PLUGIN_EXPORT cell PLUGIN_CALL InvokeNative(const char* native_name, const char* format, void** native_args) {

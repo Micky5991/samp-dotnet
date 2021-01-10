@@ -1,6 +1,7 @@
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.EventAggregator.Services;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
+using Micky5991.Samp.Net.Core.Interfaces.Logging;
 using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Interop.Events;
 using Micky5991.Samp.Net.Core.Natives.Actor;
@@ -19,6 +20,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         public virtual void AddServices(IServiceCollection serviceCollection)
         {
             this.AddGamemodeStarter(serviceCollection);
+            this.AddLoggerHandler(serviceCollection);
             this.AddEventAggregator(serviceCollection);
             this.AddSynchronizationServices(serviceCollection);
             this.AddNativeEventHandling(serviceCollection);
@@ -29,6 +31,11 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         protected virtual void AddGamemodeStarter(IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<IGamemodeStarter, GamemodeStarter>();
+        }
+
+        protected virtual void AddLoggerHandler(IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddSingleton<ISampLoggerHandler, SampLoggerHandler>();
         }
 
         protected virtual void AddEventAggregator(IServiceCollection serviceCollection)

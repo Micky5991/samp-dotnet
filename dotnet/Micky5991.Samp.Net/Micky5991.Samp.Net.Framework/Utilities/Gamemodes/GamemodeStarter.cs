@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
+using Micky5991.Samp.Net.Core.Interfaces.Logging;
 using Micky5991.Samp.Net.Core.Threading;
 using Micky5991.Samp.Net.Framework.Interfaces;
 
@@ -17,23 +18,36 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 
         private readonly SampSynchronizationContext synchronizationContext;
 
+        private readonly ISampLoggerHandler sampLoggerHandler;
+
         public GamemodeStarter(
             IEventAggregator eventAggregator,
             INativeEventRegistry eventRegistry,
             IEnumerable<INativeEventCollectionFactory> eventCollectionsFactories,
-            SampSynchronizationContext synchronizationContext)
+            SampSynchronizationContext synchronizationContext,
+            ISampLoggerHandler sampLoggerHandler)
         {
             this.eventAggregator = eventAggregator;
             this.eventRegistry = eventRegistry;
             this.eventCollectionsFactories = eventCollectionsFactories;
             this.synchronizationContext = synchronizationContext;
+            this.sampLoggerHandler = sampLoggerHandler;
         }
 
-        public virtual void Start()
+        public virtual IGamemodeStarter Start()
         {
             this.StartSynchronizationContext();
             this.StartEventAggregator();
             this.StartEvents();
+
+            return this;
+        }
+
+        public virtual IGamemodeStarter StartLogRedirection()
+        {
+            this.sampLoggerHandler.Attach();
+
+            return this;
         }
 
         private void StartSynchronizationContext()

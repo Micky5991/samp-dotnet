@@ -24,7 +24,7 @@ add_samp_plugin(samp-dotnet
 
 target_compile_features(samp-dotnet PUBLIC cxx_std_17)
 
-target_link_libraries(samp-dotnet PRIVATE coreclr)
+target_link_libraries(samp-dotnet PRIVATE coreclr subhook)
 
 if(WIN32)
 install(FILES ${CMAKE_BINARY_DIR}/src/samp-dotnet/samp-dotnet.dll DESTINATION "${CMAKE_SOURCE_DIR}/samp/plugins")

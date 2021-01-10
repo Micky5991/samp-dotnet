@@ -11,7 +11,8 @@ namespace Micky5991.Samp.Net.Core.Interop
 
         private const string _plugin = "samp-dotnet";
 
-        public delegate EventInvokeResult EventInvokerDelegate(string eventName, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? argments, int argumentAmount);
+        public delegate EventInvokeResult EventInvokerDelegate([MarshalAs(UnmanagedType.LPStr)]string eventName, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? argments, int argumentAmount);
+        public delegate void LoggerDelegate([MarshalAs(UnmanagedType.LPStr)]string message);
 
         public delegate void PluginTickDelegate();
 
@@ -29,6 +30,9 @@ namespace Micky5991.Samp.Net.Core.Interop
 
         [DllImport(_plugin, CallingConvention = _callingConvention)]
         public static extern int AttachTickHandler([MarshalAs(UnmanagedType.FunctionPtr)] PluginTickDelegate callback);
+
+        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        public static extern void AttachLoggerHandler([MarshalAs(UnmanagedType.FunctionPtr)] LoggerDelegate logger);
 
     }
 }

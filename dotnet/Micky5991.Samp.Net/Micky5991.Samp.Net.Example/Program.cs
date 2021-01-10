@@ -22,7 +22,9 @@ namespace Micky5991.Samp.Net.Example
 
                 var starter = serviceProvider.GetRequiredService<IGamemodeStarter>();
 
-                starter.Start();
+                starter
+                    // .StartLogRedirection()
+                    .Start();
             }
             catch (Exception e)
             {
