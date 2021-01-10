@@ -1,4 +1,4 @@
-using System.Text;
+using System.Collections.Generic;
 using Micky5991.Samp.Net.Generators.Data;
 
 namespace Micky5991.Samp.Net.Generators.Contracts
@@ -9,6 +9,6 @@ namespace Micky5991.Samp.Net.Generators.Contracts
 
         IdlNamespaceElement Parse(string line);
 
-        void Build(IdlNamespaceElement element, BuilderTargetCollection builderTargets, int indent);
+        void Build(IdlNamespaceElement element, IList<string> constantPrefixes, BuilderTargetCollection builderTargets, int indent);
     }
 }

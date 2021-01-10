@@ -9,7 +9,11 @@ using Micky5991.Samp.Net.Core;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
 using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Interop.Events;
-using Micky5991.Samp.Net.Core.Natives;
+using Micky5991.Samp.Net.Core.Natives.Actor;
+using Micky5991.Samp.Net.Core.Natives.Objects;
+using Micky5991.Samp.Net.Core.Natives.Players;
+using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Core.Natives.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -110,7 +114,7 @@ namespace Micky5991.Samp.Net.Example
 
                 eventAggregator.Subscribe<NativePlayerTextEvent>(x =>
                 {
-                    x.Cancelled = true;
+                    x.Cancelled = false;
 
                     sampNatives.SendClientMessage(x.Playerid, -1, $"Du hast folgendes geschrieben: {x.Text}");
                     Console.WriteLine($"CHAT {x.Playerid}: {x.Text}");

@@ -32,6 +32,10 @@
       <AdditionalFiles Include="Definitions\natives.a_objects.idl" />
       <AdditionalFiles Include="Definitions\natives.a_players.idl" />
       <AdditionalFiles Include="Definitions\natives.a_samp.idl" />
+      <AdditionalFiles Include="Definitions\constants.a_players.txt" />
+      <AdditionalFiles Include="Definitions\constants.a_vehicles.txt" />
+      <AdditionalFiles Include="Definitions\constants.a_objects.txt" />
+      <AdditionalFiles Include="Definitions\constants.a_samp.txt" />
     </ItemGroup>
 
     <ItemGroup>

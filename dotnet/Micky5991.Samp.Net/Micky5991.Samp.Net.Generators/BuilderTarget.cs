@@ -3,6 +3,7 @@ namespace Micky5991.Samp.Net.Generators
     public enum BuilderTarget
     {
         None,
+        Namespaces,
         Types,
         InterfaceSignatures,
         Delegates,
@@ -11,6 +12,7 @@ namespace Micky5991.Samp.Net.Generators
         FunctionBody,
         EventProperties,
         EventBody,
-        Events
+        Events,
+        Constants,
     }
 }

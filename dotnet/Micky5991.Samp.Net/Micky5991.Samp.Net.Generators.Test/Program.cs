@@ -16,6 +16,11 @@ namespace Micky5991.Samp.Net.Generators.Test
                 Path.GetFullPath("Definitions/natives.a_actor.idl"),
                 Path.GetFullPath("Definitions/natives.a_objects.idl"),
                 Path.GetFullPath("Definitions/natives.a_vehicles.idl"),
+
+                Path.GetFullPath("Definitions/constants.a_objects.txt"),
+                Path.GetFullPath("Definitions/constants.a_samp.txt"),
+                Path.GetFullPath("Definitions/constants.a_players.txt"),
+                Path.GetFullPath("Definitions/constants.a_vehicles.txt"),
             });
 
             File.WriteAllText("result.cs", result);

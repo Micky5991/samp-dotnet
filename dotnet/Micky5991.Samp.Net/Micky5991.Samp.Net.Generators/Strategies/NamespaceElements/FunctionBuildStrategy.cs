@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using Micky5991.Samp.Net.Generators.Contracts;
@@ -48,7 +49,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
             return new IdlFunction(name, returnType, new IdlAttribute(attribute), this.parameterBuildStrategy.Parse(parameters));
         }
 
-        public virtual void Build(IdlNamespaceElement element, BuilderTargetCollection builderTargets, int indent)
+        public virtual void Build(IdlNamespaceElement element, IList<string> constantPrefixes, BuilderTargetCollection builderTargets, int indent)
         {
             this.BuildFunction((IdlFunction) element, builderTargets, indent);
         }
@@ -84,7 +85,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
 
             var signature = $"{this.MapReturnType(function.ReturnType)} {function.Name}({functionTargets[BuilderTarget.Parameters]})";
 
-            builderTargets[BuilderTarget.InterfaceSignatures].AppendLine($"{signature};".Indent(indent));
+            builderTargets[BuilderTarget.InterfaceSignatures].AppendLine($"{signature};".Indent(indent + 1));
 
             builderTargets[BuilderTarget.Functions].AppendLine($"public virtual {signature}".Indent(indent));
             builderTargets[BuilderTarget.Functions].AppendLine("{".Indent(indent));

@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Micky5991.Samp.Net.Generators.Contracts;
 using Micky5991.Samp.Net.Generators.Data;
@@ -21,9 +20,33 @@ namespace Micky5991.Samp.Net.Generators.Strategies
         public IdlNamespace Parse(string filename, TextReader stream)
         {
             var elements = this.ParseElements(stream);
-            var nameMatch = Regex.Match(filename, @"natives\.(?:a_)?([A-z0-9_-]+).idl");
 
-            return new IdlNamespace(nameMatch.Groups[1].Value, elements);
+            var nameMatch = Regex.Match(filename, @"natives\.(?<full>(?:a_)?(?<core>[A-z0-9_-]+)).idl");
+
+            var constantsFileName = $"{Path.GetDirectoryName(filename)}{Path.DirectorySeparatorChar}constants.{nameMatch.Groups["full"]}.txt";
+            var constantPrefixes = File.Exists(constantsFileName) ? this.ParseConstantPrefixes(new StreamReader(constantsFileName)) : new List<string>();
+
+            return new IdlNamespace(nameMatch.Groups["core"].Value, nameMatch.Groups["full"].Value, elements, constantPrefixes);
+        }
+
+        private IList<string> ParseConstantPrefixes(TextReader stream)
+        {
+            List<string> prefixes = new();
+
+            string line;
+            while ((line = stream.ReadLine()) != null)
+            {
+                if (line.Length <= 0)
+                {
+                    continue;
+                }
+
+                prefixes.Add(line.Trim());
+            }
+
+            prefixes = prefixes.OrderByDescending(x => x.Split('_').Length).ToList();
+
+            return prefixes;
         }
 
         private IList<(IElementBuildStrategy Strategy, IdlNamespaceElement Element)> ParseElements(TextReader stream)
@@ -59,24 +82,48 @@ namespace Micky5991.Samp.Net.Generators.Strategies
                 BuilderTarget.InterfaceSignatures,
                 BuilderTarget.Delegates,
                 BuilderTarget.Functions,
-                BuilderTarget.Events
+                BuilderTarget.Events,
+                BuilderTarget.Types,
+                BuilderTarget.Constants
             };
 
             namespaceBuilderTargets.Parent = builderTargets;
 
             foreach (var (strategy, element) in idlNamespace.Elements)
             {
-                strategy.Build(element, namespaceBuilderTargets, indent + 1);
+                strategy.Build(element, idlNamespace.ConstantPrefixes, namespaceBuilderTargets, indent + 2);
             }
 
-            this.BuildNamespaceEventsClass(namespaceBuilderTargets, idlNamespace, indent);
-            this.BuildNamespaceNativesInterface(namespaceBuilderTargets, idlNamespace, indent);
-            this.BuildNamespaceNativesClass(namespaceBuilderTargets, idlNamespace, indent);
+            this.BuildNamespaceConstants(namespaceBuilderTargets, idlNamespace, indent + 1);
+            this.BuildNamespaceEventsClass(namespaceBuilderTargets, idlNamespace, indent + 1);
+            this.BuildNamespaceNativesInterface(namespaceBuilderTargets, idlNamespace, indent + 1);
+            this.BuildNamespaceNativesClass(namespaceBuilderTargets, idlNamespace, indent + 1);
+
+            var namespaceTarget = builderTargets[BuilderTarget.Namespaces];
+
+            namespaceTarget.AppendLine($"namespace Micky5991.Samp.Net.Core.Natives.{idlNamespace.Name.ConvertToPascalCase()}".Indent(indent));
+            namespaceTarget.AppendLine("{".Indent(indent));
+
+            namespaceTarget.AppendLine(namespaceBuilderTargets[BuilderTarget.Types].ToString());
+
+            namespaceTarget.AppendLine("}".Indent(indent));
+        }
+
+        private void BuildNamespaceConstants(BuilderTargetCollection buildTargets, IdlNamespace idlNamespace, int indent)
+        {
+            var stringBuilder = buildTargets[BuilderTarget.Types];
+
+            stringBuilder.AppendLine($"public static class {idlNamespace.Name.ConvertToPascalCase()}Constants".Indent(indent));
+            stringBuilder.AppendLine("{".Indent(indent));
+
+            stringBuilder.AppendLine(buildTargets[BuilderTarget.Constants].ToString());
+
+            stringBuilder.AppendLine("}".Indent(indent));
         }
 
         private void BuildNamespaceNativesInterface(BuilderTargetCollection buildTargets, IdlNamespace idlNamespace, int indent)
         {
-            var stringBuilder = buildTargets.Parent[BuilderTarget.Types];
+            var stringBuilder = buildTargets[BuilderTarget.Types];
 
             stringBuilder.AppendLine($"public interface I{idlNamespace.Name.ConvertToPascalCase()}Natives : INatives".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
@@ -89,7 +136,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies
 
         private void BuildNamespaceNativesClass(BuilderTargetCollection buildTargets, IdlNamespace idlNamespace, int indent)
         {
-            var stringBuilder = buildTargets.Parent[BuilderTarget.Types];
+            var stringBuilder = buildTargets[BuilderTarget.Types];
 
             stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}Natives : I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
@@ -118,7 +165,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies
 
         private void BuildNamespaceEventsClass(BuilderTargetCollection buildTargets, IdlNamespace idlNamespace, int indent)
         {
-            var stringBuilder = buildTargets.Parent[BuilderTarget.Types];
+            var stringBuilder = buildTargets[BuilderTarget.Types];
 
             stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}EventCollectionFactory : Micky5991.Samp.Net.Core.Interfaces.Events.INativeEventCollectionFactory".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Schema;
 using Micky5991.Samp.Net.Generators.Data;
 using Micky5991.Samp.Net.Generators.Extensions;
 using Micky5991.Samp.Net.Generators.Strategies.Parameters;
@@ -108,7 +109,7 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
 
             functionTargets.Parent = builderTargets;
 
-            var typesTarget = builderTargets.Parent[BuilderTarget.Types];
+            var typesTarget = builderTargets[BuilderTarget.Types];
 
             var typeName = this.BuildEventName(function.Name);
             var cancellable = function.Attribute.TryGetValue("badret", out _);
