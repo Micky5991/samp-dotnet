@@ -10,3 +10,6 @@
 [submodule "thirdparty/subhook"]
 	path = thirdparty/subhook
 	url = https://github.com/Zeex/subhook
+[submodule "thirdparty/sampgdk"]
+	path = thirdparty/sampgdk
+	url = https://github.com/Zeex/sampgdk
