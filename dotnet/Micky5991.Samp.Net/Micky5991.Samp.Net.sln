@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micky5991.Samp.Net.Generato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micky5991.Samp.Net.Generators.Test", "Micky5991.Samp.Net.Generators.Test\Micky5991.Samp.Net.Generators.Test.csproj", "{08EFB2F5-F270-458F-B371-7FA76A84DE73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Micky5991.Samp.Net.Framework", "Micky5991.Samp.Net.Framework\Micky5991.Samp.Net.Framework.csproj", "{6B62C2B3-F31C-4ECC-897B-48679A521407}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,5 +41,11 @@ Global
 		{08EFB2F5-F270-458F-B371-7FA76A84DE73}.Release|Any CPU.Build.0 = Release|Any CPU
 		{08EFB2F5-F270-458F-B371-7FA76A84DE73}.Local|Any CPU.ActiveCfg = Debug|Any CPU
 		{08EFB2F5-F270-458F-B371-7FA76A84DE73}.Local|Any CPU.Build.0 = Debug|Any CPU
+		{6B62C2B3-F31C-4ECC-897B-48679A521407}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B62C2B3-F31C-4ECC-897B-48679A521407}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B62C2B3-F31C-4ECC-897B-48679A521407}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B62C2B3-F31C-4ECC-897B-48679A521407}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B62C2B3-F31C-4ECC-897B-48679A521407}.Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B62C2B3-F31C-4ECC-897B-48679A521407}.Local|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

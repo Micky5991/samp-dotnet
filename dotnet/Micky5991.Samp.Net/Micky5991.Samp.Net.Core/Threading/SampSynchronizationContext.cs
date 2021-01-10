@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Micky5991.Samp.Net.Core
+namespace Micky5991.Samp.Net.Core.Threading
 {
     public class SampSynchronizationContext : SynchronizationContext
     {
@@ -32,7 +32,7 @@ namespace Micky5991.Samp.Net.Core
             this.Post(d, state);
         }
 
-        public void Run()
+        public virtual void Run()
         {
             if (Thread.CurrentThread.ManagedThreadId != this.targetThreadId)
             {
@@ -45,17 +45,6 @@ namespace Micky5991.Samp.Net.Core
             {
                 entry.Continuation(entry.State);
             }
-        }
-
-        public static SampSynchronizationContext Setup()
-        {
-            var context = new SampSynchronizationContext();
-
-            SetSynchronizationContext(context);
-
-            context.OperationStarted();
-
-            return context;
         }
     }
 }

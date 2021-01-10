@@ -23,7 +23,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Micky5991.Samp.Net.Core\Micky5991.Samp.Net.Core.csproj" />
+      <ProjectReference Include="..\Micky5991.Samp.Net.Framework\Micky5991.Samp.Net.Framework.csproj" />
     </ItemGroup>
 
     <ItemGroup>
