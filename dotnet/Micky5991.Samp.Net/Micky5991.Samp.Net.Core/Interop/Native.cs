@@ -34,5 +34,8 @@ namespace Micky5991.Samp.Net.Core.Interop
         [DllImport(_plugin, CallingConvention = _callingConvention)]
         public static extern void AttachLoggerHandler([MarshalAs(UnmanagedType.FunctionPtr)] LoggerDelegate logger);
 
+        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        public static extern void LogMessage([MarshalAs(UnmanagedType.LPStr)] string message);
+
     }
 }

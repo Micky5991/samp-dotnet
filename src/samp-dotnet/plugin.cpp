@@ -81,6 +81,10 @@ PLUGIN_EXPORT void PLUGIN_CALL AttachLoggerHandler(log_handler callback) {
     sampdotnet::attach_logger(callback);
 }
 
+PLUGIN_EXPORT void PLUGIN_CALL LogMessage(const char* message) {
+    sampdotnet::print_samp(message);
+}
+
 PLUGIN_EXPORT cell PLUGIN_CALL InvokeNative(const char* native_name, const char* format, void** native_args) {
     AMX_NATIVE native = sampgdk::FindNative(native_name);
     if(native == nullptr) {

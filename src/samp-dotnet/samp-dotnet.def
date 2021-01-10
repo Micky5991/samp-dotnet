@@ -8,6 +8,7 @@ EXPORTS
     AttachEventHandler
     AttachLoggerHandler
 	InvokeNative
+	LogMessage
 	OnPublicCall
     AmxLoad
     AmxUnload
