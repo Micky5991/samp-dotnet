@@ -1,0 +1,91 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*.*.*'
+  pull_request:
+    branches: [ $default-branch ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  variables:
+    runs-on: ubuntu-latest
+    name: Create variables
+
+    outputs:
+      istag: ${{ steps.vars.outputs.is_tag }}
+      ref: ${{ steps.vars.outputs.ref }}
+
+    steps:
+      - id: vars
+        run: |
+          echo ::set-output name=ref::${GITHUB_REF#refs/*/}
+          echo ::set-output name=is_tag::${{ startsWith(github.ref, 'refs/tags/') }}
+
+  dotnet:
+    needs: [ variables ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{github.workspace}}/dotnet/Micky5991.Samp.Net
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Setup .NET Core 2.1.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 2.1.x
+
+      - name: Setup .NET Core 3.1.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+
+      - name: Setup .NET 5.0.x
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Restore .NET dependencies
+        run: dotnet restore
+
+      - name: Build .NET app
+        if: needs.variables.outputs.istag == 'false'
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Build .NET app with version
+        if: needs.variables.outputs.istag == 'true'
+        run: dotnet build --no-restore --configuration Release -p:Version=${{ needs.variables.outputs.ref }} -p:PackageVersion=${{ needs.variables.outputs.ref }}
+
+      - name: Run .NET test
+        run: dotnet test -v normal
+
+  cpp:
+    needs: [ variables ]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest ]
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+  release:
+    needs: [ cpp, dotnet ]
+    if: needs.dotnet.result == 'success' && needs.cpp.result == 'success' && needs.variables.outputs.istag == 'true'
+    runs-on: ubuntu-latest
+
