@@ -6,6 +6,7 @@
         <Platforms>AnyCPU</Platforms>
         <LangVersion>9</LangVersion>
         <Nullable>annotations</Nullable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>Samp.Net.Generators</Title>
         <Authors>Micky5991</Authors>
