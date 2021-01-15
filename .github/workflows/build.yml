@@ -295,8 +295,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: ${{ github.ref }}
-          tag_name: V${{ github.ref }}
+          name: V${{ needs.variables.outputs.version }}
+          tag_name: ${{ needs.variables.outputs.version }}
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
