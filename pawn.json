@@ -1,0 +1,20 @@
+{
+  "user": "Micky5991",
+  "repo": "samp-dotnet",
+  "contributors": [
+    "Micky5991"
+  ],
+  "website": "https://github.com/Micky5991/samp-dotnet",
+  "entry": "gamemodes/main.pwn",
+  "output": "gamemodes/main.amx",
+  "dependencies": [
+    "sampctl/samp-stdlib"
+  ],
+  "runtime": {
+    "port": 7777,
+    "plugins": [
+      "Micky5991/samp-dotnet"
+    ]
+  },
+  "local": false
+}

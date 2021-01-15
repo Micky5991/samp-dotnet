@@ -1,11 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
         <Configurations>Debug;Release;Local</Configurations>
         <Platforms>AnyCPU</Platforms>
         <LangVersion>9</LangVersion>
         <Nullable>annotations</Nullable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Samp.Net.Core</Title>
+        <Description>Provides core functionality and interop utilities for the native SA:MP plugin.</Description>
+        <Copyright>2021 Micky5991</Copyright>
+        <PackageProjectUrl>https://github.com/Micky5991/samp-dotnet</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Micky5991/samp-dotnet</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <Authors>Micky5991</Authors>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

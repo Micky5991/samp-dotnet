@@ -6,6 +6,7 @@ on:
       - '*'
     tags:
       - '*.*.*'
+
   pull_request:
     branches: [ $default-branch ]
 
@@ -20,19 +21,34 @@ jobs:
     outputs:
       istag: ${{ steps.vars.outputs.is_tag }}
       ref: ${{ steps.vars.outputs.ref }}
+      version: ${{ steps.vars.outputs.version }}
+      shashort: ${{ steps.vars.outputs.sha_short }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: 'Get previous tag'
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@1.0.0
+
       - id: vars
+        name: Set variables
         run: |
           echo ::set-output name=ref::${GITHUB_REF#refs/*/}
           echo ::set-output name=is_tag::${{ startsWith(github.ref, 'refs/tags/') }}
+          echo ::set-output name=version::${{ steps.previoustag.outputs.tag }}
+          echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
 
   dotnet:
+    name: Build .NET Libraries
     needs: [ variables ]
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{github.workspace}}/dotnet/Micky5991.Samp.Net
+        working-directory: ${{github.workspace}}/src/dotnet/
 
     steps:
       - name: Checkout repository
@@ -58,25 +74,50 @@ jobs:
       - name: Restore .NET dependencies
         run: dotnet restore
 
-      - name: Build .NET app
+      - name: Build .NET app with version ${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }}
         if: needs.variables.outputs.istag == 'false'
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build --no-restore --configuration Release -p:Version=${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }} -p:PackageVersion=${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }}
 
-      - name: Build .NET app with version
+      - name: Build .NET app with version ${{ needs.variables.outputs.ref }}
         if: needs.variables.outputs.istag == 'true'
         run: dotnet build --no-restore --configuration Release -p:Version=${{ needs.variables.outputs.ref }} -p:PackageVersion=${{ needs.variables.outputs.ref }}
 
       - name: Run .NET test
-        run: dotnet test -v normal
+        run: dotnet test --no-restore -v normal
+
+      - name: Save NuGet artifacts
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: package-nuget
+          path: "${{github.workspace}}/src/dotnet/*/bin/Release/*.nupkg"
+          if-no-files-found: error
+
+      - name: Save example .NET gamemode
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: gamemode-dotnet
+          path: "${{github.workspace}}/src/dotnet/Micky5991.Samp.Net.Example/bin/Release/*"
+          if-no-files-found: error
+
 
   cpp:
+    name: Build Server Plugin
     needs: [ variables ]
     runs-on: ${{ matrix.os }}
+    env:
+      CC: "gcc-9"
+      CXX: "g++-9"
 
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-latest ]
-
+        platform: [ windows, linux ]
+        include:
+          - platform: windows
+            os: windows-latest
+            plugin-file: 'Release/samp-dotnet.dll'
+          - platform: linux
+            os: ubuntu-20.04
+            plugin-file: 'samp-dotnet.so'
 
     steps:
       - name: Checkout repository
@@ -84,8 +125,181 @@ jobs:
         with:
           submodules: 'recursive'
 
-  release:
-    needs: [ cpp, dotnet ]
-    if: needs.dotnet.result == 'success' && needs.cpp.result == 'success' && needs.variables.outputs.istag == 'true'
-    runs-on: ubuntu-latest
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '2.x'
 
+      - name: Install linux dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y gcc-9-multilib g++-9-multilib libc6-dev-i386 python2
+
+      - name: Install python dependencies
+        run: python --version && pip --version && pip install ply cidl
+
+      - name: Create Build Environment
+        run: cmake -E make_directory ${{github.workspace}}/build
+
+      - name: Configure CMake for Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+      - name: Configure CMake for Windows
+        if: runner.os == 'Windows'
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: cmake $GITHUB_WORKSPACE -Wno-dev -DPYTHON_EXECUTABLE=${pythonLocation}/python.exe -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G "Visual Studio 16 2019" -A Win32
+
+      - name: Build
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: cmake --build . --config $BUILD_TYPE
+
+      - name: Save plugin file
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: plugin-${{ matrix.platform }}
+          path: "${{github.workspace}}/build/src/plugin/samp-dotnet/${{ matrix.plugin-file }}"
+          if-no-files-found: error
+
+  samp:
+    name: "Build SA:MP gamemode"
+    runs-on: ubuntu-latest
+    needs: [ variables ]
+
+    defaults:
+      run:
+        working-directory: ${{github.workspace}}/server
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Install sampctl
+        uses: AGraber/sampctl-action@v1
+        with:
+          version: '1.9.1'
+
+      - name: Build Gamemode
+        run: sampctl p build --forceEnsure
+
+      - name: Save empty SA:MP gamemode file
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: gamemode-samp
+          path: "${{github.workspace}}/server/*/main.amx"
+          if-no-files-found: error
+
+      - name: Save raw SA:MP gamemode file
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: gamemode-samp
+          path: "${{github.workspace}}/src/samp/"
+          if-no-files-found: error
+
+  pack:
+    name: "Create sampctl package"
+    runs-on: ubuntu-latest
+    needs: [ variables, samp, cpp, dotnet ]
+
+    strategy:
+      matrix:
+        platform: [ windows, linux ]
+        include:
+          - platform: 'windows'
+            plugin-file: 'samp-dotnet.dll'
+          - platform: 'linux'
+            plugin-file: 'samp-dotnet.so'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          path: 'repo'
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: "${{github.workspace}}/artifacts"
+
+      - name: "Create samp folder structure"
+        run: |
+          mkdir -p package/plugins
+          mkdir -p package/gamemodes
+          mkdir -p package/dotnet/gamemodes
+          mkdir -p package/dotnet/runtime
+
+      - name: "Copy files to locations"
+        working-directory: ${{github.workspace}}/package
+        run: |
+          cp ${{github.workspace}}/repo/README.md ${{github.workspace}}/package/
+          cp ${{github.workspace}}/repo/LICENSE ${{github.workspace}}/package/
+          cp ${{github.workspace}}/artifacts/gamemode-samp/gamemodes/* ${{github.workspace}}/package/gamemodes/
+          cp -r ${{github.workspace}}/artifacts/gamemode-dotnet/* ${{github.workspace}}/package/dotnet/gamemodes/
+          cp ${{github.workspace}}/artifacts/plugin-${{matrix.platform}}/${{matrix.plugin-file}} ${{github.workspace}}/package/plugins/
+
+      - name: Download .NET 5.0.2 Windows x86 runtime
+        if: matrix.platform == 'windows'
+        working-directory: ${{github.workspace}}
+        run: |
+          wget https://download.visualstudio.microsoft.com/download/pr/aa281535-ba5d-4fea-a0ec-f47eb90436b4/3b070e6dff1b235d2c9780c52cb36522/dotnet-runtime-5.0.2-win-x86.zip
+          unzip -j dotnet-runtime-5.0.2-win-x86.zip "shared/Microsoft.NETCore.App/5.0.2/*" -d "${{github.workspace}}/package/dotnet/runtime/"
+
+      - name: Create ZIP
+        if: needs.variables.outputs.istag == 'false'
+        working-directory: ${{github.workspace}}/package
+        run: zip -r samp-dotnet-${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }}-${{matrix.platform}}.zip .
+
+      - name: Create release ZIP
+        if: needs.variables.outputs.istag == 'true'
+        working-directory: ${{github.workspace}}/package
+        run: zip -r samp-dotnet-${{ needs.variables.outputs.ref }}-${{matrix.platform}}.zip .
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: "package-${{matrix.platform}}"
+          path: "${{github.workspace}}/package/*.zip"
+          if-no-files-found: error
+
+  release:
+    name: "Create Release"
+    if: needs.variables.outputs.istag == 'true'
+    runs-on: ubuntu-latest
+    needs: [ variables, pack ]
+
+    steps:
+      - name: Download Linux package
+        uses: actions/download-artifact@v2.0.8
+        with:
+          name: package-linux
+          path: "${{github.workspace}}/artifacts"
+
+      - name: Download Windows package
+        uses: actions/download-artifact@v2.0.8
+        with:
+          name: package-windows
+          path: "${{github.workspace}}/artifacts"
+
+      - name: Download NuGet package
+        uses: actions/download-artifact@v2.0.8
+        with:
+          name: package-nuget
+          path: "${{github.workspace}}/artifacts"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{ github.ref }}
+          tag_name: V${{ github.ref }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: |
+            ${{github.workspace}}/artifacts/**/*.nupkg
+            ${{github.workspace}}/artifacts/*.zip

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <filesystem>
 
@@ -13,6 +12,21 @@ ClrManager::~ClrManager() {
     delete coreclr;
 
     coreclr = nullptr;
+}
+
+std::string ClrManager::check_directories() {
+    std::filesystem::path gamemodes_path = sampdotnet::get_dotnet_gamemodes_path();
+    std::filesystem::path runtime_path = sampdotnet::get_dotnet_runtime_path();
+
+    if(std::filesystem::exists(gamemodes_path) == false) {
+        return gamemodes_path.string();
+    }
+
+    if(std::filesystem::exists(runtime_path) == false) {
+        return runtime_path.string();
+    }
+
+    return std::string();
 }
 
 bool ClrManager::start(const std::string& gamemode) {

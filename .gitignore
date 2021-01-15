@@ -1,13 +1,9 @@
 build/*
-
-samp/dotnet/runtime/
-samp/dotnet/gamemodes/
-
 runtime/
 tmp/
 
-
-
+server/*
+!server/pawn.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/c++,cmake,vscode,jetbrains+all,dotnetcore,visualstudio
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,cmake,vscode,jetbrains+all,dotnetcore,visualstudio

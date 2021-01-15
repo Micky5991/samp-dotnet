@@ -18,7 +18,7 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Local' ">
       <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
       <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
-      <OutputPath>../../../samp/dotnet/gamemodes/</OutputPath>
+      <OutputPath>../../../server/dotnet/gamemodes/</OutputPath>
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 

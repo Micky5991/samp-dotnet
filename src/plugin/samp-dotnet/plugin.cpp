@@ -8,8 +8,6 @@
 #include "samp-dotnet/clr_manager.h"
 #include "samp-dotnet/event_manager.h"
 
-extern void *pAMXFunctions;
-
 ClrManager* clr_manager = nullptr;
 EventManager* event_manager = nullptr;
 
@@ -20,33 +18,54 @@ PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
-    pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
+    std::cout << "[SAMP.Net] Initializing SAMP.Net V1.0.0" << std::endl;
+
+    bool loaded = sampgdk::Load(ppData);
+    if(loaded == false) {
+        std::cerr << "[SAMP.Net] Loading SAMPGDK failed" << std::endl;
+
+        return false;
+    }
 
     auto samp_logger = reinterpret_cast<logprintf>(ppData[PLUGIN_DATA_LOGPRINTF]);
     sampdotnet::hook_logger(samp_logger);
 
-    bool loaded = sampgdk::Load(ppData);
-    if(loaded == false) {
-        return false;
-    }
+    std::cout << "[SAMP.Net] SA:MP logger has been hooked" << std::endl;
 
     clr_manager = new ClrManager();
     event_manager = new EventManager();
 
-    return loaded;
+    std::cout << "[SAMP.Net] Components initialized" << std::endl;
+
+    std::string missing_folder = clr_manager->check_directories();
+    if(missing_folder.empty() == false) {
+        std::cout << "[SAMP.Net] The directory \"" << missing_folder << "\" is missing! Abort." << std::endl;
+
+        return false;
+    }
+
+    std::cout << "[SAMP.Net] SAMP.Net has been initialized" << std::endl;
+
+    started = true;
+
+    return true;
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX* amx) {
-    started = true;
+    if(started == false) {
+        return AMX_ERR_NONE;
+    }
+
+    std::cout << "[SAMP.Net] AMX loaded, starting .NET CoreCLR" << std::endl;
 
     clr_manager->start("net5.0/Micky5991.Samp.Net.Example.dll");
+
+    std::cout << "[SAMP.Net] .NET CoreCLR has been started" << std::endl;
 
     return AMX_ERR_NONE;
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX* amx) {
-    started = false;
-
     delete clr_manager;
     delete event_manager;
 
@@ -61,6 +80,10 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload() {
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick() {
+    if(started == false) {
+        return;
+    }
+
     sampgdk::ProcessTick();
     sampdotnet::execute_tick();
 }
@@ -78,9 +101,9 @@ PLUGIN_EXPORT void PLUGIN_CALL AttachEventHandler(event_handler callback) {
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL AttachLoggerHandler(log_handler callback) {
-    sampdotnet::print_samp("[sampdotnet] Log-redirection has been enabled!");
-
     sampdotnet::attach_logger(callback);
+
+    sampdotnet::print_samp("[SAMP.Net]  Log-redirection has been enabled!");
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL LogMessage(const char* message) {
@@ -100,9 +123,7 @@ PLUGIN_EXPORT cell PLUGIN_CALL InvokeNative(const char* native_name, const char*
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* params, cell* retval) {
     if(started == false) {
-        std::cerr << "OnPublicCall before started!" << amx << std::endl;
-
-        return true;
+        return false;
     }
 
     CallbackArgument* arguments = nullptr;

@@ -1,1 +1,1 @@
-add_subdirectory(samp-dotnet)
+add_subdirectory(plugin)

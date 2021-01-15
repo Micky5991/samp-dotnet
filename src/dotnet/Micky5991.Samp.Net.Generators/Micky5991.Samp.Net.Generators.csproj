@@ -6,6 +6,14 @@
         <Platforms>AnyCPU</Platforms>
         <LangVersion>9</LangVersion>
         <Nullable>annotations</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Samp.Net.Generators</Title>
+        <Authors>Micky5991</Authors>
+        <Description>Source generator to parse sampgdk IDL files and setup your own .NET wrappers for samp-dotnet</Description>
+        <Copyright>2021 Micky5991</Copyright>
+        <PackageProjectUrl>https://github.com/Micky5991/samp-dotnet</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Micky5991/samp-dotnet</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Local' ">

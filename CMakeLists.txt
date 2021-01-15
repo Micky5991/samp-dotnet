@@ -1,13 +1,23 @@
 cmake_minimum_required(VERSION 3.10)
-project(mplaying-cpp)
+project(samp-dotnet)
 
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/samp-plugin-sdk
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/samp-plugin-sdk/amx
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/host-coreclr/include
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/sampgdk/include
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
 )
+
+if(UNIX)
+    # force 32bit compilation and hide non-exported symbols
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -fvisibility=hidden")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -fvisibility=hidden")
+    set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
+endif()
+
+set(SAMPDOTNET_RUNTIME_VERSION 5.0.2)
 
 set(SAMP_SDK_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/samp-plugin-sdk)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/tmp/)
@@ -30,3 +40,5 @@ add_subdirectory(thirdparty/host-coreclr)
 add_subdirectory(thirdparty/subhook)
 add_subdirectory(thirdparty/sampgdk)
 add_subdirectory(src)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/runtime/shared/Microsoft.NETCore.App/${SAMPDOTNET_RUNTIME_VERSION}/ DESTINATION "${CMAKE_SOURCE_DIR}/server/dotnet/runtime/")
