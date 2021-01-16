@@ -2,6 +2,8 @@
 
 Use C# and .NET to create your own SA:MP gamemode.
 
+Kartoffel 1234
+
 ## Getting started
 
 > **DISCLAIMER**: Due to missing support by Microsoft there is currently no support for .NET on linux x86!
