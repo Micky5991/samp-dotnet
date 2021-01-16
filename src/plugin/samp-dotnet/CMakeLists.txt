@@ -11,8 +11,8 @@ add_definitions(-DSAMPGDK_CPP_WRAPPERS)
 
 add_samp_plugin(${PROJECT_NAME}
         plugin.cpp
+        plugin.def
         samp-dotnet.cpp
-        samp-dotnet.def
         clr_manager.cpp
         event_manager.cpp
         ${SAMPSDK_DIR}/amxplugin.cpp
