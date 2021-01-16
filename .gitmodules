@@ -13,3 +13,6 @@
 [submodule "thirdparty/sampgdk"]
 	path = thirdparty/sampgdk
 	url = https://github.com/Zeex/sampgdk
+[submodule "thirdparty/configreader"]
+	path = thirdparty/configreader
+	url = https://github.com/Zeex/configreader
