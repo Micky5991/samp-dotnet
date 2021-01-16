@@ -29,6 +29,16 @@ std::string ClrManager::check_directories() {
     return std::string();
 }
 
+bool ClrManager::check_gamemode(const std::string& gamemode, std::string& searched_location) {
+    std::filesystem::path assembly_path = sampdotnet::get_dotnet_gamemodes_path();
+
+    assembly_path /= gamemode;
+
+    searched_location = assembly_path.string();
+
+    return std::filesystem::exists(assembly_path);
+}
+
 bool ClrManager::start(const std::string& gamemode) {
     std::filesystem::path gamemodes_path = sampdotnet::get_dotnet_gamemodes_path();
     std::filesystem::path plugins_path = sampdotnet::get_samp_plugins_path();
