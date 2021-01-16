@@ -9,7 +9,7 @@ on:
 jobs:
   reset:
     name: "Force push new head"
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true && github.head_ref != 'refs/heads/master'
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +29,6 @@ jobs:
         with:
           force: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: 'develop'
+          branch: ${{ github.head_ref }}
 
 
