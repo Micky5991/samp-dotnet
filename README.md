@@ -4,7 +4,7 @@ Use C# and .NET to create your own SA:MP Gamemode.
 
 ## Getting started
 
-> **DISCLAIMER**: Due to missing support by Microsoft there is currently no support for .NET Core on linux x86!
+> **DISCLAIMER**: Due to missing support by Microsoft there is currently no support for .NET on linux x86!
 > This plugin will still be published for linux, but there is currently no .NET 5.0 runtime for linux x86.
 
 ### Installation
