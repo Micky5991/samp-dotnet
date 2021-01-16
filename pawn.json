@@ -39,5 +39,8 @@
       ]
     }
   ],
+  "extra": {
+    "dotnet_gamemode": "net5.0/Micky5991.Samp.Net.Example.dll"
+  },
   "local": false
 }
