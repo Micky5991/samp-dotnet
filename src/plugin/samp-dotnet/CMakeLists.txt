@@ -13,8 +13,8 @@ add_samp_plugin(${PROJECT_NAME}
         plugin.cpp
         plugin.def
         samp-dotnet.cpp
-        clr_manager.cpp
-        event_manager.cpp
+        managers/clr_manager.cpp
+        managers/event_manager.cpp
         ${SAMPSDK_DIR}/amxplugin.cpp
         )
 
