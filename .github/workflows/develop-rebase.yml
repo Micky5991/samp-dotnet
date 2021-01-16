@@ -1,7 +1,8 @@
 name: "Reset HEAD of develop to master"
 
 on:
-  push:
+  pull_request:
+    types: [ closed ]
     branches:
       - test-rebase
 
@@ -26,6 +27,6 @@ jobs:
         with:
           force: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: 'other-master'
+          branch: 'test-develop'
 
 
