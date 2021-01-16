@@ -1,6 +1,6 @@
 # SAMP.Net
 
-Develop your own SA:MP Gamemode
+Use C# and .NET to create your own SA:MP Gamemode.
 
 ## Special thanks to
 
