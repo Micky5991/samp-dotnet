@@ -16,5 +16,28 @@
       "Micky5991/samp-dotnet"
     ]
   },
+  "resources": [
+    {
+      "name": "samp-dotnet-.*-windows.zip",
+      "platform": "windows",
+      "version": "0.3.7",
+      "archive": true,
+      "plugins": [
+        "plugins/samp-dotnet.dll"
+      ],
+      "files": {
+        "dotnet/runtime/": "dotnet/runtime/*"
+      }
+    },
+    {
+      "name": "samp-dotnet-.*-linux.zip",
+      "platform": "linux",
+      "version": "0.3.7",
+      "archive": true,
+      "plugins": [
+        "plugins/samp-dotnet.dll"
+      ]
+    }
+  ],
   "local": false
 }
