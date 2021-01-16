@@ -3,22 +3,41 @@
 #include "sampgdk/interop.h"
 #include "sampgdk/core.h"
 #include "samp-dotnet/samp-dotnet.h"
-#include "samp-dotnet/clr_manager.h"
-#include "samp-dotnet/event_manager.h"
 #include "configreader/configreader.h"
 
-ClrManager* clr_manager = nullptr;
-EventManager* event_manager = nullptr;
+extern void *pAMXFunctions;
 
-bool started = false;
+sampdotnet::SampNet* samp_net = nullptr;
+
+std::string get_config_gamemode_path() {
+    ConfigReader c;
+    c.ReadFromFile("server.cfg");
+
+    std::string gamemode_path;
+    c.GetValue("dotnet_gamemode", gamemode_path);
+
+    return gamemode_path;
+}
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
-    return sampgdk::Supports() | SUPPORTS_PROCESS_TICK | SUPPORTS_AMX_NATIVES;
+    return sampgdk::Supports() | SUPPORTS_AMX_NATIVES;
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
     std::cout << "[SAMP.Net] Initializing SAMP.Net V1.0.0" << std::endl;
 
+    samp_net = new sampdotnet::SampNet();
+
+    auto samp_logger = reinterpret_cast<logprintf>(ppData[PLUGIN_DATA_LOGPRINTF]);
+    samp_net->set_samp_logger(samp_logger);
+
+    if(samp_net->check_startup(get_config_gamemode_path()) == false) {
+        return false;
+    }
+
+    sampdotnet::SampNet::printf("[SAMP.Net] Loading sampgdk");
+
+    pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
     bool loaded = sampgdk::Load(ppData);
     if(loaded == false) {
         std::cerr << "[SAMP.Net] Loading SAMPGDK failed" << std::endl;
@@ -26,59 +45,30 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
         return false;
     }
 
-    auto samp_logger = reinterpret_cast<logprintf>(ppData[PLUGIN_DATA_LOGPRINTF]);
-    sampdotnet::hook_logger(samp_logger);
-
-    std::cout << "[SAMP.Net] SA:MP logger has been hooked" << std::endl;
-
-    ConfigReader config;
-
-    config.ReadFromFile("server.cfg");
-
-    std::string gamemode_path;
-    config.GetValue("dotnet_gamemode", gamemode_path);
-
-    std::cout << "Gamemode: " << gamemode_path << std::endl;
-
-    clr_manager = new ClrManager();
-    event_manager = new EventManager();
-
-    std::cout << "[SAMP.Net] Components initialized" << std::endl;
-
-    std::string missing_folder = clr_manager->check_directories();
-    if(missing_folder.empty() == false) {
-        std::cout << "[SAMP.Net] The directory \"" << missing_folder << "\" is missing! Abort." << std::endl;
-
-        return false;
-    }
-
-    std::cout << "[SAMP.Net] SAMP.Net has been initialized" << std::endl;
-
-    started = true;
+    sampdotnet::SampNet::printf("[SAMP.Net] SAMP.Net has been initialized");
 
     return true;
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX* amx) {
-    if(started == false) {
+    if(samp_net == nullptr) {
         return AMX_ERR_NONE;
     }
 
-    std::cout << "[SAMP.Net] AMX loaded, starting .NET CoreCLR" << std::endl;
+    sampdotnet::SampNet::printf("[SAMP.Net] Starting gamemode");
 
-    clr_manager->start("net5.0/Micky5991.Samp.Net.Example.dll");
-
-    std::cout << "[SAMP.Net] .NET CoreCLR has been started" << std::endl;
+    samp_net->start_gamemode();
 
     return AMX_ERR_NONE;
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX* amx) {
-    delete clr_manager;
-    delete event_manager;
+    if(samp_net == nullptr) {
+        return AMX_ERR_NONE;
+    }
 
-    clr_manager = nullptr;
-    event_manager = nullptr;
+    samp_net->dispose();
+    samp_net = nullptr;
 
     return AMX_ERR_NONE;
 }
@@ -88,40 +78,65 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload() {
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick() {
-    if(started == false) {
+    if(samp_net == nullptr) {
         return;
     }
 
     sampgdk::ProcessTick();
-    sampdotnet::execute_tick();
+    samp_net->execute_tick();
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL AttachTickHandler(tick_handler callback) {
-    sampdotnet::attach_tick_handler(callback);
+    if(samp_net == nullptr) {
+        return;
+    }
+
+    samp_net->attach_tick_handler(callback);
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL RegisterEvent(const char* event_name, const char* format) {
-    return event_manager->register_event(std::string(event_name), std::string(format));
+    if(samp_net == nullptr) {
+        return false;
+    }
+
+    return samp_net->register_event(std::string(event_name), std::string(format));
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL AttachEventHandler(event_handler callback) {
-    event_manager->attach_event_handler(callback);
+    if(samp_net == nullptr) {
+        return;
+    }
+
+    samp_net->attach_event_handler(callback);
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL AttachLoggerHandler(log_handler callback) {
-    sampdotnet::attach_logger(callback);
+    if(samp_net == nullptr) {
+        return;
+    }
 
-    sampdotnet::print_samp("[SAMP.Net]  Log-redirection has been enabled!");
+    samp_net->install_logger_hook();
+    samp_net->attach_logger(callback);
+
+    sampdotnet::SampNet::printf("Log-redirection has been enabled!");
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL LogMessage(const char* message) {
-    sampdotnet::print_samp(message);
+    if(samp_net == nullptr) {
+        return;
+    }
+
+    samp_net->print_samp(message);
 }
 
 PLUGIN_EXPORT cell PLUGIN_CALL InvokeNative(const char* native_name, const char* format, void** native_args) {
+    if(samp_net == nullptr) {
+        return 0;
+    }
+
     AMX_NATIVE native = sampgdk::FindNative(native_name);
     if(native == nullptr) {
-        std::cerr << "Unable to find native " << native_name << std::endl;
+        sampdotnet::SampNet::printf("[SAMP.Net] Unable to find native \"%s\"", native_name);
 
         return 0;
     }
@@ -130,28 +145,9 @@ PLUGIN_EXPORT cell PLUGIN_CALL InvokeNative(const char* native_name, const char*
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPublicCall(AMX* amx, const char* name, cell* params, cell* retval) {
-    if(started == false) {
+    if(samp_net == nullptr) {
         return false;
     }
 
-    CallbackArgument* arguments = nullptr;
-    int argument_amount = 0;
-
-    auto success = event_manager->format_event(amx, name, params, &arguments, &argument_amount);
-    if(success == false) {
-        return true;
-    }
-
-    EventInvokeResult result = event_manager->dispatch_event(name, arguments, argument_amount);
-
-    for (int i = 0; i < argument_amount; ++i) {
-        arguments[i].dispose();
-    }
-    delete arguments;
-
-    if(retval != nullptr) {
-        *retval = (cell) result.return_value;
-    }
-
-    return result.allow_execute;
+    return samp_net->handle_public_call(amx, name, params, retval);
 }
