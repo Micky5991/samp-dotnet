@@ -9,7 +9,7 @@
       "samp-dotnet"
     ],
     "extra": {
-      "dotnet_gamemode": "kartoffel"
+      "dotnet_gamemode": "net5.0/Micky5991.Samp.Net.Example.dll"
     }
   },
   "local": true
