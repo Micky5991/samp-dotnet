@@ -20,7 +20,7 @@ add_samp_plugin(${PROJECT_NAME}
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE coreclr subhook sampgdk)
+target_link_libraries(${PROJECT_NAME} PRIVATE coreclr subhook sampgdk configreader)
 
 if(WIN32)
     install(FILES ${CMAKE_BINARY_DIR}/src/plugin/samp-dotnet/samp-dotnet.dll DESTINATION "${CMAKE_SOURCE_DIR}/server/plugins")

@@ -1,12 +1,11 @@
 #include <iostream>
-#include <sstream>
 
 #include "sampgdk/interop.h"
-#include "sampgdk/sdk.h"
 #include "sampgdk/core.h"
 #include "samp-dotnet/samp-dotnet.h"
 #include "samp-dotnet/clr_manager.h"
 #include "samp-dotnet/event_manager.h"
+#include "configreader/configreader.h"
 
 ClrManager* clr_manager = nullptr;
 EventManager* event_manager = nullptr;
@@ -31,6 +30,15 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
     sampdotnet::hook_logger(samp_logger);
 
     std::cout << "[SAMP.Net] SA:MP logger has been hooked" << std::endl;
+
+    ConfigReader config;
+
+    config.ReadFromFile("server.cfg");
+
+    std::string gamemode_path;
+    config.GetValue("dotnet_gamemode", gamemode_path);
+
+    std::cout << "Gamemode: " << gamemode_path << std::endl;
 
     clr_manager = new ClrManager();
     event_manager = new EventManager();

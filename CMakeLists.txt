@@ -39,6 +39,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake-modules)
 add_subdirectory(thirdparty/host-coreclr)
 add_subdirectory(thirdparty/subhook)
 add_subdirectory(thirdparty/sampgdk)
+add_subdirectory(thirdparty/configreader)
 add_subdirectory(src)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/runtime/shared/Microsoft.NETCore.App/${SAMPDOTNET_RUNTIME_VERSION}/ DESTINATION "${CMAKE_SOURCE_DIR}/server/dotnet/runtime/")
