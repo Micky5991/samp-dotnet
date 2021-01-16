@@ -26,7 +26,7 @@
         "plugins/samp-dotnet.dll"
       ],
       "files": {
-        "dotnet/runtime/": "dotnet/runtime/*"
+        "dotnet/runtime/": "dotnet/runtime/"
       }
     },
     {
