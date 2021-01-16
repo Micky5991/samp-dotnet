@@ -14,10 +14,7 @@
     "port": 7777,
     "plugins": [
       "Micky5991/samp-dotnet"
-    ],
-    "extra": {
-      "dotnet_gamemode": "net5.0/Micky5991.Samp.Net.Example.dll"
-    }
+    ]
   },
   "resources": [
     {
