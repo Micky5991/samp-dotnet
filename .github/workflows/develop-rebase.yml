@@ -1,6 +1,9 @@
 name: "Reset HEAD of develop to master"
 
-on: [ workflow_dispatch ]
+on:
+  push:
+    branches:
+      - test-rebase
 
 jobs:
   reset:
@@ -23,6 +26,6 @@ jobs:
         with:
           force: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: 'test-rebase'
+          branch: 'other-master'
 
 
