@@ -21,6 +21,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 
         private readonly ISampLoggerHandler sampLoggerHandler;
 
+        private readonly IEnumerable<IEntityListener> entityListeners;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GamemodeStarter"/> class.
         /// </summary>
@@ -29,18 +31,21 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <param name="eventCollectionsFactories">List of factories which provide information how native events are formatted.</param>
         /// <param name="synchronizationContext">Synchronization context that handles main thread tasks.</param>
         /// <param name="sampLoggerHandler">Handler that bootstraps samp server log redirection.</param>
+        /// <param name="entityListeners">List of entity listeners to activate.</param>
         public GamemodeStarter(
             IEventAggregator eventAggregator,
             INativeEventRegistry eventRegistry,
             IEnumerable<INativeEventCollectionFactory> eventCollectionsFactories,
             SampSynchronizationContext synchronizationContext,
-            ISampLoggerHandler sampLoggerHandler)
+            ISampLoggerHandler sampLoggerHandler,
+            IEnumerable<IEntityListener> entityListeners)
         {
             this.eventAggregator = eventAggregator;
             this.eventRegistry = eventRegistry;
             this.eventCollectionsFactories = eventCollectionsFactories;
             this.synchronizationContext = synchronizationContext;
             this.sampLoggerHandler = sampLoggerHandler;
+            this.entityListeners = entityListeners;
         }
 
         /// <inheritdoc />
@@ -49,6 +54,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.StartSynchronizationContext();
             this.StartEventAggregator();
             this.StartEvents();
+            this.StartEntityListeners();
 
             return this;
         }
@@ -79,6 +85,17 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             foreach (var nativeEventCollectionFactory in this.eventCollectionsFactories)
             {
                 this.eventRegistry.RegisterEvents(nativeEventCollectionFactory.Build());
+            }
+        }
+
+        /// <summary>
+        /// Attach entity listeners.
+        /// </summary>
+        protected virtual void StartEntityListeners()
+        {
+            foreach (var entityListener in this.entityListeners)
+            {
+                entityListener.Attach();
             }
         }
 
