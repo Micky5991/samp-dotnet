@@ -50,14 +50,15 @@ namespace Micky5991.Samp.Net.Framework.Entities
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Executes an actual dispose of this entity.
-        /// </summary>
-        protected abstract void DisposeEntity();
-
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"<{this.GetType()} ({this.Id})>";
         }
+
+        /// <summary>
+        /// Executes an actual dispose of this entity.
+        /// </summary>
+        protected abstract void DisposeEntity();
     }
 }
