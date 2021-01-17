@@ -54,5 +54,10 @@ namespace Micky5991.Samp.Net.Framework.Entities
         /// Executes an actual dispose of this entity.
         /// </summary>
         protected abstract void DisposeEntity();
+
+        public override string ToString()
+        {
+            return $"<{this.GetType()} ({this.Id})>";
+        }
     }
 }

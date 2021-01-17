@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Numerics;
 using Dawn;
 using Micky5991.Samp.Net.Core.Natives.Players;
@@ -48,6 +49,26 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
+        public float Rotation
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.GetPlayerFacingAngle(this.Id, out var angle);
+
+                return angle;
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.SetPlayerFacingAngle(this.Id, value);
+            }
+        }
+
+        /// <inheritdoc />
         public string Name
         {
             get
@@ -66,6 +87,118 @@ namespace Micky5991.Samp.Net.Framework.Entities
 
                 this.playersNatives.SetPlayerName(this.Id, value);
             }
+        }
+
+        /// <inheritdoc />
+        public int Money
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return this.playersNatives.GetPlayerMoney(this.Id);
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                if (value == 0)
+                {
+                    this.playersNatives.ResetPlayerMoney(this.Id);
+
+                    return;
+                }
+
+                this.playersNatives.GivePlayerMoney(this.Id, value - this.Money);
+            }
+        }
+
+        /// <inheritdoc />
+        public Color Color
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                var color = this.playersNatives.GetPlayerColor(this.Id);
+
+                return Color.FromArgb(color);
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.SetPlayerColor(this.Id, value.ToArgb());
+            }
+        }
+
+        /// <inheritdoc />
+        public float Health
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.GetPlayerHealth(this.Id, out var health);
+
+                return health;
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.SetPlayerHealth(this.Id, value);
+            }
+        }
+
+        /// <inheritdoc />
+        public float Armor
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.GetPlayerArmour(this.Id, out var armor);
+
+                return armor;
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.SetPlayerArmour(this.Id, value);
+            }
+        }
+
+        /// <inheritdoc />
+        public int AnimationIndex
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return this.playersNatives.GetPlayerAnimationIndex(this.Id);
+            }
+        }
+
+        /// <inheritdoc />
+        public bool PutPlayerIntoVehicle(IVehicle vehicle, int seat = 0)
+        {
+            Guard.Argument(vehicle, nameof(vehicle)).NotNull();
+            Guard.Argument(seat, nameof(seat)).NotNegative();
+            Guard.Disposal(vehicle.Disposed);
+
+            return this.playersNatives.PutPlayerInVehicle(this.Id, vehicle.Id, seat);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"<{this.GetType()} ({this.Id}) {this.Name}>";
         }
 
         /// <inheritdoc />

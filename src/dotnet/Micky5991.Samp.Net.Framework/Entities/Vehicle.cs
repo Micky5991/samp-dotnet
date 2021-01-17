@@ -1,4 +1,6 @@
+using System;
 using System.Numerics;
+using Dawn;
 using Micky5991.Samp.Net.Core.Natives.Vehicles;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
@@ -26,7 +28,61 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
-        public Vector3 Position { get; set; }
+        public Vector3 Position
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.GetVehiclePos(this.Id, out var x, out var y, out var z);
+
+                return new Vector3(x, y, z);
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.SetVehiclePos(this.Id, value.X, value.Y, value.Z);
+            }
+        }
+
+        /// <inheritdoc />
+        public float Rotation
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.GetVehicleZAngle(this.Id, out var rotation);
+
+                return rotation;
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.SetVehicleZAngle(this.Id, value);
+            }
+        }
+
+        /// <inheritdoc />
+        public Core.Natives.Samp.Vehicle Model
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return (Core.Natives.Samp.Vehicle)this.vehiclesNatives.GetVehicleModel(this.Id);
+            }
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"<{this.GetType()} ({this.Id}) {this.Model}>";
+        }
 
         /// <inheritdoc />
         protected override void DisposeEntity()

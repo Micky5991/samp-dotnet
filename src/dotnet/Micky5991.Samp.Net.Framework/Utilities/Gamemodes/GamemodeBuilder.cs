@@ -151,7 +151,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <param name="serviceCollection">Service collection to add the listers to.</param>
         protected virtual void AddEntityListeners(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>();
+            serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>()
+                             .AddTransient<IEntityListener, PlayerEventListener>();
         }
     }
 }
