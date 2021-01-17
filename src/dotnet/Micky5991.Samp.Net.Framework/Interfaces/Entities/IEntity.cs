@@ -1,11 +1,14 @@
-using System.Numerics;
+using System;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
-    public interface IEntity
+    public interface IEntity : IDisposable
     {
         int Id { get; }
 
-        Vector3 Position { get; set; }
+        /// <summary>
+        /// Gets a value indicating whether the current entity has been disposed.
+        /// </summary>
+        bool Disposed { get; }
     }
 }
