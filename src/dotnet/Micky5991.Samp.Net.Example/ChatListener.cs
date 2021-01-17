@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
-using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Microsoft.Extensions.Logging;
