@@ -8,6 +8,7 @@ using Micky5991.Samp.Net.Framework.Interfaces;
 
 namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 {
+    /// <inheritdoc />
     public class GamemodeStarter : IGamemodeStarter
     {
         private readonly IEventAggregator eventAggregator;
@@ -20,6 +21,14 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 
         private readonly ISampLoggerHandler sampLoggerHandler;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GamemodeStarter"/> class.
+        /// </summary>
+        /// <param name="eventAggregator">Aggregator instance to start.</param>
+        /// <param name="eventRegistry">Registry instance to start.</param>
+        /// <param name="eventCollectionsFactories">List of factories which provide information how native events are formatted.</param>
+        /// <param name="synchronizationContext">Synchronization context that handles main thread tasks.</param>
+        /// <param name="sampLoggerHandler">Handler that bootstraps samp server log redirection.</param>
         public GamemodeStarter(
             IEventAggregator eventAggregator,
             INativeEventRegistry eventRegistry,
@@ -34,6 +43,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.sampLoggerHandler = sampLoggerHandler;
         }
 
+        /// <inheritdoc />
         public virtual IGamemodeStarter Start()
         {
             this.StartSynchronizationContext();
@@ -43,6 +53,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             return this;
         }
 
+        /// <inheritdoc />
         public virtual IGamemodeStarter StartLogRedirection()
         {
             this.sampLoggerHandler.Attach();
@@ -50,16 +61,17 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             return this;
         }
 
-        private void StartSynchronizationContext()
-        {
-            this.synchronizationContext.Setup();
-        }
-
+        /// <summary>
+        /// Starts the event aggregator and sets the main thread.
+        /// </summary>
         protected void StartEventAggregator()
         {
             this.eventAggregator.SetMainThreadSynchronizationContext(SynchronizationContext.Current);
         }
 
+        /// <summary>
+        /// Registers all events and stores format information for each event.
+        /// </summary>
         protected virtual void StartEvents()
         {
             this.eventRegistry.AttachEventInvoker();
@@ -68,6 +80,11 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             {
                 this.eventRegistry.RegisterEvents(nativeEventCollectionFactory.Build());
             }
+        }
+
+        private void StartSynchronizationContext()
+        {
+            this.synchronizationContext.Setup();
         }
     }
 }
