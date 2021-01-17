@@ -36,6 +36,17 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
             throw new System.NotImplementedException();
         }
 
+        /// <inheritdoc />
+        public T? FindOrDefaultEntity(int id)
+        {
+            if (this.Entities.TryGetValue(id, out var entity) == false)
+            {
+                return default;
+            }
+
+            return entity;
+        }
+
         /// <summary>
         /// Modifies the entity collection in this pool safely.
         /// </summary>

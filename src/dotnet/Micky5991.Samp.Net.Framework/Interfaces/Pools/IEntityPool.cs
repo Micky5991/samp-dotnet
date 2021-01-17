@@ -30,5 +30,12 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Pools
         /// <returns>Found or created entity of type <typeparamref name="T"/>.</returns>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is negative.</exception>
         T FindOrCreateEntity(int id);
+
+        /// <summary>
+        /// Requests an entity, but if the entity is not available, returns null.
+        /// </summary>
+        /// <param name="id">Id of the entity.</param>
+        /// <returns>Instance of type <typeparamref name="T"/>, null otherwise.</returns>
+        T? FindOrDefaultEntity(int id);
     }
 }
