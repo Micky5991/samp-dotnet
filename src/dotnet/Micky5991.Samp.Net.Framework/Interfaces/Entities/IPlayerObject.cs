@@ -1,6 +1,6 @@
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
-    public interface IPlayerObject : IEntity
+    public interface IPlayerObject : IPlayerBoundEnitity
     {
 
     }

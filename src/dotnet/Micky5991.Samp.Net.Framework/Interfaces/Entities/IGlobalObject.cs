@@ -1,6 +1,6 @@
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
-    public interface IPlayer : IWorldEntity
+    public interface IGlobalObject : IObject
     {
 
     }
