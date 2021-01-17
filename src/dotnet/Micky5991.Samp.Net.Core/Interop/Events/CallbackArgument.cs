@@ -45,7 +45,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
 
                     Marshal.Copy(this.PointerValue, buffer, 0, buffer.Length);
 
-                    return Encoding.ASCII.GetString(buffer);
+                    return Encoding.ASCII.GetString(buffer).TrimEnd('\0');
                 }
 
                 default:
