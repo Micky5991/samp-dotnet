@@ -25,134 +25,179 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
     /// </summary>
     public class GamemodeBuilder
     {
+        private readonly IServiceCollection serviceCollection;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GamemodeBuilder"/> class.
+        /// </summary>
+        /// <param name="serviceCollection">Service collection to use.</param>
+        public GamemodeBuilder(IServiceCollection serviceCollection)
+        {
+            this.serviceCollection = serviceCollection;
+        }
+
         /// <summary>
         /// Registers all core services provided by SAMP.Net.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to register all services to.</param>
-        public virtual void AddServices(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        public virtual GamemodeBuilder AddCoreServices()
         {
-            this.AddGamemodeStarter(serviceCollection);
-            this.AddLoggerHandler(serviceCollection);
-            this.AddEventAggregator(serviceCollection);
-            this.AddSynchronizationServices(serviceCollection);
-            this.AddNativeEventHandling(serviceCollection);
-            this.AddNativeEvents(serviceCollection);
-            this.AddNatives(serviceCollection);
-            this.AddEntityFactories(serviceCollection);
-            this.AddEntityPools(serviceCollection);
-            this.AddEntityListeners(serviceCollection);
+            this.AddGamemodeStarter()
+                .AddLoggerHandler()
+                .AddEventAggregator()
+                .AddSynchronizationServices()
+                .AddNativeEventHandling()
+                .AddNativeEvents()
+                .AddNatives()
+                .AddEntityFactories()
+                .AddEntityPools()
+                .AddEntityListeners();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Runs the extension builder and registers services provided by it.
+        /// </summary>
+        /// <param name="extensionBuilder"><see cref="IExtensionBuilder"/> to execute and take services.</param>
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        public virtual GamemodeBuilder AddExtensionBuilder(IExtensionBuilder extensionBuilder)
+        {
+            extensionBuilder.Register(this.serviceCollection);
+
+            return this;
         }
 
         /// <summary>
         /// Should register the gamemode starter that should boot up the gamemode. Override to replace the default
         /// implementation with your custom starter.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the starter to.</param>
-        protected virtual void AddGamemodeStarter(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddGamemodeStarter()
         {
-            serviceCollection.AddSingleton<IGamemodeStarter, GamemodeStarter>();
+            this.serviceCollection.AddSingleton<IGamemodeStarter, GamemodeStarter>();
+
+            return this;
         }
 
         /// <summary>
         /// Should register the native samp logger that listens to all samp logs. Override to replace the default
         /// implementation with your custom listener.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the logger to.</param>
-        protected virtual void AddLoggerHandler(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddLoggerHandler()
         {
-            serviceCollection.AddSingleton<ISampLoggerHandler, SampLoggerHandler>();
+            this.serviceCollection.AddSingleton<ISampLoggerHandler, SampLoggerHandler>();
+
+            return this;
         }
 
         /// <summary>
         /// Should register the used event aggregator. It still needs to implement the interface <see cref="IEventAggregator"/>.
         /// Override to replace the default implementation with your custom event aggregator.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the event aggregator to.</param>
-        protected virtual void AddEventAggregator(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddEventAggregator()
         {
-            serviceCollection.AddSingleton<IEventAggregator, EventAggregatorService>();
+            this.serviceCollection.AddSingleton<IEventAggregator, EventAggregatorService>();
+
+            return this;
         }
 
         /// <summary>
         /// Should register the used event aggregator. It still needs to implement the interface <see cref="IEventAggregator"/>.
         /// Override to replace the default implementation with your custom event aggregator.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the event aggregator to.</param>
-        protected virtual void AddSynchronizationServices(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddSynchronizationServices()
         {
-            serviceCollection.AddSingleton<SampSynchronizationContext>();
+            this.serviceCollection.AddSingleton<SampSynchronizationContext>();
+
+            return this;
         }
 
         /// <summary>
         /// Add services for native event handling. Override to replace the default implementation with your custom
         /// event handling.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the event handlers to.</param>
-        protected virtual void AddNativeEventHandling(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddNativeEventHandling()
         {
-            serviceCollection.AddTransient<NativeTypeConverter>()
-                             .AddSingleton<INativeEventRegistry, NativeEventRegistry>();
+            this.serviceCollection.AddTransient<NativeTypeConverter>()
+                .AddSingleton<INativeEventRegistry, NativeEventRegistry>();
+
+            return this;
         }
 
         /// <summary>
         /// Registers all default event collections to the service collection. Override to replace the default
         /// implementation with your custom native event collections.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the event collections to.</param>
-        protected virtual void AddNativeEvents(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddNativeEvents()
         {
-            serviceCollection.AddTransient<INativeEventCollectionFactory, SampEventCollectionFactory>()
-                             .AddTransient<INativeEventCollectionFactory, VehiclesEventCollectionFactory>()
-                             .AddTransient<INativeEventCollectionFactory, PlayersEventCollectionFactory>()
-                             .AddTransient<INativeEventCollectionFactory, ActorEventCollectionFactory>()
-                             .AddTransient<INativeEventCollectionFactory, ObjectsEventCollectionFactory>();
+            this.serviceCollection.AddTransient<INativeEventCollectionFactory, SampEventCollectionFactory>()
+                .AddTransient<INativeEventCollectionFactory, VehiclesEventCollectionFactory>()
+                .AddTransient<INativeEventCollectionFactory, PlayersEventCollectionFactory>()
+                .AddTransient<INativeEventCollectionFactory, ActorEventCollectionFactory>()
+                .AddTransient<INativeEventCollectionFactory, ObjectsEventCollectionFactory>();
+
+            return this;
         }
 
         /// <summary>
         /// Registers all available natives to the service collection seperated by namespace. Override to replace the default
         /// implementation with your custom natives.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the natives to.</param>
-        protected virtual void AddNatives(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddNatives()
         {
-            serviceCollection.AddTransient<ISampNatives, SampNatives>()
-                             .AddTransient<IVehiclesNatives, VehiclesNatives>()
-                             .AddTransient<IPlayersNatives, PlayersNatives>()
-                             .AddTransient<IActorNatives, ActorNatives>()
-                             .AddTransient<IObjectsNatives, ObjectsNatives>();
+            this.serviceCollection.AddTransient<ISampNatives, SampNatives>()
+                .AddTransient<IVehiclesNatives, VehiclesNatives>()
+                .AddTransient<IPlayersNatives, PlayersNatives>()
+                .AddTransient<IActorNatives, ActorNatives>()
+                .AddTransient<IObjectsNatives, ObjectsNatives>();
+
+            return this;
         }
 
         /// <summary>
         /// Registers all included entity factories. Override to replace the default implementations with your custom
         /// factories.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the factories to.</param>
-        protected virtual void AddEntityFactories(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddEntityFactories()
         {
-            serviceCollection.AddTransient<IPlayerFactory, PlayerFactory>()
-                             .AddTransient<IVehicleFactory, VehicleFactory>();
+            this.serviceCollection.AddTransient<IPlayerFactory, PlayerFactory>()
+                .AddTransient<IVehicleFactory, VehicleFactory>();
+
+            return this;
         }
 
         /// <summary>
         /// Registers all included entity pools. Override to replace the default implementations with your custom
         /// pools.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the pools to.</param>
-        protected virtual void AddEntityPools(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddEntityPools()
         {
-            serviceCollection.AddSingleton<IPlayerPool, PlayerPool>()
-                             .AddSingleton<IVehiclePool, VehiclePool>();
+            this.serviceCollection.AddSingleton<IPlayerPool, PlayerPool>()
+                .AddSingleton<IVehiclePool, VehiclePool>();
+
+            return this;
         }
 
         /// <summary>
         /// Registers all available entity listeners. Override to replace the default implementations with your custom
         /// listeners.
         /// </summary>
-        /// <param name="serviceCollection">Service collection to add the listers to.</param>
-        protected virtual void AddEntityListeners(IServiceCollection serviceCollection)
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddEntityListeners()
         {
-            serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>()
-                             .AddTransient<IEntityListener, PlayerEventListener>();
+            this.serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>()
+                .AddTransient<IEntityListener, PlayerEventListener>();
+
+            return this;
         }
     }
 }

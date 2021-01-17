@@ -23,6 +23,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 
         private readonly IEnumerable<IEntityListener> entityListeners;
 
+        private readonly IEnumerable<IExtensionStarter> extensions;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GamemodeStarter"/> class.
         /// </summary>
@@ -32,13 +34,15 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <param name="synchronizationContext">Synchronization context that handles main thread tasks.</param>
         /// <param name="sampLoggerHandler">Handler that bootstraps samp server log redirection.</param>
         /// <param name="entityListeners">List of entity listeners to activate.</param>
+        /// <param name="extensions">List of extensions of this gamemode.</param>
         public GamemodeStarter(
             IEventAggregator eventAggregator,
             INativeEventRegistry eventRegistry,
             IEnumerable<INativeEventCollectionFactory> eventCollectionsFactories,
             SampSynchronizationContext synchronizationContext,
             ISampLoggerHandler sampLoggerHandler,
-            IEnumerable<IEntityListener> entityListeners)
+            IEnumerable<IEntityListener> entityListeners,
+            IEnumerable<IExtensionStarter> extensions)
         {
             this.eventAggregator = eventAggregator;
             this.eventRegistry = eventRegistry;
@@ -46,6 +50,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.synchronizationContext = synchronizationContext;
             this.sampLoggerHandler = sampLoggerHandler;
             this.entityListeners = entityListeners;
+            this.extensions = extensions;
         }
 
         /// <inheritdoc />
@@ -55,6 +60,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.StartEventAggregator();
             this.StartEvents();
             this.StartEntityListeners();
+            this.StartExtensions();
 
             return this;
         }
@@ -96,6 +102,17 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             foreach (var entityListener in this.entityListeners)
             {
                 entityListener.Attach();
+            }
+        }
+
+        /// <summary>
+        /// Starts the services of every extension.
+        /// </summary>
+        protected virtual void StartExtensions()
+        {
+            foreach (var extensionStarter in this.extensions)
+            {
+                extensionStarter.Start();
             }
         }
 
