@@ -18,6 +18,6 @@ namespace Micky5991.Samp.Net.Framework.Enums
         /// <summary>
         /// Player has been kicked or banned from the server.
         /// </summary>
-        Kick
+        Kick,
     }
 }
