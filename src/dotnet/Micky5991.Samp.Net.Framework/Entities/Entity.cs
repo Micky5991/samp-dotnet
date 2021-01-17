@@ -33,6 +33,12 @@ namespace Micky5991.Samp.Net.Framework.Entities
         public bool Disposed { get; private set; }
 
         /// <inheritdoc />
+        public bool Valid()
+        {
+            return this.Disposed == false;
+        }
+
+        /// <inheritdoc />
         public void Dispose()
         {
             Guard.Disposal(this.Disposed);

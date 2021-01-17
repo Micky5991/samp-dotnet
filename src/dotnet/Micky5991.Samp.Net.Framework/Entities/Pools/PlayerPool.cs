@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Factories;
@@ -43,6 +46,16 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
             this.UpdateEntities(c => c.TryGetValue(playerid, out result) ? c.Remove(playerid) : c);
 
             return result;
+        }
+
+        /// <inheritdoc />
+        public ICollection<IPlayer> GetPlayersNearPoint(Vector3 position, float distance)
+        {
+            return this.Entities
+                       .Where(entry => entry.Value.Valid() &&
+                                       (position - entry.Value.Position).Length() < distance)
+                       .Select(x => x.Value)
+                       .ToList();
         }
     }
 }
