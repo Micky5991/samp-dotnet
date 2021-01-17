@@ -1,3 +1,5 @@
+using Micky5991.Samp.Net.Core.Natives.Samp;
+
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
     /// <summary>
@@ -5,5 +7,9 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
     /// </summary>
     public interface IVehicle : IWorldEntity
     {
+        /// <summary>
+        /// Gets the model of this vehicle.
+        /// </summary>
+        Vehicle Model { get; }
     }
 }
