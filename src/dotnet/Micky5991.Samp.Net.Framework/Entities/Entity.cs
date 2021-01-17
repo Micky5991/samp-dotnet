@@ -1,4 +1,5 @@
 using System;
+using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
 namespace Micky5991.Samp.Net.Framework.Entities
@@ -6,18 +7,27 @@ namespace Micky5991.Samp.Net.Framework.Entities
     /// <inheritdoc />
     public abstract class Entity : IEntity
     {
+        private readonly int id;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Entity"/> class.
         /// </summary>
         /// <param name="id">Current id of this entity.</param>
-        /// <param name="entityRemoval">Delegate that should be called when this entity was disposed.</param>
         protected Entity(int id)
         {
-            this.Id = id;
+            this.id = id;
         }
 
         /// <inheritdoc />
-        public int Id { get; }
+        public int Id
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return this.id;
+            }
+        }
 
         /// <inheritdoc />
         public bool Disposed { get; private set; }
@@ -25,10 +35,7 @@ namespace Micky5991.Samp.Net.Framework.Entities
         /// <inheritdoc />
         public void Dispose()
         {
-            if (this.Disposed)
-            {
-                throw new ObjectDisposedException(nameof(Entity));
-            }
+            Guard.Disposal(this.Disposed);
 
             this.DisposeEntity();
 

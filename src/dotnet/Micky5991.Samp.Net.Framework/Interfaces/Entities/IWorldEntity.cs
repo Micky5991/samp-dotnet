@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
@@ -10,6 +11,7 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <summary>
         /// Gets or sets the current position in the world of this entity.
         /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IWorldEntity"/> was disposed.</exception>
         public Vector3 Position { get; set; }
     }
 }

@@ -40,7 +40,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
 
         private void OnPlayerConnect(NativePlayerConnectEvent eventdata)
         {
-            var player = this.playerPool.AddPlayer(eventdata.Playerid);
+            var player = this.playerPool.CreateAndAddPlayer(eventdata.Playerid);
 
             var connectEvent = this.eventAggregator.Publish(new PlayerConnectEvent(player));
 

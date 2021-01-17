@@ -28,9 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="gamemode.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
       <None Update="NLog.config">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

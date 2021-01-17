@@ -1,3 +1,4 @@
+using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
@@ -21,8 +22,10 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
         }
 
         /// <inheritdoc />
-        public IPlayer AddPlayer(int playerid)
+        public IPlayer CreateAndAddPlayer(int playerid)
         {
+            Guard.Argument(playerid, nameof(playerid)).NotNegative();
+
             var player = this.playerFactory.CreatePlayer(playerid, this.RemoveEntity);
 
             this.AddEntity(player);
@@ -33,6 +36,8 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
         /// <inheritdoc />
         public IPlayer? RemovePlayer(int playerid)
         {
+            Guard.Argument(playerid, nameof(playerid)).NotNegative();
+
             IPlayer? result = null;
 
             this.UpdateEntities(c => c.TryGetValue(playerid, out result) ? c.Remove(playerid) : c);
