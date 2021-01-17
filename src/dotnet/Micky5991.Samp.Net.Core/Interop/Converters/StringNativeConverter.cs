@@ -21,7 +21,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Converters
         {
             var buffer = this.ReadBytesFromNative(location, size);
 
-            return Encoding.ASCII.GetString(buffer);
+            return Encoding.ASCII.GetString(buffer).TrimEnd('\0');
         }
     }
 }
