@@ -37,7 +37,7 @@ namespace Micky5991.Samp.Net.Example
         {
             this.eventAggregator.Subscribe<NativeGameModeInitEvent>(OnGamemodeInit);
 
-            this.eventAggregator.Subscribe<NativePlayerTextEvent>(this.OnPlayerChat);
+            this.eventAggregator.Subscribe<PlayerTextEvent>(this.OnPlayerChat);
             this.eventAggregator.Subscribe<PlayerConnectEvent>(this.OnPlayerConnect);
             this.eventAggregator.Subscribe<NativePlayerRequestClassEvent>(this.OnPlayerRequestClass);
             this.eventAggregator.Subscribe<NativePlayerRequestSpawnEvent>(this.OnPlayerRequestSpawn);
@@ -89,16 +89,20 @@ namespace Micky5991.Samp.Net.Example
             this.logger.LogInformation($"Player {eventdata.Player.Name} connected");
         }
 
-        private void OnPlayerChat(NativePlayerTextEvent textEvent)
+        private void OnPlayerChat(PlayerTextEvent textEvent)
         {
-            this.logger.LogInformation($"Incoming message: {textEvent.Playerid}: {textEvent.Text}");
+            this.logger.LogInformation($"Incoming message: {textEvent.Player}: {textEvent.Text}");
 
             if (textEvent.Text == "veh")
             {
-                var vehicle = this.vehiclePool.CreateVehicle(Vehicle.Bullet, this.playerPool.Entities[textEvent.Playerid].Position,
-                                               0, 0, 150);
+                var vehicle = this.vehiclePool.CreateVehicle(
+                                                             Vehicle.Bullet,
+                                                             textEvent.Player.Position,
+                                                             0,
+                                                             0,
+                                                             150);
 
-                this.playersNatives.PutPlayerInVehicle(textEvent.Playerid, vehicle.Id, 0);
+                textEvent.Player.PutPlayerIntoVehicle(vehicle, 0);
             }
         }
 

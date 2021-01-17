@@ -13,5 +13,11 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="IWorldEntity"/> was disposed.</exception>
         public Vector3 Position { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current rotation of this entity.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IWorldEntity"/> was disposed.</exception>
+        float Rotation { get; set; }
     }
 }
