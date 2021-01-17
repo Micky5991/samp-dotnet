@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
 using Micky5991.Samp.Net.NLogTarget;
@@ -25,16 +25,15 @@ namespace Micky5991.Samp.Net.Example
                     })
                     .AddSingleton<ChatListener>();
 
-                new GamemodeBuilder()
-                    .AddServices(serviceCollection);
+                new GamemodeBuilder(serviceCollection)
+                    .AddCoreServices()
+                    .AddExtensionBuilder(new CommandExtensionBuilder());
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();
 
-                var starter = serviceProvider.GetRequiredService<IGamemodeStarter>();
-
-                starter
-                    .StartLogRedirection()
-                    .Start();
+                serviceProvider.GetRequiredService<IGamemodeStarter>()
+                               .StartLogRedirection()
+                               .Start();
 
                 var listener = serviceProvider.GetRequiredService<ChatListener>();
                 listener.Attach();
