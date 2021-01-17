@@ -129,7 +129,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <param name="serviceCollection">Service collection to add the factories to.</param>
         protected virtual void AddEntityFactories(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IPlayerFactory, PlayerFactory>();
+            serviceCollection.AddTransient<IPlayerFactory, PlayerFactory>()
+                             .AddTransient<IVehicleFactory, VehicleFactory>();
         }
 
         /// <summary>
@@ -139,7 +140,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <param name="serviceCollection">Service collection to add the pools to.</param>
         protected virtual void AddEntityPools(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddSingleton<IPlayerPool, PlayerPool>();
+            serviceCollection.AddSingleton<IPlayerPool, PlayerPool>()
+                             .AddSingleton<IVehiclePool, VehiclePool>();
         }
 
         /// <summary>

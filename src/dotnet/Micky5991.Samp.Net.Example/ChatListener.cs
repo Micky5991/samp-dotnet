@@ -2,7 +2,9 @@ using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Core.Natives.Vehicles;
 using Micky5991.Samp.Net.Framework.Events.Players;
+using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Example
@@ -17,12 +19,18 @@ namespace Micky5991.Samp.Net.Example
 
         private readonly ISampNatives sampNatives;
 
-        public ChatListener(IEventAggregator eventAggregator, ILogger<ChatListener> logger, IPlayersNatives playersNatives, ISampNatives sampNatives)
+        private readonly IVehiclePool vehiclePool;
+
+        private readonly IPlayerPool playerPool;
+
+        public ChatListener(IEventAggregator eventAggregator, ILogger<ChatListener> logger, IPlayersNatives playersNatives, ISampNatives sampNatives, IVehiclePool vehiclePool, IPlayerPool playerPool)
         {
             this.eventAggregator = eventAggregator;
             this.logger = logger;
             this.playersNatives = playersNatives;
             this.sampNatives = sampNatives;
+            this.vehiclePool = vehiclePool;
+            this.playerPool = playerPool;
         }
 
         public void Attach()
@@ -84,6 +92,14 @@ namespace Micky5991.Samp.Net.Example
         private void OnPlayerChat(NativePlayerTextEvent textEvent)
         {
             this.logger.LogInformation($"Incoming message: {textEvent.Playerid}: {textEvent.Text}");
+
+            if (textEvent.Text == "veh")
+            {
+                var vehicle = this.vehiclePool.CreateVehicle(Vehicle.Bullet, this.playerPool.Entities[textEvent.Playerid].Position,
+                                               0, 0, 150);
+
+                this.playersNatives.PutPlayerInVehicle(textEvent.Playerid, vehicle.Id, 0);
+            }
         }
 
     }
