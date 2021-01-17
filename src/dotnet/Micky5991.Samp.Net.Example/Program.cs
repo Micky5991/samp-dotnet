@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
 using Micky5991.Samp.Net.NLogTarget;
@@ -21,7 +22,8 @@ namespace Micky5991.Samp.Net.Example
                     {
                         builder.SetMinimumLevel(LogLevel.Trace);
                         builder.AddNLog();
-                    });
+                    })
+                    .AddSingleton<ChatListener>();
 
                 new GamemodeBuilder()
                     .AddServices(serviceCollection);
@@ -33,6 +35,9 @@ namespace Micky5991.Samp.Net.Example
                 starter
                     .StartLogRedirection()
                     .Start();
+
+                var listener = serviceProvider.GetRequiredService<ChatListener>();
+                listener.Attach();
             }
             catch (Exception e)
             {
