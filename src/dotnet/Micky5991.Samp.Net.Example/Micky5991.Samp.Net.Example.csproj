@@ -23,6 +23,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Micky5991.Samp.Net.Commands\Micky5991.Samp.Net.Commands.csproj" />
       <ProjectReference Include="..\Micky5991.Samp.Net.Framework\Micky5991.Samp.Net.Framework.csproj" />
       <ProjectReference Include="..\Micky5991.Samp.Net.NLogTarget\Micky5991.Samp.Net.NLogTarget.csproj" />
     </ItemGroup>
