@@ -17,5 +17,11 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// Gets a value indicating whether the current entity has been disposed.
         /// </summary>
         bool Disposed { get; }
+
+        /// <summary>
+        /// Gets if the entity is still valid.
+        /// </summary>
+        /// <returns>true if the instance has not been disposed, false otherwise.</returns>
+        bool Valid();
     }
 }
