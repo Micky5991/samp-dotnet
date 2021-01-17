@@ -2,6 +2,7 @@ using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Framework.Events.Players;
 using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Example
@@ -29,7 +30,7 @@ namespace Micky5991.Samp.Net.Example
             this.eventAggregator.Subscribe<NativeGameModeInitEvent>(OnGamemodeInit);
 
             this.eventAggregator.Subscribe<NativePlayerTextEvent>(this.OnPlayerChat);
-            this.eventAggregator.Subscribe<NativePlayerConnectEvent>(this.OnPlayerConnect);
+            this.eventAggregator.Subscribe<PlayerConnectEvent>(this.OnPlayerConnect);
             this.eventAggregator.Subscribe<NativePlayerRequestClassEvent>(this.OnPlayerRequestClass);
             this.eventAggregator.Subscribe<NativePlayerRequestSpawnEvent>(this.OnPlayerRequestSpawn);
             this.eventAggregator.Subscribe<NativeDialogResponseEvent>(OnPlayerRespondDialog);
@@ -75,9 +76,9 @@ namespace Micky5991.Samp.Net.Example
             // eventdata.Cancelled = true;
         }
 
-        private void OnPlayerConnect(NativePlayerConnectEvent eventdata)
+        private void OnPlayerConnect(PlayerConnectEvent eventdata)
         {
-            this.logger.LogInformation($"Player {eventdata.Playerid} connected");
+            this.logger.LogInformation($"Player {eventdata.Player.Name} connected");
         }
 
         private void OnPlayerChat(NativePlayerTextEvent textEvent)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
+using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 
@@ -30,6 +31,8 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
         /// <inheritdoc />
         public T FindOrCreateEntity(int id)
         {
+            Guard.Argument(id, nameof(id)).NotNegative();
+
             throw new System.NotImplementedException();
         }
 
@@ -37,8 +40,11 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
         /// Modifies the entity collection in this pool safely.
         /// </summary>
         /// <param name="modificator">Callback which will be called so you can modify it in a safe way.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="modificator"/> was null.</exception>
         protected void UpdateEntities(Func<IImmutableDictionary<int, T>, IImmutableDictionary<int, T>> modificator)
         {
+            Guard.Argument(modificator, nameof(modificator)).NotNull();
+
             lock (this.enityModificationLock)
             {
                 this.Entities = modificator(this.Entities);
@@ -49,6 +55,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
         /// Adds a specific entity to the current pool.
         /// </summary>
         /// <param name="entity">Entity to add.</param>
+        /// <exception cref="ArgumentException">The given entity was already added to the pool.</exception>
         protected void AddEntity(T entity)
         {
             this.UpdateEntities(collection => collection.Add(entity.Id, entity));
