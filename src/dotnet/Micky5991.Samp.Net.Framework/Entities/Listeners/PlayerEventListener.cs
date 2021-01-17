@@ -1,4 +1,3 @@
-using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Events.Players;
@@ -36,6 +35,21 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
         public void Attach()
         {
             this.eventAggregator.Subscribe<NativePlayerTextEvent>(this.OnPlayerChat);
+            this.eventAggregator.Subscribe<NativePlayerCommandTextEvent>(this.OnPlayerCommand);
+        }
+
+        private void OnPlayerCommand(NativePlayerCommandTextEvent eventdata)
+        {
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerCommandTextEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            var commandEvent = this.eventAggregator.Publish(new PlayerCommandEvent(player, eventdata.Cmdtext));
+
+            eventdata.Cancelled = commandEvent.Cancelled;
         }
 
         private void OnPlayerChat(NativePlayerTextEvent eventdata)
