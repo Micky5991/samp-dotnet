@@ -73,6 +73,7 @@ To develop your first SAMP.Net gamemode, you must fulfill these requirements:
 | [Micky5991.Samp.Net.Framework](https://www.nuget.org/packages/Micky5991.Samp.Net.Framework/)  | .NET Standard 2.0 / 2.1 library that provides types and tools for your first gamemode. You only need this package to start creating your first gamemode. |
 | [Micky5991.Samp.Net.Core](https://www.nuget.org/packages/Micky5991.Samp.Net.Core/)       | Provides core functionality to other parts of SAMP.Net.                                                                                        |
 | [Micky5991.Samp.Net.Generators](https://www.nuget.org/packages/Micky5991.Samp.Net.Generators/) | Generates APIs for natives, events and constants by reading sampgdk `.idl` files using C# source generators                                    |
+| [Micky5991.Samp.Net.Commands](https://www.nuget.org/packages/Micky5991.Samp.Net.Commands/) | Optional extension that adds command handling to your gamemode.                                   |
 
 
 
