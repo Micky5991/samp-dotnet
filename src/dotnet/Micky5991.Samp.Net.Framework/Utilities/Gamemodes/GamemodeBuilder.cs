@@ -10,7 +10,12 @@ using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Core.Natives.Vehicles;
 using Micky5991.Samp.Net.Core.Threading;
+using Micky5991.Samp.Net.Framework.Entities.Factories;
+using Micky5991.Samp.Net.Framework.Entities.Listeners;
+using Micky5991.Samp.Net.Framework.Entities.Pools;
 using Micky5991.Samp.Net.Framework.Interfaces;
+using Micky5991.Samp.Net.Framework.Interfaces.Factories;
+using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
@@ -33,6 +38,9 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.AddNativeEventHandling(serviceCollection);
             this.AddNativeEvents(serviceCollection);
             this.AddNatives(serviceCollection);
+            this.AddEntityFactories(serviceCollection);
+            this.AddEntityPools(serviceCollection);
+            this.AddEntityListeners(serviceCollection);
         }
 
         /// <summary>
@@ -112,6 +120,36 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
                              .AddTransient<IPlayersNatives, PlayersNatives>()
                              .AddTransient<IActorNatives, ActorNatives>()
                              .AddTransient<IObjectsNatives, ObjectsNatives>();
+        }
+
+        /// <summary>
+        /// Registers all included entity factories. Override to replace the default implementations with your custom
+        /// factories.
+        /// </summary>
+        /// <param name="serviceCollection">Service collection to add the factories to.</param>
+        protected virtual void AddEntityFactories(IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddTransient<IPlayerFactory, PlayerFactory>();
+        }
+
+        /// <summary>
+        /// Registers all included entity pools. Override to replace the default implementations with your custom
+        /// pools.
+        /// </summary>
+        /// <param name="serviceCollection">Service collection to add the pools to.</param>
+        protected virtual void AddEntityPools(IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddSingleton<IPlayerPool, PlayerPool>();
+        }
+
+        /// <summary>
+        /// Registers all available entity listeners. Override to replace the default implementations with your custom
+        /// listeners.
+        /// </summary>
+        /// <param name="serviceCollection">Service collection to add the listers to.</param>
+        protected virtual void AddEntityListeners(IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>();
         }
     }
 }
