@@ -74,11 +74,11 @@ jobs:
 
       - name: Build .NET app with version ${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }}
         if: needs.variables.outputs.istag == 'false'
-        run: dotnet build --no-restore --configuration Release -p:Version=${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }} -p:PackageVersion=${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }}
+        run: dotnet build /warnaserror --no-restore --configuration Release -p:Version=${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }} -p:PackageVersion=${{ needs.variables.outputs.version }}-prerelease-${{ needs.variables.outputs.ref }}-${{ needs.variables.outputs.shashort }}
 
       - name: Build .NET app with version ${{ needs.variables.outputs.ref }}
         if: needs.variables.outputs.istag == 'true'
-        run: dotnet build --no-restore --configuration Release -p:Version=${{ needs.variables.outputs.ref }} -p:PackageVersion=${{ needs.variables.outputs.ref }}
+        run: dotnet build /warnaserror --no-restore --configuration Release -p:Version=${{ needs.variables.outputs.ref }} -p:PackageVersion=${{ needs.variables.outputs.ref }}
 
       - name: Run .NET test
         run: dotnet test --no-restore -v normal
