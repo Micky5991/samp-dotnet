@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Reflection;
 using Micky5991.Samp.Net.Commands;
+using Micky5991.Samp.Net.Commands.Mapping;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
 using Micky5991.Samp.Net.NLogTarget;
@@ -17,6 +19,8 @@ namespace Micky5991.Samp.Net.Example
             {
                 SampLogTarget.Register();
 
+                Console.WriteLine($"Working directory: {Environment.CurrentDirectory}");
+
                 var serviceCollection = new ServiceCollection()
                     .AddLogging(builder =>
                     {
@@ -25,9 +29,13 @@ namespace Micky5991.Samp.Net.Example
                     })
                     .AddSingleton<ChatListener>();
 
+                var commandExtensionBuilder = new CommandExtensionBuilder()
+                    .AddProfilesInAssembly(Assembly.GetExecutingAssembly())
+                    .AddProfilesInAssembly<CommandExtensionBuilder>();
+
                 new GamemodeBuilder(serviceCollection)
                     .AddCoreServices()
-                    .AddExtensionBuilder(new CommandExtensionBuilder());
+                    .AddExtensionBuilder(commandExtensionBuilder);
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();
 
