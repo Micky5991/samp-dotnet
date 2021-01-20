@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
 {
     public class DefaultValuesCommandHandler : ICommandHandler
     {
-        [Command("test")]
+        [Command("test", "grouped")]
         public void Command(IPlayer player, string test, int provided = 123)
         {
             // Empty
