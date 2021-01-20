@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
-using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
 namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
 {
@@ -11,9 +10,8 @@ namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
         [CanBeNull] public const string CommandGroup = null;
 
         [Command(CommandName, CommandGroup)]
-        public void CreateVehicle(IPlayer player)
+        public void CreateVehicle()
         {
-
         }
 
     }

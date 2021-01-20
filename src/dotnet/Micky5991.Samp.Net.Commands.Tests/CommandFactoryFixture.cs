@@ -49,7 +49,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             commands.Should().HaveCount(1);
 
             var command = commands.First();
-            command.Should().BeOfType<Command>();
+            command.Should().BeOfType<HandlerCommand>();
 
             command.Name.Should().Be(SingleCommandHandler.CommandName);
             command.Group.Should().Be(SingleCommandHandler.CommandGroup);
@@ -63,7 +63,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             commands.Should().HaveCount(1);
 
             var command = commands.First();
-            command.Should().BeOfType<Command>();
+            command.Should().BeOfType<HandlerCommand>();
 
             command.Name.Should().Be("verb");
             command.Group.Should().Be("group");
@@ -77,16 +77,16 @@ namespace Micky5991.Samp.Net.Commands.Tests
             commands.Should().HaveCount(2);
 
             var command1 = commands.ElementAt(0);
-            command1.Should().BeOfType<Command>();
+            command1.Should().BeOfType<HandlerCommand>();
 
             command1.Name.Should().Be("command1");
             command1.Group.Should().Be("grouped");
             command1.Parameters.Should().NotBeNull().And.BeEmpty();
 
             var command2 = commands.ElementAt(1);
-            command2.Should().BeOfType<Command>();
+            command2.Should().BeOfType<HandlerCommand>();
 
-            command2.Name.Should().Be("verb");
+            command2.Name.Should().Be("command2");
             command2.Group.Should().BeNull();
             command2.Parameters.Should().NotBeNull().And.BeEmpty();
         }
@@ -99,16 +99,16 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var command = commands.ElementAt(0);
 
-            command.Should().BeOfType<Command>();
+            command.Should().BeOfType<HandlerCommand>();
 
-            command.Name.Should().Be("command1");
+            command.Name.Should().Be("veh");
             command.Group.Should().Be("grouped");
             command.Parameters.Should()
                    .HaveCount(3)
                    .And.ContainInOrder(
                                        new ParameterDefinition("player", typeof(IPlayer), false, null),
                                        new ParameterDefinition("number", typeof(string), false, null),
-                                       new ParameterDefinition("type", typeof(int), false, null)
+                                       new ParameterDefinition("type", typeof(int), false, 123)
                                       );
         }
 
@@ -120,9 +120,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var command = commands.ElementAt(0);
 
-            command.Should().BeOfType<Command>();
+            command.Should().BeOfType<HandlerCommand>();
 
-            command.Name.Should().Be("command1");
+            command.Name.Should().Be("test");
             command.Group.Should().Be("grouped");
             command.Parameters.Should()
                    .HaveCount(3)
