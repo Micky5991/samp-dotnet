@@ -14,13 +14,13 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <param name="name">Name of the parameter.</param>
         /// <param name="type">Type of the parameter.</param>
         /// <param name="hasDefault">true if this parameter has a default value.</param>
-        /// <param name="defaultValue">Default value of the parameter.</param>
+        /// <param name="defaultValue">Default value of the parameter. Will be null if <paramref name="hasDefault"/> is false.</param>
         public ParameterDefinition(string name, Type type, bool hasDefault, object? defaultValue)
         {
             this.Name = name;
             this.Type = type;
             this.HasDefault = hasDefault;
-            this.DefaultValue = defaultValue;
+            this.DefaultValue = hasDefault ? defaultValue : null;
         }
 
         /// <summary>
