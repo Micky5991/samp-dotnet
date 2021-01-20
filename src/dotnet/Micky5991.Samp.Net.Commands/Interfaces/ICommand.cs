@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;

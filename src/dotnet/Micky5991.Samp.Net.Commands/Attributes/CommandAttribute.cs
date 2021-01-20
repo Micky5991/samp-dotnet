@@ -1,4 +1,5 @@
 using System;
+using Dawn;
 using JetBrains.Annotations;
 
 namespace Micky5991.Samp.Net.Commands.Attributes
@@ -7,7 +8,7 @@ namespace Micky5991.Samp.Net.Commands.Attributes
     /// Attribute which defines how the command is called and how its used.
     /// </summary>
     [MeansImplicitUse]
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method)]
     public class CommandAttribute : Attribute
     {
         /// <summary>
@@ -17,6 +18,9 @@ namespace Micky5991.Samp.Net.Commands.Attributes
         /// <param name="group">Optional group this command is assigned to.</param>
         public CommandAttribute(string name, string? group = null)
         {
+            Guard.Argument(name, nameof(name)).NotNull().NotWhiteSpace();
+            Guard.Argument(group, nameof(group)).NotWhiteSpace();
+
             this.Name = name;
             this.Group = group;
         }
