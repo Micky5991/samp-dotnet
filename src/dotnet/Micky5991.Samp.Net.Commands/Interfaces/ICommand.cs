@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
 namespace Micky5991.Samp.Net.Commands.Interfaces
@@ -20,9 +21,9 @@ namespace Micky5991.Samp.Net.Commands.Interfaces
         public string Name { get; }
 
         /// <summary>
-        /// Gets the list of parameters and default values of this method.
+        /// Gets the list of <see cref="ParameterDefinition"/> of this command.
         /// </summary>
-        public IReadOnlyDictionary<Type, object?> Parameters { get; }
+        public IReadOnlyList<ParameterDefinition> Parameters { get; }
 
         /// <summary>
         /// Executes the command with the specific sender and arguments.
