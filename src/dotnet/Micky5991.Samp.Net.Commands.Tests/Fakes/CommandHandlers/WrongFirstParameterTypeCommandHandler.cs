@@ -1,13 +1,12 @@
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
-using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
 namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
 {
-    public class GroupedCommandHandler : ICommandHandler
+    public class WrongFirstParameterTypeCommandHandler : ICommandHandler
     {
-        [Command("verb", "group")]
-        public void HandlerFirst(IPlayer player)
+        [Command("test")]
+        public void Test(int amount)
         {
             // Empty
         }

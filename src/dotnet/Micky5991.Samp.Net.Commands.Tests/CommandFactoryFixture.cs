@@ -2,10 +2,13 @@ using System;
 using System.Linq;
 using FluentAssertions;
 using Micky5991.Samp.Net.Commands.Elements;
+using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Micky5991.Samp.Net.Commands.Tests
 {
@@ -17,7 +20,15 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestInitialize]
         public void Setup()
         {
-            this.commandFactory = new CommandFactory();
+            this.commandFactory = new CommandFactory(new NullLogger<HandlerCommand>());
+        }
+
+        [TestMethod]
+        public void InvalidFactoryConstructorArgumentThrowsException()
+        {
+            Action act = () => new CommandFactory(null!);
+
+            act.Should().Throw<ArgumentNullException>();
         }
 
         [TestMethod]
@@ -53,7 +64,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             command.Name.Should().Be(SingleCommandHandler.CommandName);
             command.Group.Should().Be(SingleCommandHandler.CommandGroup);
-            command.Parameters.Should().NotBeNull().And.BeEmpty();
+            command.Parameters.Should()
+                   .NotBeNull()
+                   .And.ContainInOrder(new ParameterDefinition("player", typeof(IPlayer), false, null));
         }
 
         [TestMethod]
@@ -67,7 +80,25 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             command.Name.Should().Be("verb");
             command.Group.Should().Be("group");
-            command.Parameters.Should().NotBeNull().And.BeEmpty();
+            command.Parameters.Should()
+                   .NotBeNull()
+                   .And.ContainInOrder(new ParameterDefinition("player", typeof(IPlayer), false, null));
+        }
+
+        [TestMethod]
+        public void MissingArgumentsInCommandThrowsException()
+        {
+            Action act = () => this.commandFactory.BuildFromCommandHandler(new MissingPlayerParameterCommandHandler());
+
+            act.Should().Throw<ArgumentException>();
+        }
+
+        [TestMethod]
+        public void MissingWrongFirstParameterTypeInCommandThrowsException()
+        {
+            Action act = () => this.commandFactory.BuildFromCommandHandler(new WrongFirstParameterTypeCommandHandler());
+
+            act.Should().Throw<ArgumentException>().WithMessage($"*player*");
         }
 
         [TestMethod]
@@ -81,14 +112,16 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             command1.Name.Should().Be("command1");
             command1.Group.Should().Be("grouped");
-            command1.Parameters.Should().NotBeNull().And.BeEmpty();
+            command1.Parameters.Should().NotBeNull()
+                    .And.ContainInOrder(new ParameterDefinition("player", typeof(IPlayer), false, null));;
 
             var command2 = commands.ElementAt(1);
             command2.Should().BeOfType<HandlerCommand>();
 
             command2.Name.Should().Be("command2");
             command2.Group.Should().BeNull();
-            command2.Parameters.Should().NotBeNull().And.BeEmpty();
+            command2.Parameters.Should().NotBeNull()
+                    .And.ContainInOrder(new ParameterDefinition("player", typeof(IPlayer), false, null));;
         }
 
         [TestMethod]
@@ -131,6 +164,62 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                        new ParameterDefinition("test", typeof(string), false, null),
                                        new ParameterDefinition("provided", typeof(int), true, 123)
                                       );
+        }
+
+        [TestMethod]
+        public void CommandHandlerWillBeExecutedCorrectly()
+        {
+            var player = new Mock<IPlayer>();
+            var handler = new ExecutionTesterCommandHandler();
+
+            var commands = this.commandFactory.BuildFromCommandHandler(handler);
+            var command = commands.First();
+
+            var result = command.TryExecute(player.Object, new object[]
+            {
+                "hello",
+                123,
+                true
+            }, out var errorMessage);
+
+            result.Should().Be(CommandExecutionStatus.Ok);
+            handler.Arguments.Should().ContainInOrder(player.Object, "hello", 123, true);
+        }
+
+        [TestMethod]
+        public void MissingValuesWillBeFilledWithDefaultValues()
+        {
+            var player = new Mock<IPlayer>();
+            var handler = new ExecutionTesterCommandHandler();
+
+            var commands = this.commandFactory.BuildFromCommandHandler(handler);
+            var command = commands.First();
+
+            var result = command.TryExecute(player.Object, new object[]
+            {
+                "hello",
+                123
+            }, out var errorMessage);
+
+            result.Should().Be(CommandExecutionStatus.Ok);
+            handler.Arguments.Should().ContainInOrder(player.Object, "hello", 123, false);
+        }
+
+        [TestMethod]
+        public void DuplicatedCommandsInSameGroupWillBeCaught()
+        {
+            Action act = () => this.commandFactory.BuildFromCommandHandler(new DuplicatedCommandNameCommandHandler());
+
+            act.Should().Throw<DuplicateCommandException>()
+               .WithMessage($"*{typeof(DuplicatedCommandNameCommandHandler)}*");
+        }
+
+        [TestMethod]
+        public void DuplicatedNamesInSameGroupWillBeAccepted()
+        {
+            var commands = this.commandFactory.BuildFromCommandHandler(new DuplicatedCommandNameButDifferentGroupNameCommandHandler());
+
+            commands.Should().NotBeNullOrEmpty().And.HaveCount(2);
         }
     }
 }
