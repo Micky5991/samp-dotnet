@@ -7,34 +7,34 @@ namespace Micky5991.Samp.Net.Core.Interop
 {
     public static class Native
     {
-        private const CallingConvention _callingConvention = CallingConvention.StdCall;
+        private const CallingConvention CallingConvention = System.Runtime.InteropServices.CallingConvention.StdCall;
 
-        private const string _plugin = "samp-dotnet";
+        private const string Plugin = "samp-dotnet";
 
         public delegate EventInvokeResult EventInvokerDelegate([MarshalAs(UnmanagedType.LPStr)]string eventName, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] CallbackArgument[]? argments, int argumentAmount);
         public delegate void LoggerDelegate([MarshalAs(UnmanagedType.LPStr)]string message);
 
         public delegate void PluginTickDelegate();
 
-        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        [DllImport(Plugin, CallingConvention = CallingConvention)]
         public static extern int InvokeNative([MarshalAs(UnmanagedType.LPStr)] string nativeName,
                                               [MarshalAs(UnmanagedType.LPStr)] string format,
                                               IntPtr arguments);
 
-        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        [DllImport(Plugin, CallingConvention = CallingConvention)]
         public static extern int RegisterEvent([MarshalAs(UnmanagedType.LPStr)] string eventName,
                                                [MarshalAs(UnmanagedType.LPStr)] string format);
 
-        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        [DllImport(Plugin, CallingConvention = CallingConvention)]
         public static extern int AttachEventHandler([MarshalAs(UnmanagedType.FunctionPtr)] EventInvokerDelegate callback);
 
-        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        [DllImport(Plugin, CallingConvention = CallingConvention)]
         public static extern int AttachTickHandler([MarshalAs(UnmanagedType.FunctionPtr)] PluginTickDelegate callback);
 
-        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        [DllImport(Plugin, CallingConvention = CallingConvention)]
         public static extern void AttachLoggerHandler([MarshalAs(UnmanagedType.FunctionPtr)] LoggerDelegate logger);
 
-        [DllImport(_plugin, CallingConvention = _callingConvention)]
+        [DllImport(Plugin, CallingConvention = CallingConvention)]
         public static extern void LogMessage([MarshalAs(UnmanagedType.LPStr)] string message);
 
     }
