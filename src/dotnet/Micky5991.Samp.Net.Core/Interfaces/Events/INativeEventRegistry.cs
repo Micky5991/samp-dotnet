@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Micky5991.Samp.Net.Core.Interop.Data;
 using Micky5991.Samp.Net.Core.Interop.Events;
-using Micky5991.Samp.Net.Core.NativeEvents;
 
 namespace Micky5991.Samp.Net.Core.Interfaces.Events
 {

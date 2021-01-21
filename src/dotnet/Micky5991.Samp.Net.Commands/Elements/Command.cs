@@ -36,11 +36,6 @@ namespace Micky5991.Samp.Net.Commands.Elements
             this.MinimalArgumentAmount = this.Parameters.Count(x => x.HasDefault == false);
         }
 
-        /// <summary>
-        /// Gets the minimal required argument amount for this command.
-        /// </summary>
-        protected int MinimalArgumentAmount { get; }
-
         /// <inheritdoc />
         public string? Group { get; }
 
@@ -49,6 +44,11 @@ namespace Micky5991.Samp.Net.Commands.Elements
 
         /// <inheritdoc />
         public IReadOnlyList<ParameterDefinition> Parameters { get; }
+
+        /// <summary>
+        /// Gets the minimal required argument amount for this command.
+        /// </summary>
+        protected int MinimalArgumentAmount { get; }
 
         /// <inheritdoc />
         public abstract CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage);

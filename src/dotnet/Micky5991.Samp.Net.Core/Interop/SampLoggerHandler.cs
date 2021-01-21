@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.InteropServices;
 using Micky5991.Samp.Net.Core.Interfaces.Logging;
 using Microsoft.Extensions.Logging;

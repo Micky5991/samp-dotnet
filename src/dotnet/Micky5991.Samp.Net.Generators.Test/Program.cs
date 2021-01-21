@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace Micky5991.Samp.Net.Generators.Test
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var builder = new SampNativeBuilder();
 
