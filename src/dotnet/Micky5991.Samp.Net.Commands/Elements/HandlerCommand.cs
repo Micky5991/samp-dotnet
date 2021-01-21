@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Dawn;
 using JetBrains.Annotations;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Commands.Elements
 {
@@ -12,34 +15,80 @@ namespace Micky5991.Samp.Net.Commands.Elements
     /// </summary>
     public class HandlerCommand : Command
     {
+        private readonly ILogger<HandlerCommand> logger;
+
         private readonly ICommandHandler commandHandler;
 
-        private readonly MethodInfo methodInfo;
+        private readonly Func<object[], object> executor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HandlerCommand"/> class.
         /// </summary>
+        /// <param name="logger">Logger for this command instance.</param>
         /// <param name="name">Name of the command.</param>
         /// <param name="group">Optional group of this command.</param>
         /// <param name="parameters">Parameter information about this command.</param>
         /// <param name="commandHandler">Target instance of this command.</param>
-        /// <param name="methodInfo">Reflection method information used to invoke the method.</param>
+        /// <param name="executor">Executor action to trigger the command.</param>
         public HandlerCommand(
+            ILogger<HandlerCommand> logger,
             [NotNull] string name,
             [CanBeNull] string? @group,
             [NotNull] IReadOnlyList<ParameterDefinition> parameters,
             ICommandHandler commandHandler,
-            MethodInfo methodInfo)
+            Func<object[], object> executor)
             : base(name, @group, parameters)
         {
+            Guard.Argument(logger, nameof(logger)).NotNull();
+            Guard.Argument(executor, nameof(executor)).NotNull();
+            Guard.Argument(commandHandler, nameof(commandHandler)).NotNull();
+
+            this.logger = logger;
             this.commandHandler = commandHandler;
-            this.methodInfo = methodInfo;
+            this.executor = executor;
         }
 
         /// <inheritdoc />
-        public override bool TryExecute(IPlayer player, IList<object> arguments, out string? errorMessage)
+        public override CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage)
         {
-            throw new NotImplementedException();
+            Guard.Argument(player, nameof(player)).NotNull();
+            Guard.Argument(arguments, nameof(arguments)).NotNull();
+
+            errorMessage = string.Empty;
+            if (arguments.Length < this.MinimalArgumentAmount - 1)
+            {
+                return CommandExecutionStatus.MissingArgument;
+            }
+
+            if (arguments.Length > this.Parameters.Count)
+            {
+                return CommandExecutionStatus.TooManyArguments;
+            }
+
+            var extendedArguments = new object[this.Parameters.Count];
+            extendedArguments[0] = player;
+
+            Array.Copy(arguments, 0, extendedArguments, 1, arguments.Length);
+
+            this.FillMissingArguments(extendedArguments, arguments.Length + 1);
+
+            if (this.ValidateArgumentTypes(extendedArguments) == false)
+            {
+                return CommandExecutionStatus.ArgumentTypeMismatch;
+            }
+
+            try
+            {
+                this.executor(extendedArguments);
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+
+                return CommandExecutionStatus.Exception;
+            }
+
+            return CommandExecutionStatus.Ok;
         }
     }
 }

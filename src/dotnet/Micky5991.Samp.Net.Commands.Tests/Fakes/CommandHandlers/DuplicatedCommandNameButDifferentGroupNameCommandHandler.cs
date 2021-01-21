@@ -4,16 +4,16 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
 namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
 {
-    public class MultipleCommandsHandler : ICommandHandler
+    public class DuplicatedCommandNameButDifferentGroupNameCommandHandler : ICommandHandler
     {
-        [Command("command1", "grouped")]
-        public void Command1(IPlayer player)
+        [Command("test", "groupA")]
+        public void Test(IPlayer player)
         {
             // Empty
         }
 
-        [Command("command2")]
-        public void Command2(IPlayer player)
+        [Command("test", "groupB")]
+        public void Test2(IPlayer player)
         {
             // Empty
         }
