@@ -44,10 +44,10 @@ namespace Micky5991.Samp.Net.Commands.Services
         {
             eventdata.Cancelled = true;
 
-            void ApplyContext(IMappingOperationOptions options)
-            {
-                options.Items[CommandConstants.CommandExecutorKey] = eventdata.Player;
-            }
+            // void ApplyContext(IMappingOperationOptions options)
+            // {
+            //     options.Items[CommandConstants.CommandExecutorKey] = eventdata.Player;
+            // }
 
             // var vehicle = this.mapper.Map(eventdata.CommandText, typeof(string), typeof(Vehicle), ApplyContext);
 
