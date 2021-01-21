@@ -4,13 +4,28 @@ using System.Reflection;
 using Dawn;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
+using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Commands.Services
 {
     /// <inheritdoc />
     public class CommandFactory : ICommandFactory
     {
+        private readonly ILogger<HandlerCommand> handlerLogger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandFactory"/> class.
+        /// </summary>
+        /// <param name="handlerLogger">Logger needed for <see cref="HandlerCommand"/>.</param>
+        public CommandFactory(ILogger<HandlerCommand> handlerLogger)
+        {
+            Guard.Argument(handlerLogger, nameof(handlerLogger)).NotNull();
+
+            this.handlerLogger = handlerLogger;
+        }
+
         /// <inheritdoc />
         public ICollection<ICommand> BuildFromCommandHandler(ICommandHandler commandHandler)
         {
@@ -32,10 +47,15 @@ namespace Micky5991.Samp.Net.Commands.Services
                 }
             }
 
+            if (commands.GroupBy(x => $"{x.Group ?? string.Empty}:{x.Name}").Any(x => x.Count() > 1))
+            {
+                throw new DuplicateCommandException(commandHandler.GetType());
+            }
+
             return commands;
         }
 
-        private ICommand BuildCommandFromHandler(ICommandHandler handler, CommandAttribute attribute, MethodInfo methodInfo)
+        private ICommand BuildCommandFromHandler(ICommandHandler handler, CommandAttribute attribute, MethodBase methodInfo)
         {
             var parameters = methodInfo
                              .GetParameters()
@@ -46,7 +66,7 @@ namespace Micky5991.Samp.Net.Commands.Services
                                                                   x.DefaultValue))
                              .ToList();
 
-            return new HandlerCommand(attribute.Name, attribute.Group, parameters, handler, methodInfo);
+            return new HandlerCommand(this.handlerLogger, attribute.Name, attribute.Group, parameters, handler, x => methodInfo.Invoke(handler, x));
         }
     }
 }
