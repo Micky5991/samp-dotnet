@@ -248,10 +248,12 @@ namespace Micky5991.Samp.Net.Commands.Tests
                 .Returns<ICommandHandler>(x =>
                                               new List<ICommand>
                                               {
-                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), "test", Array.Empty<string>(), groupName, new ParameterDefinition[]
+                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), groupName, "test", Array.Empty<string>(), new ParameterDefinition[]
                                                   {
                                                       ParameterDefinition.Player(),
-                                                  }, x, _ => null!),
+                                                  },
+                                                                     x,
+                                                                     _ => null!),
                                               });
 
             this.RecreateCommandService();

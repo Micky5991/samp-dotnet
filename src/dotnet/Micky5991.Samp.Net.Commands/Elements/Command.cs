@@ -14,13 +14,17 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <summary>
         /// Initializes a new instance of the <see cref="Command"/> class.
         /// </summary>
+        /// <param name="group">Optional group name of this command.</param>
         /// <param name="name">Required name of this command.</param>
         /// <param name="aliasNames">Available alias names of this command.</param>
-        /// <param name="group">Optional group name of this command.</param>
         /// <param name="parameters">List of parameters of this command.</param>
         /// <exception cref="ArgumentNullException"><paramref name="name"/>, <paramref name="aliasNames"/> or <paramref name="parameters"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="name"/> or <paramref name="group"/> is empty or whitespace, <paramref name="parameters"/> or <paramref name="aliasNames"/>contains null.</exception>
-        protected Command(string name, string[] aliasNames, string? group, IReadOnlyList<ParameterDefinition> parameters)
+        protected Command(
+            string? @group,
+            string name,
+            string[] aliasNames,
+            IReadOnlyList<ParameterDefinition> parameters)
         {
             Guard.Argument(name, nameof(name)).NotNull().NotWhiteSpace();
             Guard.Argument(aliasNames, nameof(aliasNames)).NotNull().DoesNotContainNull();

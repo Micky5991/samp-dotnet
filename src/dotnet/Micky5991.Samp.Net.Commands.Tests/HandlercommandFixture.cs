@@ -33,26 +33,30 @@ namespace Micky5991.Samp.Net.Commands.Tests
             this.playerMock = new Mock<IPlayer>();
             this.fakeExecutor = _ => { };
 
-            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), "command", Array.Empty<string>(), "grouped", new []
+            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), "grouped", "command", Array.Empty<string>(), new []
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null),
                 new ParameterDefinition("allow", typeof(bool), false, null),
                 new ParameterDefinition("message", typeof(string), true, "cool"),
-            }, this.commandHandlerMock.Object, x =>
-            {
-                this.fakeExecutor(x);
+            },
+                                                     this.commandHandlerMock.Object,
+                                                     x =>
+                                                     {
+                                                         this.fakeExecutor(x);
 
-                return this.passedArguments = x;
-            });
+                                                         return this.passedArguments = x;
+                                                     });
         }
 
         [TestMethod]
         public void PassingInvalidConstructorLoggerArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(null!, "a", Array.Empty<string>(), null, new[]
+            Action act = () => new HandlerCommand(null!, null, "a", Array.Empty<string>(), new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
-            }, this.commandHandlerMock.Object, _ => null!);
+            },
+                                                  this.commandHandlerMock.Object,
+                                                  _ => null!);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*logger*");
         }
@@ -60,10 +64,12 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingInvalidConstructorNameArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null!, Array.Empty<string>(), null, new[]
+            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null, null!, Array.Empty<string>(), new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
-            }, this.commandHandlerMock.Object, _ => null!);
+            },
+                                                  this.commandHandlerMock.Object,
+                                                  _ => null!);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*name*");
         }
@@ -73,9 +79,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
+                                                  null,
                                                   "ok",
                                                   Array.Empty<string>(),
-                                                  null,
                                                   null!,
                                                   this.commandHandlerMock.Object,
                                                   _ => null!);
@@ -88,9 +94,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
+                                                  null,
                                                   "ok",
                                                   Array.Empty<string>(),
-                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("player", typeof(IPlayer), false, null)
@@ -106,9 +112,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
+                                                  null,
                                                   "ok",
                                                   Array.Empty<string>(),
-                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("player", typeof(IPlayer), false, null)
@@ -124,9 +130,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
+                                                  null,
                                                   "ok",
                                                   Array.Empty<string>(),
-                                                  null,
                                                   Array.Empty<ParameterDefinition>(),
                                                   this.commandHandlerMock.Object,
                                                   null!);
@@ -139,9 +145,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
+                                                  null,
                                                   "ok",
                                                   Array.Empty<string>(),
-                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("amount", typeof(int), false, null)
