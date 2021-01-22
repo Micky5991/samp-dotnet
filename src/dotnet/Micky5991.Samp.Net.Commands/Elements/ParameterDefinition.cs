@@ -1,5 +1,7 @@
 using System;
+using Dawn;
 using Micky5991.Samp.Net.Commands.Interfaces;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
 namespace Micky5991.Samp.Net.Commands.Elements
 {
@@ -15,8 +17,13 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <param name="type">Type of the parameter.</param>
         /// <param name="hasDefault">true if this parameter has a default value.</param>
         /// <param name="defaultValue">Default value of the parameter. Will be null if <paramref name="hasDefault"/> is false.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="type"/> is null or empty.</exception>
+        /// <exception cref="ArgumentException"><paramref name="name"/> is null or whitespace.</exception>
         public ParameterDefinition(string name, Type type, bool hasDefault, object? defaultValue)
         {
+            Guard.Argument(name, nameof(name)).NotEmpty().NotWhiteSpace();
+            Guard.Argument(type, nameof(type)).NotNull();
+
             this.Name = name;
             this.Type = type;
             this.HasDefault = hasDefault;
@@ -42,6 +49,15 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// Gets the default value of the parameter.
         /// </summary>
         public object? DefaultValue { get; }
+
+        /// <summary>
+        /// Returns a default <see cref="ParameterDefinition"/> with a parameter named "player" and of type <see cref="IPlayer"/>.
+        /// </summary>
+        /// <returns>Created <see cref="ParameterDefinition"/> instance.</returns>
+        public static ParameterDefinition Player()
+        {
+            return new ("player", typeof(IPlayer), false, null);
+        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
