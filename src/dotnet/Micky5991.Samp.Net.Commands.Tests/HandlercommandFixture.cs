@@ -33,7 +33,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             this.playerMock = new Mock<IPlayer>();
             this.fakeExecutor = _ => { };
 
-            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), "command", "grouped", new []
+            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), "command", Array.Empty<string>(), "grouped", new []
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null),
                 new ParameterDefinition("allow", typeof(bool), false, null),
@@ -49,7 +49,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingInvalidConstructorLoggerArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(null!, "a", null, new[]
+            Action act = () => new HandlerCommand(null!, "a", Array.Empty<string>(), null, new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             }, this.commandHandlerMock.Object, _ => null!);
@@ -60,7 +60,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingInvalidConstructorNameArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null!, null, new[]
+            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null!, Array.Empty<string>(), null, new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             }, this.commandHandlerMock.Object, _ => null!);
@@ -74,6 +74,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
                                                   "ok",
+                                                  Array.Empty<string>(),
                                                   null,
                                                   null!,
                                                   this.commandHandlerMock.Object,
@@ -88,6 +89,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
                                                   "ok",
+                                                  Array.Empty<string>(),
                                                   null,
                                                   new[]
                                                   {
@@ -105,6 +107,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
                                                   "ok",
+                                                  Array.Empty<string>(),
                                                   null,
                                                   new[]
                                                   {
@@ -122,6 +125,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
                                                   "ok",
+                                                  Array.Empty<string>(),
                                                   null,
                                                   Array.Empty<ParameterDefinition>(),
                                                   this.commandHandlerMock.Object,
@@ -136,6 +140,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
                                                   "ok",
+                                                  Array.Empty<string>(),
                                                   null,
                                                   new[]
                                                   {

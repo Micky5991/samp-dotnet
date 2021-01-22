@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Dawn;
 using JetBrains.Annotations;
 using Micky5991.Samp.Net.Commands.Interfaces;
@@ -26,6 +24,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// </summary>
         /// <param name="logger">Logger for this command instance.</param>
         /// <param name="name">Name of the command.</param>
+        /// <param name="aliasNames">Alias names which are also available.</param>
         /// <param name="group">Optional group of this command.</param>
         /// <param name="parameters">Parameter information about this command.</param>
         /// <param name="commandHandler">Target instance of this command.</param>
@@ -33,11 +32,12 @@ namespace Micky5991.Samp.Net.Commands.Elements
         public HandlerCommand(
             ILogger<HandlerCommand> logger,
             [NotNull] string name,
+            [NotNull] string[] aliasNames,
             [CanBeNull] string? @group,
             [NotNull] IReadOnlyList<ParameterDefinition> parameters,
             ICommandHandler commandHandler,
             Func<object[], object> executor)
-            : base(name, @group, parameters)
+            : base(name, aliasNames, @group, parameters)
         {
             Guard.Argument(logger, nameof(logger)).NotNull();
             Guard.Argument(executor, nameof(executor)).NotNull();
