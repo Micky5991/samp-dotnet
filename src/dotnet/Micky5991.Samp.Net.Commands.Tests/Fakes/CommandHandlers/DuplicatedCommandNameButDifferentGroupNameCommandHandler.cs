@@ -6,13 +6,13 @@ namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
 {
     public class DuplicatedCommandNameButDifferentGroupNameCommandHandler : ICommandHandler
     {
-        [Command("test", "groupA")]
+        [Command("groupA", "test")]
         public void Test(IPlayer player)
         {
             // Empty
         }
 
-        [Command("test", "groupB")]
+        [Command("groupB", "test")]
         public void Test2(IPlayer player)
         {
             // Empty

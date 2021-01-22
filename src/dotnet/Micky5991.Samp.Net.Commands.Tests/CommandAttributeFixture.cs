@@ -45,7 +45,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CreatingCorrectNameAndGroupAttributeSetsValuesCorrectly()
         {
-            var attribute = new CommandAttribute("create", "veh");
+            var attribute = new CommandAttribute("veh", "create");
 
             attribute.Name.Should()
                      .NotBeNull()
@@ -60,7 +60,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CreatingCorrectNameGroupAndHelpAttributeSetsValuesCorrectly()
         {
-            var attribute = new CommandAttribute("create", "veh")
+            var attribute = new CommandAttribute("veh", "create")
             {
                 Help = "Help me!"
             };
@@ -77,7 +77,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void ChangingHelpTextChangesItInAttribute()
         {
-            var attribute = new CommandAttribute("create", "veh")
+            var attribute = new CommandAttribute("veh", "create")
             {
                 Help = "Help me!"
             };

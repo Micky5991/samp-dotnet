@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
 {
     public class DuplicatedGroupedCommandHandler : ICommandHandler
     {
-        [Command("verb", "group")]
+        [Command("group", "verb")]
         public void HandlerFirst(IPlayer player)
         {
             // Empty
