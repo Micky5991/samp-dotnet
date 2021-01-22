@@ -16,7 +16,7 @@ namespace Micky5991.Samp.Net.Example.Commands
             this.vehiclePool = vehiclePool;
         }
 
-        [Command("spawn", "veh")]
+        [Command("veh", "spawn")]
         [CommandAlias("s")]
         public void Test(IPlayer player, Vehicle model)
         {

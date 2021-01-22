@@ -14,15 +14,24 @@ namespace Micky5991.Samp.Net.Commands.Attributes
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandAttribute"/> class.
         /// </summary>
-        /// <param name="name">Name of the command.</param>
         /// <param name="group">Optional group this command is assigned to.</param>
-        public CommandAttribute(string name, string? group = null)
+        /// <param name="name">Name of the command.</param>
+        public CommandAttribute(string? group, string name)
         {
             Guard.Argument(name, nameof(name)).NotNull().NotWhiteSpace();
             Guard.Argument(group, nameof(group)).NotWhiteSpace();
 
             this.Name = name;
             this.Group = group;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandAttribute"/> class.
+        /// </summary>
+        /// <param name="name">Name of the command.</param>
+        public CommandAttribute(string name)
+            : this(null!, name)
+        {
         }
 
         /// <summary>
