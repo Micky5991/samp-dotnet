@@ -23,21 +23,21 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// Initializes a new instance of the <see cref="HandlerCommand"/> class.
         /// </summary>
         /// <param name="logger">Logger for this command instance.</param>
+        /// <param name="group">Optional group of this command.</param>
         /// <param name="name">Name of the command.</param>
         /// <param name="aliasNames">Alias names which are also available.</param>
-        /// <param name="group">Optional group of this command.</param>
         /// <param name="parameters">Parameter information about this command.</param>
         /// <param name="commandHandler">Target instance of this command.</param>
         /// <param name="executor">Executor action to trigger the command.</param>
         public HandlerCommand(
             ILogger<HandlerCommand> logger,
+            [CanBeNull] string? @group,
             [NotNull] string name,
             [NotNull] string[] aliasNames,
-            [CanBeNull] string? @group,
             [NotNull] IReadOnlyList<ParameterDefinition> parameters,
             ICommandHandler commandHandler,
             Func<object[], object> executor)
-            : base(name, aliasNames, @group, parameters)
+            : base(@group, name, aliasNames, parameters)
         {
             Guard.Argument(logger, nameof(logger)).NotNull();
             Guard.Argument(executor, nameof(executor)).NotNull();

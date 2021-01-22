@@ -69,7 +69,7 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             var aliasNames = aliasAttributes.Select(x => x.Name).ToArray();
 
-            return new HandlerCommand(this.handlerLogger, attribute.Name, aliasNames, attribute.Group, parameters, handler, x => methodInfo.Invoke(handler, x));
+            return new HandlerCommand(this.handlerLogger, attribute.Group, attribute.Name, aliasNames, parameters, handler, x => methodInfo.Invoke(handler, x));
         }
     }
 }
