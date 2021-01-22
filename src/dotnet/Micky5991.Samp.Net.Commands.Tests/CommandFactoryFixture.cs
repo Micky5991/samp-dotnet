@@ -9,6 +9,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using EmptyCommandHandler = Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers.EmptyCommandHandler;
 
 namespace Micky5991.Samp.Net.Commands.Tests
 {

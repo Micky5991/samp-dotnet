@@ -3,6 +3,7 @@ using System.Numerics;
 using Dawn;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 
@@ -13,6 +14,8 @@ namespace Micky5991.Samp.Net.Framework.Entities
     {
         private readonly IPlayerPool.RemoveEntityDelegate entityRemoval;
 
+        private readonly ISampNatives sampNatives;
+
         private readonly IPlayersNatives playersNatives;
 
         /// <summary>
@@ -20,11 +23,13 @@ namespace Micky5991.Samp.Net.Framework.Entities
         /// </summary>
         /// <param name="id">The id of this player.</param>
         /// <param name="entityRemoval">Pool removal delgate.</param>
+        /// <param name="sampNatives">General samp natives needed for this entity.</param>
         /// <param name="playersNatives">Natives needed for this entity.</param>
-        public Player(int id, IPlayerPool.RemoveEntityDelegate entityRemoval, IPlayersNatives playersNatives)
+        public Player(int id, IPlayerPool.RemoveEntityDelegate entityRemoval, ISampNatives sampNatives, IPlayersNatives playersNatives)
             : base(id)
         {
             this.entityRemoval = entityRemoval;
+            this.sampNatives = sampNatives;
             this.playersNatives = playersNatives;
         }
 
@@ -190,9 +195,19 @@ namespace Micky5991.Samp.Net.Framework.Entities
         {
             Guard.Argument(vehicle, nameof(vehicle)).NotNull();
             Guard.Argument(seat, nameof(seat)).NotNegative();
-            Guard.Disposal(vehicle.Disposed);
+            Guard.Disposal(this.Disposed);
+            Guard.Disposal(vehicle.Disposed, nameof(vehicle));
 
             return this.playersNatives.PutPlayerInVehicle(this.Id, vehicle.Id, seat);
+        }
+
+        /// <inheritdoc />
+        public void SendMessage(Color color, string message)
+        {
+            Guard.Argument(message).NotNull();
+            Guard.Disposal(this.Disposed);
+
+            this.sampNatives.SendClientMessage(this.Id, color.ToRgba(), message);
         }
 
         /// <inheritdoc />

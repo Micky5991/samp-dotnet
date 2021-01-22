@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Dawn;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
@@ -21,6 +22,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
             Guard.Argument(name, nameof(name)).NotNull().NotWhiteSpace();
             Guard.Argument(group, nameof(group)).NotWhiteSpace();
             Guard.Argument(parameters, nameof(parameters)).NotEmpty().NotNull().DoesNotContainNull();
+            Guard.Argument(parameters.Select(x => x.Name), nameof(parameters)).DoesNotContainDuplicate((_, _) => "All parameter names need to be unique.");
 
             if (parameters.Count >= 1 && parameters[0].Type != typeof(IPlayer))
             {
@@ -29,11 +31,25 @@ namespace Micky5991.Samp.Net.Commands.Elements
                                             nameof(parameters));
             }
 
+            var lastDefault = false;
+            foreach (var definition in parameters)
+            {
+                if (lastDefault && definition.HasDefault == false)
+                {
+                    throw new ArgumentException(
+                                                $"There cannot be a parameter with no default value after a parameter with default value.",
+                                                nameof(parameters));
+                }
+
+                lastDefault = definition.HasDefault;
+            }
+
             this.Name = name;
             this.Group = group;
             this.Parameters = parameters;
 
             this.MinimalArgumentAmount = this.Parameters.Count(x => x.HasDefault == false);
+            this.HelpSignature = this.BuildHelpSignature();
         }
 
         /// <inheritdoc />
@@ -44,6 +60,9 @@ namespace Micky5991.Samp.Net.Commands.Elements
 
         /// <inheritdoc />
         public IReadOnlyList<ParameterDefinition> Parameters { get; }
+
+        /// <inheritdoc />
+        public string HelpSignature { get; }
 
         /// <summary>
         /// Gets the minimal required argument amount for this command.
@@ -90,6 +109,38 @@ namespace Micky5991.Samp.Net.Commands.Elements
             {
                 arguments[i] = this.Parameters[i].DefaultValue!;
             }
+        }
+
+        /// <summary>
+        /// Generates a string that should be used when the user requests the command signature.
+        /// </summary>
+        /// <returns>Generated help signature.</returns>
+        protected virtual string BuildHelpSignature()
+        {
+            var builder = new StringBuilder();
+
+            if (this.Group == null)
+            {
+                builder.Append($"/{this.Name}");
+            }
+            else
+            {
+                builder.Append($"/{this.Group} {this.Name}");
+            }
+
+            foreach (var definition in this.Parameters.Skip(1))
+            {
+                if (definition.HasDefault == false)
+                {
+                    builder.Append($" [{definition.Name}]");
+                }
+                else
+                {
+                    builder.Append($" <{definition.Name}>");
+                }
+            }
+
+            return builder.ToString();
         }
     }
 }
