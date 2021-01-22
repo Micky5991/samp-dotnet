@@ -22,7 +22,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var command = new TestCommand("command", groupName, new ParameterDefinition[]
             {
-                new ParameterDefinition("player", typeof(IPlayer), false, null)
+                new ("player", typeof(IPlayer), false, null),
             });
 
             command.Name.Should().Be("command");
@@ -39,7 +39,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new TestCommand(name, "groupName", new ParameterDefinition[]
             {
-                new ("player", typeof(IPlayer), false, null)
+                new ("player", typeof(IPlayer), false, null),
             });
 
             act.Should().Throw<ArgumentException>().WithMessage("*name*");
@@ -52,7 +52,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new TestCommand("name", group, new ParameterDefinition[]
             {
-                new ("player", typeof(IPlayer), false, null)
+                new ("player", typeof(IPlayer), false, null),
             });
 
             act.Should().Throw<ArgumentException>().WithMessage("*group*");
@@ -71,10 +71,115 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new TestCommand("name", null, new ParameterDefinition[]
             {
-                new ("player", typeof(int), false, null)
+                new ("player", typeof(int), false, null),
             });
 
             act.Should().Throw<ArgumentException>().WithMessage("*parameter*").WithMessage("*player*");
+        }
+
+        [TestMethod]
+        public void CommandRequiresOptionalParametersToComeLast()
+        {
+            Action act = () => new TestCommand("name", null, new ParameterDefinition[]
+            {
+                new ("player", typeof(IPlayer), false, null),
+                new ("color1", typeof(int), true, null),
+                new ("color2", typeof(int), false, null),
+            });
+
+            act.Should().Throw<ArgumentException>().WithMessage("*default*");
+        }
+
+        [TestMethod]
+        public void CommandHelpStringWillBeGeneratedCorrectlyNoGroup()
+        {
+            var testCommand = new TestCommand(
+                                              "name",
+                                              null,
+                                              new ParameterDefinition[]
+                                              {
+                                                  new("player", typeof(IPlayer), false, null),
+                                                  new("vehicle", typeof(int), false, null),
+                                              });
+
+            testCommand.HelpSignature.Should().Be("/name [vehicle]");
+        }
+
+        [TestMethod]
+        public void CommandHelpStringWillBeGeneratedCorrectlyWithGroup()
+        {
+            var testCommand = new TestCommand(
+                                              "create",
+                                              "veh",
+                                              new ParameterDefinition[]
+                                              {
+
+                                                  new("player", typeof(IPlayer), false, 5),
+                                                  new("vehicle", typeof(int), false, null),
+                                              });
+
+            testCommand.HelpSignature.Should().Be("/veh create [vehicle]");
+        }
+
+        [TestMethod]
+        public void CommandHelpStringWillBeGeneratedCorrectlyWithoutParameter()
+        {
+            var testCommand = new TestCommand(
+                                              "create",
+                                              "veh",
+                                              new ParameterDefinition[]
+                                              {
+                                                  new("player", typeof(IPlayer), false, 5),
+                                              });
+
+            testCommand.HelpSignature.Should().Be("/veh create");
+        }
+
+        [TestMethod]
+        public void CommandHelpStringWillBeGeneratedCorrectlyWithSingleDefaultParameter()
+        {
+            var testCommand = new TestCommand(
+                                              "create",
+                                              "veh",
+                                              new ParameterDefinition[]
+                                              {
+                                                  new("player", typeof(IPlayer), false, 5),
+                                                  new("vehicle", typeof(int), true, null),
+                                              });
+
+            testCommand.HelpSignature.Should().Be("/veh create <vehicle>");
+        }
+
+        [TestMethod]
+        public void CommandHelpStringWillBeGeneratedCorrectlyWithSingleDefaultParameterMultipleParameters()
+        {
+            var testCommand = new TestCommand(
+                                              "create",
+                                              "veh",
+                                              new ParameterDefinition[]
+                                              {
+                                                  new("player", typeof(IPlayer), false, null),
+                                                  new("vehicle", typeof(int), false, 5),
+                                                  new("color", typeof(int), true, 5),
+                                              });
+
+            testCommand.HelpSignature.Should().Be("/veh create [vehicle] <color>");
+        }
+
+        [TestMethod]
+        public void CommandParameterNamesHaveToBeUnique()
+        {
+            Action act = () => new TestCommand(
+                                              "create",
+                                              "veh",
+                                              new ParameterDefinition[]
+                                              {
+                                                  new("player", typeof(IPlayer), false, null),
+                                                  new("vehicle", typeof(int), false, 5),
+                                                  new("vehicle", typeof(string), false, 5),
+                                              });
+
+            act.Should().Throw<ArgumentException>().WithMessage("*unique*");
         }
     }
 }

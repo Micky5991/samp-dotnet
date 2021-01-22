@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Dawn;
+using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;

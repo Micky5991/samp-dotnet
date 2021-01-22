@@ -26,6 +26,11 @@ namespace Micky5991.Samp.Net.Commands.Interfaces
         public IReadOnlyList<ParameterDefinition> Parameters { get; }
 
         /// <summary>
+        /// Gets the signature that should be displayed if requested.
+        /// </summary>
+        public string HelpSignature { get; }
+
+        /// <summary>
         /// Executes the command with the specific sender and arguments.
         /// </summary>
         /// <param name="player">Sender that executed the command.</param>

@@ -55,5 +55,14 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="seat"/> is negative.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="vehicle"/> is null.</exception>
         bool PutPlayerIntoVehicle(IVehicle vehicle, int seat = 0);
+
+        /// <summary>
+        /// Sends a chat message to the player.
+        /// </summary>
+        /// <param name="color">Color of the message.</param>
+        /// <param name="message">Message to send.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is null.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> was disposed.</exception>
+        void SendMessage(Color color, string message);
     }
 }
