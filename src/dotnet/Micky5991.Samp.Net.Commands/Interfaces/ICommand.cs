@@ -21,6 +21,11 @@ namespace Micky5991.Samp.Net.Commands.Interfaces
         public string Name { get; }
 
         /// <summary>
+        /// Gets the current alias names of this command.
+        /// </summary>
+        public string[] AliasNames { get; }
+
+        /// <summary>
         /// Gets the list of <see cref="ParameterDefinition"/> of this command.
         /// </summary>
         public IReadOnlyList<ParameterDefinition> Parameters { get; }
