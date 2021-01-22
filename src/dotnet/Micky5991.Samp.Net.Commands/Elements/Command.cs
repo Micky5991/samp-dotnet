@@ -15,11 +15,15 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// Initializes a new instance of the <see cref="Command"/> class.
         /// </summary>
         /// <param name="name">Required name of this command.</param>
+        /// <param name="aliasNames">Available alias names of this command.</param>
         /// <param name="group">Optional group name of this command.</param>
         /// <param name="parameters">List of parameters of this command.</param>
-        protected Command(string name, string? group, IReadOnlyList<ParameterDefinition> parameters)
+        /// <exception cref="ArgumentNullException"><paramref name="name"/>, <paramref name="aliasNames"/> or <paramref name="parameters"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="name"/> or <paramref name="group"/> is empty or whitespace, <paramref name="parameters"/> or <paramref name="aliasNames"/>contains null.</exception>
+        protected Command(string name, string[] aliasNames, string? group, IReadOnlyList<ParameterDefinition> parameters)
         {
             Guard.Argument(name, nameof(name)).NotNull().NotWhiteSpace();
+            Guard.Argument(aliasNames, nameof(aliasNames)).NotNull().DoesNotContainNull();
             Guard.Argument(group, nameof(group)).NotWhiteSpace();
             Guard.Argument(parameters, nameof(parameters)).NotEmpty().NotNull().DoesNotContainNull();
             Guard.Argument(parameters.Select(x => x.Name), nameof(parameters)).DoesNotContainDuplicate((_, _) => "All parameter names need to be unique.");
@@ -45,6 +49,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
             }
 
             this.Name = name;
+            this.AliasNames = aliasNames;
             this.Group = group;
             this.Parameters = parameters;
 
@@ -57,6 +62,9 @@ namespace Micky5991.Samp.Net.Commands.Elements
 
         /// <inheritdoc />
         public string Name { get; }
+
+        /// <inheritdoc />
+        public string[] AliasNames { get; }
 
         /// <inheritdoc />
         public IReadOnlyList<ParameterDefinition> Parameters { get; }

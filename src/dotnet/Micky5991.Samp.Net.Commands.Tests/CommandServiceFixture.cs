@@ -248,7 +248,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                 .Returns<ICommandHandler>(x =>
                                               new List<ICommand>
                                               {
-                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), "test", groupName, new ParameterDefinition[]
+                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), "test", Array.Empty<string>(), groupName, new ParameterDefinition[]
                                                   {
                                                       ParameterDefinition.Player(),
                                                   }, x, _ => null!),
@@ -373,6 +373,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var handler = new GroupedCommandHandler();
             var command = new TestCommand(
                                           "verb",
+                                          Array.Empty<string>(),
                                           "group",
                                           new ParameterDefinition[]
                                           {
@@ -412,6 +413,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var handler = new GroupedCommandHandler();
             var command = new TestCommand(
                                           "verb",
+                                          Array.Empty<string>(),
                                           null,
                                           new ParameterDefinition[]
                                           {
@@ -452,6 +454,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var handler = new GroupedCommandHandler();
             var command = new TestCommand(
                                           "verb",
+                                          Array.Empty<string>(),
                                           "group",
                                           new ParameterDefinition[]
                                           {
@@ -488,6 +491,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var firstCommand = new TestCommand(
                                           "verb",
+                                          Array.Empty<string>(),
                                           "group",
                                           new []
                                           {
@@ -496,6 +500,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var secondCommand = new TestCommand(
                                           "verb",
+                                          Array.Empty<string>(),
                                           null,
                                           new []
                                           {
@@ -560,6 +565,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var firstCommand = new TestCommand(
                                           "verb",
+                                          Array.Empty<string>(),
                                           "group",
                                           new []
                                           {
@@ -568,6 +574,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var secondCommand = new TestCommand(
                                                 "othercommand",
+                                                Array.Empty<string>(),
                                                 "group",
                                                 new []
                                                 {
@@ -576,6 +583,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var wrongCommand = new TestCommand(
                                                 "othercommand",
+                                                Array.Empty<string>(),
                                                 "othergroup",
                                                 new []
                                                 {

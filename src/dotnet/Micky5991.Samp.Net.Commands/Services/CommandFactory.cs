@@ -35,16 +35,17 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             foreach (var method in commandHandler.GetType().GetMethods())
             {
-                var attributes = method.GetCustomAttributes<CommandAttribute>().ToList();
-                if (attributes.Count == 0)
+                var attribute = method.GetCustomAttributes<CommandAttribute>().ToList().FirstOrDefault();
+                if (attribute == null)
                 {
                     continue;
                 }
 
-                foreach (var attribute in attributes)
-                {
-                    commands.Add(this.BuildCommandFromHandler(commandHandler, attribute, method));
-                }
+                var aliasAttributes = method
+                            .GetCustomAttributes<CommandAliasAttribute>()
+                            .ToArray();
+
+                commands.Add(this.BuildCommandFromHandler(commandHandler, attribute, aliasAttributes, method));
             }
 
             if (commands.GroupBy(x => $"{x.Group ?? string.Empty}:{x.Name}").Any(x => x.Count() > 1))
@@ -55,7 +56,7 @@ namespace Micky5991.Samp.Net.Commands.Services
             return commands;
         }
 
-        private ICommand BuildCommandFromHandler(ICommandHandler handler, CommandAttribute attribute, MethodBase methodInfo)
+        private ICommand BuildCommandFromHandler(ICommandHandler handler, CommandAttribute attribute, IEnumerable<CommandAliasAttribute> aliasAttributes, MethodBase methodInfo)
         {
             var parameters = methodInfo
                              .GetParameters()
@@ -66,7 +67,9 @@ namespace Micky5991.Samp.Net.Commands.Services
                                                                   x.DefaultValue))
                              .ToList();
 
-            return new HandlerCommand(this.handlerLogger, attribute.Name, attribute.Group, parameters, handler, x => methodInfo.Invoke(handler, x));
+            var aliasNames = aliasAttributes.Select(x => x.Name).ToArray();
+
+            return new HandlerCommand(this.handlerLogger, attribute.Name, aliasNames, attribute.Group, parameters, handler, x => methodInfo.Invoke(handler, x));
         }
     }
 }

@@ -7,12 +7,12 @@ namespace Micky5991.Samp.Net.Commands.Tests
 {
     public class TestCommand : Command
     {
-        public TestCommand([NotNull] string name, [CanBeNull] string group, [NotNull] IReadOnlyList<ParameterDefinition> parameters)
-            : base(name, group, parameters)
+        public TestCommand([NotNull] string name, [NotNull] [ItemNotNull] string[] aliasNames, [CanBeNull] string @group, [NotNull] IReadOnlyList<ParameterDefinition> parameters)
+            : base(name, aliasNames, @group, parameters)
         {
         }
 
-        public override CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string errorMessage)
+        public override CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage)
         {
             throw new System.NotImplementedException();
         }

@@ -17,12 +17,13 @@ namespace Micky5991.Samp.Net.Example.Commands
         }
 
         [Command("spawn", "veh")]
-        public void Test(IPlayer player)
+        [CommandAlias("s")]
+        public void Test(IPlayer player, Vehicle model)
         {
             var vehicle = this.vehiclePool.CreateVehicle(
-                                                         Vehicle.Bullet,
+                                                         model,
                                                          player.Position,
-                                                         0,
+                                                         player.Rotation,
                                                          0,
                                                          150);
 
