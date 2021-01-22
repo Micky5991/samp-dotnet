@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
 {
     public class TypedParameterCommandHandler : ICommandHandler
     {
-        [Command("veh", "grouped")]
+        [Command("grouped", "veh")]
         public void Command(IPlayer player, string number, int type)
         {
 

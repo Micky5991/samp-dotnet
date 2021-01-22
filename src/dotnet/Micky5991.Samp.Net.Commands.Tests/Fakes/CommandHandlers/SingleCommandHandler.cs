@@ -10,7 +10,7 @@ namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
         public const string CommandName = "veh";
         [CanBeNull] public const string CommandGroup = null;
 
-        [Command(CommandName, CommandGroup)]
+        [Command(CommandGroup, CommandName)]
         public void CreateVehicle(IPlayer player)
         {
         }

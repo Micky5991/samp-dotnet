@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers
 {
     public class MultipleCommandsHandler : ICommandHandler
     {
-        [Command("command1", "grouped")]
+        [Command("grouped", "command1")]
         public void Command1(IPlayer player)
         {
             // Empty
