@@ -9,6 +9,7 @@ using AutoMapper;
 using Dawn;
 using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
+using Micky5991.Samp.Net.Commands.Events;
 using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Events.Players;
@@ -88,12 +89,13 @@ namespace Micky5991.Samp.Net.Commands.Services
                                                    out var groupName,
                                                    out var remainingArgumentText) == false)
             {
-                if (potentialCommands.Count == 0)
-                {
-                    eventdata.Player.SendMessage(Color.White, "Command could not be found.");
-
-                    return;
-                }
+                this.eventAggregator.Publish(
+                                             new UnknownCommandEvent(
+                                                                     eventdata.Player,
+                                                                     eventdata.CommandText,
+                                                                     potentialCommands.ToImmutableDictionary(),
+                                                                     groupName,
+                                                                     remainingArgumentText));
 
                 return;
             }
@@ -111,26 +113,9 @@ namespace Micky5991.Samp.Net.Commands.Services
                                                                          .ToList(),
                                                                   ApplyContext);
 
-            switch (command.TryExecute(eventdata.Player, argumentValues, out var errorMessage))
-            {
-                case CommandExecutionStatus.Ok:
-                    break;
+            var status = command.TryExecute(eventdata.Player, argumentValues, out var errorMessage);
 
-                case CommandExecutionStatus.Exception:
-                    break;
-
-                case CommandExecutionStatus.ArgumentTypeMismatch:
-                    break;
-
-                case CommandExecutionStatus.MissingArgument:
-                    break;
-
-                case CommandExecutionStatus.TooManyArguments:
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            this.eventAggregator.Publish(new CommandExecutedEvent(eventdata.Player, status, errorMessage, command));
         }
 
         internal bool TryGetCommandFromArgumentText(
