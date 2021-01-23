@@ -231,6 +231,26 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
+        public AnimationData? Animation
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                var index = this.AnimationIndex;
+
+                if (index == 0)
+                {
+                    return null;
+                }
+
+                this.playersNatives.GetAnimationName(index, out var animationLibrary, 32, out var animationName, 32);
+
+                return new AnimationData(animationLibrary, animationName);
+            }
+        }
+
+        /// <inheritdoc />
         public int AnimationIndex
         {
             get
@@ -458,6 +478,60 @@ namespace Micky5991.Samp.Net.Framework.Entities
                 Guard.Disposal(this.Disposed);
 
                 this.playersNatives.SetPlayerFightingStyle(this.Id, (int)value);
+            }
+        }
+
+        /// <inheritdoc />
+        public SpecialAction SpecialAction
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return (SpecialAction)this.playersNatives.GetPlayerSpecialAction(this.Id);
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.SetPlayerSpecialAction(this.Id, (int)value);
+            }
+        }
+
+        /// <inheritdoc />
+        public int? VehicleId
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                var vehicleId = this.playersNatives.GetPlayerVehicleID(this.Id);
+
+                if (vehicleId == SampConstants.InvalidVehicleId)
+                {
+                    return null;
+                }
+
+                return vehicleId;
+            }
+        }
+
+        /// <inheritdoc />
+        public int? VehicleSeat
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                var seat = this.playersNatives.GetPlayerVehicleSeat(this.Id);
+
+                if (seat == -1)
+                {
+                    return null;
+                }
+
+                return seat;
             }
         }
 
@@ -761,6 +835,82 @@ namespace Micky5991.Samp.Net.Framework.Entities
                                                     color.ToRgba(),
                                                     drawDistance,
                                                     (int)expireTime.TotalMilliseconds);
+        }
+
+        /// <inheritdoc />
+        public void RemoveFromVehicle()
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.playersNatives.RemovePlayerFromVehicle(this.Id);
+        }
+
+        /// <inheritdoc />
+        public void ToggleControllable(bool controllable)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.playersNatives.TogglePlayerControllable(this.Id, controllable);
+        }
+
+        /// <inheritdoc />
+        public void PlaySound(int sound, Vector3 position)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.playersNatives.PlayerPlaySound(this.Id, sound, position.X, position.Y, position.Z);
+        }
+
+        /// <inheritdoc />
+        public void PlaySound(int sound)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.playersNatives.PlayerPlaySound(this.Id, sound, 0, 0, 0);
+        }
+
+        /// <inheritdoc />
+        public void ApplyAnimation(
+            AnimationData animation,
+            float delta,
+            bool loop,
+            bool lockX,
+            bool lockY,
+            bool freeze,
+            TimeSpan time,
+            bool forceSync = false)
+        {
+            Guard.Disposal(this.Disposed);
+
+            var (animationLibrary, animationName) = animation;
+
+            this.playersNatives.ApplyAnimation(
+                                               this.Id,
+                                               animationLibrary,
+                                               animationName,
+                                               delta,
+                                               loop,
+                                               lockX,
+                                               lockY,
+                                               freeze,
+                                               (int)time.TotalMilliseconds,
+                                               forceSync);
+        }
+
+        /// <inheritdoc />
+        public void ClearAnimations(bool forceSync = false)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.playersNatives.ClearAnimations(this.Id, forceSync);
+        }
+
+        /// <inheritdoc />
+        public void DisableRemoteVehicleCollisions(bool disable)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.playersNatives.DisableRemoteVehicleCollisions(this.Id, disable);
         }
 
         /// <inheritdoc />
