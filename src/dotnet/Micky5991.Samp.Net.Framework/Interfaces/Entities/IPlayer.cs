@@ -365,5 +365,84 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is too high or too low.</exception>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         void EditAttachedObject(int index);
+
+        /// <summary>
+        /// Sets the string <paramref name="value"/> with the key <paramref name="varname"/>.
+        /// </summary>
+        /// <param name="varname">Unique name of this player variable.</param>
+        /// <param name="value">Value to set this key to.</param>
+        /// <exception cref="ArgumentException"><paramref name="varname"/> is null, empty or too long or <paramref name="value"/> is null.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void SetPVar(string varname, string value);
+
+        /// <summary>
+        /// Sets the int <paramref name="value"/> with the key <paramref name="varname"/>.
+        /// </summary>
+        /// <param name="varname">Unique name of this player variable.</param>
+        /// <param name="value">Value to set this key to.</param>
+        /// <exception cref="ArgumentException"><paramref name="varname"/> is null, empty or too long.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void SetPVar(string varname, int value);
+
+        /// <summary>
+        /// Sets the int <paramref name="value"/> with the key <paramref name="varname"/>.
+        /// </summary>
+        /// <param name="varname">Unique name of this player variable.</param>
+        /// <param name="value">Value to set this key to.</param>
+        /// <exception cref="ArgumentException"><paramref name="varname"/> is null, empty or too long.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void SetPVar(string varname, float value);
+
+        /// <summary>
+        /// Sets the object <paramref name="value"/> with the key <paramref name="varname"/>.
+        /// </summary>
+        /// <param name="varname">Unique name of this player variable.</param>
+        /// <param name="value">Value to set this key to.</param>
+        /// <exception cref="ArgumentException"><paramref name="varname"/> is null, empty or too long or type of <paramref name="value"/> is not supported.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void SetPVar(string varname, object value);
+
+        /// <summary>
+        /// Gets the saved player value by <paramref name="varname"/>.
+        /// </summary>
+        /// <param name="varname">Unique name of this player variable.</param>
+        /// <typeparam name="T">Type of the variable. Can be int, float or string.</typeparam>
+        /// <returns>The actual value, null if not set.</returns>
+        /// <exception cref="ArgumentException"><paramref name="varname"/> is null, empty or too long.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        T? GetPVar<T>(string varname);
+
+        /// <summary>
+        /// Deletes the player variable on the specified <paramref name="varname"/>.
+        /// </summary>
+        /// <param name="varname">Unique name of this player variable.</param>
+        /// <exception cref="ArgumentException"><paramref name="varname"/> is null, empty or too long.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        /// <returns>true on success, false otherwise.</returns>
+        bool DeletePVar(string varname);
+
+        /// <summary>
+        /// Returns the currently highest set index for this players variables.
+        /// </summary>
+        /// <returns>Highest currently set index.</returns>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        int GetPVarsUpperIndex();
+
+        /// <summary>
+        /// Returns the anem of the player variable at the specified <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">Player variable index to get.</param>
+        /// <param name="varname">Resulting varname to get.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void GetPVarNameAtIndex(int index, out string varname);
+
+        /// <summary>
+        /// Gets the type of the variable by the name <paramref name="varname"/>.
+        /// </summary>
+        /// <param name="varname">Unique name of this player variable.</param>
+        /// <returns>The stored variable type.</returns>
+        /// <exception cref="ArgumentException"><paramref name="varname"/> is null, empty or too long.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        PlayerVartype GetPVarType(string varname);
     }
 }
