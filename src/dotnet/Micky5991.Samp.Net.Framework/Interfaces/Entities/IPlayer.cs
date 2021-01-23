@@ -444,5 +444,18 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <exception cref="ArgumentException"><paramref name="varname"/> is null, empty or too long.</exception>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         PlayerVartype GetPVarType(string varname);
+
+        /// <summary>
+        /// Sets the chat bubble of the player to <paramref name="text"/>.
+        /// </summary>
+        /// <param name="text">New value of this chat bubble.</param>
+        /// <param name="color">Color to display the chat bubble in.</param>
+        /// <param name="drawDistance">Visible distance of this chat bubble.</param>
+        /// <param name="expireTime">Time until the chat bubble automatically diappears.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="drawDistance"/> is negative.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="text"/> is is too long.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void SetChatBubble(string text, Color color, float drawDistance, TimeSpan expireTime);
     }
 }

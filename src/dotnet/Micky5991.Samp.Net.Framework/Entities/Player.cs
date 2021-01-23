@@ -749,6 +749,21 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
+        public void SetChatBubble(string text, Color color, float drawDistance, TimeSpan expireTime)
+        {
+            Guard.Argument(text, nameof(text)).NotNull().MaxLength(PlayersConstants.MaxChatbubbleLength);
+            Guard.Argument(drawDistance, nameof(drawDistance)).NotNegative();
+            Guard.Disposal(this.Disposed);
+
+            this.playersNatives.SetPlayerChatBubble(
+                                                    this.Id,
+                                                    text,
+                                                    color.ToRgba(),
+                                                    drawDistance,
+                                                    (int)expireTime.TotalMilliseconds);
+        }
+
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"<{this.GetType()} ({this.Id}) {this.Name}>";
