@@ -12,7 +12,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
         }
 
-        public override CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage)
+        public override CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string errorMessage)
         {
             throw new System.NotImplementedException();
         }
