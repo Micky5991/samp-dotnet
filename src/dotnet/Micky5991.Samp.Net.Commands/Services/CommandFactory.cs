@@ -48,11 +48,6 @@ namespace Micky5991.Samp.Net.Commands.Services
                 commands.Add(this.BuildCommandFromHandler(commandHandler, attribute, aliasAttributes, method));
             }
 
-            if (commands.GroupBy(x => $"{x.Group ?? string.Empty}:{x.Name}").Any(x => x.Count() > 1))
-            {
-                throw new DuplicateCommandException(commandHandler.GetType());
-            }
-
             return commands;
         }
 

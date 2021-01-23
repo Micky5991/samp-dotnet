@@ -207,15 +207,6 @@ namespace Micky5991.Samp.Net.Commands.Tests
         }
 
         [TestMethod]
-        public void DuplicatedCommandsInSameGroupWillBeCaught()
-        {
-            Action act = () => this.commandFactory.BuildFromCommandHandler(new DuplicatedCommandNameCommandHandler());
-
-            act.Should().Throw<DuplicateCommandException>()
-               .WithMessage($"*{typeof(DuplicatedCommandNameCommandHandler)}*");
-        }
-
-        [TestMethod]
         public void DuplicatedNamesInSameGroupWillBeAccepted()
         {
             var commands = this.commandFactory.BuildFromCommandHandler(new DuplicatedCommandNameButDifferentGroupNameCommandHandler());
