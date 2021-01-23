@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Dawn;
-using Micky5991.Samp.Net.Commands.Elements;
+using Micky5991.Samp.Net.Commands.Elements.Listeners;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;
@@ -59,6 +59,7 @@ namespace Micky5991.Samp.Net.Commands
             serviceCollection.TryAddTransient<IExtensionStarter, CommandExtensionStarter>();
             serviceCollection.AddTransient<ICommandFactory, CommandFactory>();
             serviceCollection.AddSingleton<ICommandService, CommandService>();
+            serviceCollection.AddSingleton<ICommandListener, CommandListener>();
 
             serviceCollection.AddAutoMapper(this.scannableAssemblies.ToArray());
         }
