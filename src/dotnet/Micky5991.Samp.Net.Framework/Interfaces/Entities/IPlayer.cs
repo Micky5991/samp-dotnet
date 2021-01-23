@@ -63,6 +63,12 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         float Armor { get; set; }
 
         /// <summary>
+        /// Gets the current animation of this player.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        AnimationData? Animation { get; }
+
+        /// <summary>
         /// Gets the current animation index of this player.
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
@@ -131,17 +137,37 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <summary>
         /// Gets or sets the current time visible to this player.
         /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         TimeData Time { get; set; }
 
         /// <summary>
         /// Gets or sets the wanted level of this player.
         /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         int WantedLevel { get; set; }
 
         /// <summary>
         /// Gets or sets the fighting style of this player.
         /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         FightStyle FightStyle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the special action of this player.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        SpecialAction SpecialAction { get; set; }
+
+        /// <summary>
+        /// Gets the id of the current vehicle this player is in.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        int? VehicleId { get; }
+
+        /// <summary>
+        /// Gets the seat this player is current in.
+        /// </summary>
+        int? VehicleSeat { get; }
 
         /// <summary>
         /// Puts the current player into the specified vehicle.
@@ -457,5 +483,67 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <exception cref="ArgumentException"><paramref name="text"/> is is too long.</exception>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         void SetChatBubble(string text, Color color, float drawDistance, TimeSpan expireTime);
+
+        /// <summary>
+        /// Removes the current player from its current vehicle.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void RemoveFromVehicle();
+
+        /// <summary>
+        /// Toggles if the player can control their character.
+        /// </summary>
+        /// <param name="controllable">true if the player can move, false otherwise.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void ToggleControllable(bool controllable);
+
+        /// <summary>
+        /// Plays the sound <paramref name="sound"/> on the position <paramref name="position"/>.
+        /// </summary>
+        /// <param name="sound">Sound to play.</param>
+        /// <param name="position">Location where the sound should be played from.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void PlaySound(int sound, Vector3 position);
+
+        /// <summary>
+        /// Plays the sound <paramref name="sound"/>.
+        /// </summary>
+        /// <param name="sound">Sound to play.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void PlaySound(int sound);
+
+        /// <summary>
+        /// Plays the <paramref name="animation"/> on the player.
+        /// </summary>
+        /// <param name="animation">Animation to play.</param>
+        /// <param name="delta">Speed of the animation. Usually 4.1.</param>
+        /// <param name="loop">true if the animation should be looped, false otherwise.</param>
+        /// <param name="lockX">true if the x part of the old position should not be reset after the animation was finished.</param>
+        /// <param name="lockY">true if the y part of the old position should not be reset after the animation was finished.</param>
+        /// <param name="freeze">true if the player should be frozen after the animation has ended.</param>
+        /// <param name="time">Time of the animation.</param>
+        /// <param name="forceSync">true if the animation should only be played to other players.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void ApplyAnimation(
+            AnimationData animation,
+            float delta,
+            bool loop,
+            bool lockX,
+            bool lockY,
+            bool freeze,
+            TimeSpan time,
+            bool forceSync = false);
+
+        /// <summary>
+        /// Clears the current animation of the player.
+        /// </summary>
+        /// <param name="forceSync">true if the animation should only be cleared to other players.</param>
+        void ClearAnimations(bool forceSync = false);
+
+        /// <summary>
+        /// Disables all collisions of other vehicles to this player.
+        /// </summary>
+        /// <param name="disable">true if all vehicles do not have collisions, false otherwise.</param>
+        void DisableRemoteVehicleCollisions(bool disable);
     }
 }
