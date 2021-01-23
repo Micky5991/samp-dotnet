@@ -314,6 +314,56 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// </summary>
         /// <param name="originPosition">Origin position where the shot has been sent from.</param>
         /// <param name="hitPosition">Hit position where the shot landed.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         void GetLastShotVectors(out Vector3 originPosition, out Vector3 hitPosition);
+
+        /// <summary>
+        /// Sets the specific <paramref name="modelid"/> on the bone <paramref name="bone"/>.
+        /// </summary>
+        /// <param name="index">Index of entry in player objects.</param>
+        /// <param name="modelid">Model of the attached object.</param>
+        /// <param name="bone">Player bone to attach the object to.</param>
+        /// <param name="offset">Relative offset to the player bone.</param>
+        /// <param name="rotation">Rotation of the object.</param>
+        /// <param name="scale">3D scale of this object.</param>
+        /// <param name="materialColor1">First color of the object material.</param>
+        /// <param name="materialColor2">Second color of the object material.</param>
+        /// <returns>true if successful, false otherwise.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is too high or too low.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        bool SetAttachedObject(
+            int index,
+            int modelid,
+            int bone,
+            Vector3 offset,
+            Vector3 rotation,
+            Vector3 scale,
+            int materialColor1 = 0,
+            int materialColor2 = 0);
+
+        /// <summary>
+        /// Removes the object on the specific <paramref name="index"/> from the player.
+        /// </summary>
+        /// <param name="index">Index of entry in player objects.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is too high or too low.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void RemoveAttachedObject(int index);
+
+        /// <summary>
+        /// Returns if the specified <paramref name="index"/> is used.
+        /// </summary>
+        /// <param name="index">Index to check for existance.</param>
+        /// <returns>true if the slot is used, false otherwise.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is too high or too low.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        bool IsAttachedObjectSlotUsed(int index);
+
+        /// <summary>
+        /// Starts the attached object editor for the specified <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index">Index to edit.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is too high or too low.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void EditAttachedObject(int index);
     }
 }
