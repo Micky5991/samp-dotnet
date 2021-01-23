@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Dawn;
+using Micky5991.Samp.Net.Commands.Elements.CommandHandlers;
 using Micky5991.Samp.Net.Commands.Elements.Listeners;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
@@ -23,6 +24,16 @@ namespace Micky5991.Samp.Net.Commands
     public class CommandExtensionBuilder : IExtensionBuilder
     {
         private readonly IList<Assembly> scannableAssemblies = new List<Assembly>();
+
+        private readonly IList<Action<IServiceCollection>> serviceCollectionChanges;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandExtensionBuilder"/> class.
+        /// </summary>
+        public CommandExtensionBuilder()
+        {
+            this.serviceCollectionChanges = new List<Action<IServiceCollection>>();
+        }
 
         /// <summary>
         /// Gets a list of scannable assemblies for mapping.
@@ -53,6 +64,21 @@ namespace Micky5991.Samp.Net.Commands
             return this;
         }
 
+        /// <summary>
+        /// Adds default commands like /help.
+        /// </summary>
+        /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
+        public CommandExtensionBuilder AddDefaultCommands()
+        {
+            this.serviceCollectionChanges.Add(
+                                              x =>
+                                              {
+                                                  x.AddSingleton<ICommandHandler, HelpCommandHandler>();
+                                              });
+
+            return this;
+        }
+
         /// <inheritdoc/>
         public void Register(IServiceCollection serviceCollection)
         {
@@ -62,6 +88,11 @@ namespace Micky5991.Samp.Net.Commands
             serviceCollection.AddSingleton<ICommandListener, CommandListener>();
 
             serviceCollection.AddAutoMapper(this.scannableAssemblies.ToArray());
+
+            foreach (var collectionChange in this.serviceCollectionChanges)
+            {
+                collectionChange(serviceCollection);
+            }
         }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AutoMapper;
@@ -29,8 +28,6 @@ namespace Micky5991.Samp.Net.Commands.Services
         private readonly ILogger<CommandService> logger;
 
         private readonly ICollection<ICommandHandler> commandHandlers;
-
-        private IImmutableDictionary<string, IImmutableDictionary<string, ICommand>> commands;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandService"/> class.
@@ -60,21 +57,24 @@ namespace Micky5991.Samp.Net.Commands.Services
             this.logger = logger;
             this.commandHandlers = commandHandlers.ToList();
 
-            this.commands = new Dictionary<string, IImmutableDictionary<string, ICommand>>().ToImmutableDictionary();
+            this.Commands = new Dictionary<string, IImmutableDictionary<string, ICommand>>().ToImmutableDictionary();
         }
+
+        /// <inheritdoc />
+        public IImmutableDictionary<string, IImmutableDictionary<string, ICommand>> Commands { get; private set; }
 
         /// <inheritdoc/>
         public void Start()
         {
             this.eventAggregator.Subscribe<PlayerCommandEvent>(this.OnPlayerCommand, true, threadTarget: ThreadTarget.PublisherThread);
 
-            this.commands = this.LoadCommands()
+            this.Commands = this.LoadCommands()
                                 .ToDictionary(
                                               x => x.Key,
                                               x => (IImmutableDictionary<string, ICommand>)x.Value.ToImmutableDictionary())
                                 .ToImmutableDictionary();
 
-            this.logger.LogInformation($"{this.commands.Sum(x => x.Value.Count)} commands have been loaded");
+            this.logger.LogInformation($"{this.Commands.Sum(x => x.Value.Count)} commands have been loaded");
         }
 
         internal void OnPlayerCommand(PlayerCommandEvent eventdata)
@@ -134,7 +134,7 @@ namespace Micky5991.Samp.Net.Commands.Services
             if (argumentParts.Length == 1)
             {
                 // If this is a group, but without a verb, return potential commands.
-                if (this.commands.TryGetValue(argumentParts[0], out var groupCommands))
+                if (this.Commands.TryGetValue(argumentParts[0], out var groupCommands))
                 {
                     var group = argumentParts[0];
                     groupName = group;
@@ -145,7 +145,7 @@ namespace Micky5991.Samp.Net.Commands.Services
                     return false;
                 }
 
-                if (this.commands.TryGetValue(string.Empty, out groupCommands))
+                if (this.Commands.TryGetValue(string.Empty, out groupCommands))
                 {
                     groupName = string.Empty;
 
@@ -164,7 +164,7 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             if (argumentParts.Length >= 2)
             {
-                if (this.commands.TryGetValue(argumentParts[0], out var groupCommands) &&
+                if (this.Commands.TryGetValue(argumentParts[0], out var groupCommands) &&
                     groupCommands.TryGetValue(argumentParts[1], out var command))
                 {
                     groupName = command.Group!;
@@ -178,7 +178,7 @@ namespace Micky5991.Samp.Net.Commands.Services
                     return true;
                 }
 
-                if (this.commands.TryGetValue(string.Empty, out groupCommands) &&
+                if (this.Commands.TryGetValue(string.Empty, out groupCommands) &&
                     groupCommands.TryGetValue(argumentParts[0], out command))
                 {
                     remainingArgumentText = string.Join(" ", argumentParts.Skip(1));

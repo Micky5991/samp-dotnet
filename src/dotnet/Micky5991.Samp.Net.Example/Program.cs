@@ -33,7 +33,8 @@ namespace Micky5991.Samp.Net.Example
                     .AddSingleton<ICommandHandler, TestCommandHandler>();
 
                 var commandExtensionBuilder = new CommandExtensionBuilder().AddProfilesInAssembly(Assembly.GetExecutingAssembly())
-                                                                           .AddProfilesInAssembly<CommandExtensionBuilder>();
+                                                                           .AddProfilesInAssembly<CommandExtensionBuilder>()
+                                                                           .AddDefaultCommands();
 
                 new GamemodeBuilder(serviceCollection)
                     .AddCoreServices()
