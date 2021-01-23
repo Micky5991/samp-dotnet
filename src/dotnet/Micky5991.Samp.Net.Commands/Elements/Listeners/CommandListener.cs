@@ -41,14 +41,14 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
         {
             eventdata.Cancelled = true;
 
-            eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
-
             if (eventdata.PotentialCommands.Count == 0)
             {
                 eventdata.Player.SendMessage(Color.DarkGray, "This command does not exist.");
 
                 return;
             }
+
+            eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
 
             if (string.IsNullOrWhiteSpace(eventdata.GroupName) == false)
             {
