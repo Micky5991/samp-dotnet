@@ -13,7 +13,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 namespace Micky5991.Samp.Net.Framework.Entities
 {
     /// <inheritdoc cref="IPlayer"/>
-    public class Player : Entity, IPlayer
+    public partial class Player : Entity, IPlayer
     {
         private readonly IPlayerPool.RemoveEntityDelegate entityRemoval;
 
