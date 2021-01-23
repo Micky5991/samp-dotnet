@@ -264,6 +264,11 @@ namespace Micky5991.Samp.Net.Commands.Services
                             { command.Name, command },
                         };
 
+                        foreach (var aliasName in command.AliasNames)
+                        {
+                            result[groupName][aliasName] = command;
+                        }
+
                         continue;
                     }
 
