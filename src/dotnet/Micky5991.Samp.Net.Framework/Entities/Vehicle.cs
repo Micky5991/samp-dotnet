@@ -1,4 +1,3 @@
-using System;
 using System.Numerics;
 using Dawn;
 using Micky5991.Samp.Net.Core.Natives.Vehicles;
@@ -76,6 +75,119 @@ namespace Micky5991.Samp.Net.Framework.Entities
 
                 return (Core.Natives.Samp.Vehicle)this.vehiclesNatives.GetVehicleModel(this.Id);
             }
+        }
+
+        /// <inheritdoc />
+        public Quaternion Quaternion
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.GetVehicleRotationQuat(this.Id, out var w, out var x, out var y, out var z);
+
+                return new Quaternion(x, y, z, w);
+            }
+        }
+
+        /// <inheritdoc />
+        public Vector3 Velocity
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.GetVehiclePos(this.Id, out var x, out var y, out var z);
+
+                return new Vector3(x, y, z);
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.SetVehiclePos(this.Id, value.X, value.Y, value.Z);
+            }
+        }
+
+        /// <inheritdoc />
+        public int VirtualWorld
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return this.vehiclesNatives.GetVehicleVirtualWorld(this.Id);
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.SetVehicleVirtualWorld(this.Id, value);
+            }
+        }
+
+        /// <inheritdoc />
+        public void Repair()
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.RepairVehicle(this.Id);
+        }
+
+        /// <inheritdoc />
+        public void Destroy()
+        {
+            this.Dispose();
+        }
+
+        /// <inheritdoc />
+        public void SetToRespawn()
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.SetVehicleToRespawn(this.Id);
+        }
+
+        /// <inheritdoc />
+        public void LinkToInterior(int interiorId)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.LinkVehicleToInterior(this.Id, interiorId);
+        }
+
+        /// <inheritdoc />
+        public void SetNumberPlate(string numberplate)
+        {
+            Guard.Disposal(this.Disposed);
+            Guard.Argument(numberplate, nameof(numberplate)).NotNull();
+
+            this.vehiclesNatives.SetVehicleNumberPlate(this.Id, numberplate);
+        }
+
+        /// <inheritdoc />
+        public void SetAngularVelocity(Vector3 angularVelocity)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.SetVehicleAngularVelocity(
+                                                           this.Id,
+                                                           angularVelocity.X,
+                                                           angularVelocity.Y,
+                                                           angularVelocity.Z);
+        }
+
+        /// <inheritdoc />
+        public bool IsVehicleStreamedIn(IPlayer forPlayer)
+        {
+            Guard.Argument(forPlayer, nameof(forPlayer)).NotNull();
+
+            Guard.Disposal(this.Disposed);
+            Guard.Disposal(forPlayer.Disposed, nameof(forPlayer));
+
+            return this.vehiclesNatives.IsVehicleStreamedIn(this.Id, forPlayer.Id);
         }
 
         /// <inheritdoc />

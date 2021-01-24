@@ -11,7 +11,7 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
     /// <summary>
     /// Represents a player on the server.
     /// </summary>
-    public interface IPlayer : IWorldEntity
+    public interface IPlayer : IMovingWorldEntity
     {
         /// <summary>
         /// Gets or sets the current name of the player.
@@ -31,12 +31,6 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         int Ping { get; }
-
-        /// <summary>
-        /// Gets or sets the current velocity of this entity.
-        /// </summary>
-        /// <exception cref="ObjectDisposedException"><see cref="IWorldEntity"/> was disposed.</exception>
-        public Vector3 Velocity { get; set; }
 
         /// <summary>
         /// Gets or sets the money of this player.
