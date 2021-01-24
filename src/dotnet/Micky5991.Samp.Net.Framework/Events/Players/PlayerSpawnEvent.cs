@@ -6,17 +6,17 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 namespace Micky5991.Samp.Net.Framework.Events.Players
 {
     /// <summary>
-    /// Specialized event that will be triggered when a player connected.
+    /// Event that will be triggered when a player spawned.
     /// </summary>
-    public class PlayerConnectEvent : CancellableEventBase
+    public class PlayerSpawnEvent : EventBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PlayerConnectEvent"/> class.
+        /// Initializes a new instance of the <see cref="PlayerSpawnEvent"/> class.
         /// </summary>
-        /// <param name="player">Player that connected.</param>
+        /// <param name="player">Player that spawned.</param>
         /// <exception cref="ArgumentNullException"><paramref name="player"/> is null.</exception>
         /// <exception cref="ObjectDisposedException"><paramref name="player"/> was disposed.</exception>
-        public PlayerConnectEvent(IPlayer player)
+        public PlayerSpawnEvent(IPlayer player)
         {
             Guard.Argument(player, nameof(player)).NotNull();
             Guard.Disposal(player.Disposed, nameof(player));
@@ -25,7 +25,7 @@ namespace Micky5991.Samp.Net.Framework.Events.Players
         }
 
         /// <summary>
-        /// Gets player that connected to the server.
+        /// Gets the player that spawned.
         /// </summary>
         public IPlayer Player { get; }
     }
