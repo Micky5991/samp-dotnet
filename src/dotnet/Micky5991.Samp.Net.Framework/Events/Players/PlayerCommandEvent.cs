@@ -1,3 +1,5 @@
+using System;
+using Dawn;
 using Micky5991.EventAggregator.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
@@ -13,8 +15,14 @@ namespace Micky5991.Samp.Net.Framework.Events.Players
         /// </summary>
         /// <param name="player">Player that sent the command.</param>
         /// <param name="commandText">Command that has been sent.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="player"/> or <paramref name="commandText"/> is null.</exception>
+        /// <exception cref="ObjectDisposedException"><paramref name="player"/> was disposed.</exception>
         public PlayerCommandEvent(IPlayer player, string commandText)
         {
+            Guard.Argument(player, nameof(player)).NotNull();
+            Guard.Argument(commandText, nameof(commandText)).NotNull();
+            Guard.Disposal(player.Disposed, nameof(player));
+
             this.Player = player;
             this.CommandText = commandText;
         }
