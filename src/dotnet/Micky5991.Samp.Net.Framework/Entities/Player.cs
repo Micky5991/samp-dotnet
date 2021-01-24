@@ -146,6 +146,24 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
+        public int VirtualWorld
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return this.playersNatives.GetPlayerVirtualWorld(this.Id);
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.playersNatives.SetPlayerVirtualWorld(this.Id, value);
+            }
+        }
+
+        /// <inheritdoc />
         public int Money
         {
             get

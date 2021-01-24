@@ -1,8 +1,7 @@
 using System;
 using System.Numerics;
 using Dawn;
-using Micky5991.Samp.Net.Core.Natives.Samp;
-using Micky5991.Samp.Net.Framework.Exceptions;
+using Micky5991.Samp.Net.Core.Natives.Vehicles;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
@@ -14,13 +13,17 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
     {
         private readonly IVehicleFactory vehicleFactory;
 
+        private readonly IVehiclesNatives vehiclesNatives;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VehiclePool"/> class.
         /// </summary>
         /// <param name="vehicleFactory">Factory that creates vehicles.</param>
-        public VehiclePool(IVehicleFactory vehicleFactory)
+        /// <param name="vehiclesNatives">Natives needed for certain pool methods.</param>
+        public VehiclePool(IVehicleFactory vehicleFactory, IVehiclesNatives vehiclesNatives)
         {
             this.vehicleFactory = vehicleFactory;
+            this.vehiclesNatives = vehiclesNatives;
         }
 
         /// <inheritdoc />
@@ -58,6 +61,20 @@ namespace Micky5991.Samp.Net.Framework.Entities.Pools
             this.AddEntity(vehicle);
 
             return vehicle;
+        }
+
+        /// <inheritdoc />
+        public void ManualVehicleEngineAndLights()
+        {
+            this.vehiclesNatives.ManualVehicleEngineAndLights();
+        }
+
+        /// <inheritdoc />
+        public Vector3 GetVehicleModelInfo(Core.Natives.Samp.Vehicle model, VehicleModelInfo infoType)
+        {
+            this.vehiclesNatives.GetVehicleModelInfo((int)model, (int)infoType, out var x, out var y, out var z);
+
+            return new Vector3(x, y, z);
         }
     }
 }

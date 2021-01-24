@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Core.Natives.Vehicles;
 using Micky5991.Samp.Net.Framework.Exceptions;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
@@ -37,5 +38,18 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Pools
         /// <returns>Created vehicle.</returns>
         /// <exception cref="EntityLimitReachedException">Vehicle could not be created, limit reached.</exception>
         IVehicle CreateVehicle(Vehicle model, Vector3 position, float rotation, int color1, int color2, TimeSpan respawnDelay, bool addSiren = false);
+
+        /// <summary>
+        /// Diesables the vehicle engine and light automation.
+        /// </summary>
+        void ManualVehicleEngineAndLights();
+
+        /// <summary>
+        /// Returns dimensional information about a specific vehicle model.
+        /// </summary>
+        /// <param name="model">Vehicle model to check.</param>
+        /// <param name="infoType">Type of information to return.</param>
+        /// <returns>Resulting information about this vehicle.</returns>
+        Vector3 GetVehicleModelInfo(Vehicle model, VehicleModelInfo infoType);
     }
 }
