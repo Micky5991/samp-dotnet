@@ -91,6 +91,17 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
+        public bool SirenState
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return this.vehiclesNatives.GetVehicleParamsSirenState(this.Id) == 1;
+            }
+        }
+
+        /// <inheritdoc />
         public Vector3 Velocity
         {
             get
@@ -188,6 +199,115 @@ namespace Micky5991.Samp.Net.Framework.Entities
             Guard.Disposal(forPlayer.Disposed, nameof(forPlayer));
 
             return this.vehiclesNatives.IsVehicleStreamedIn(this.Id, forPlayer.Id);
+        }
+
+        /// <inheritdoc />
+        public void SetParamsEx(bool engine, bool lights, bool alarm, bool doors, bool bonnet, bool boot, bool objective)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.SetVehicleParamsEx(
+                                                    this.Id,
+                                                    engine ? 1 : 0,
+                                                    lights ? 1 : 0,
+                                                    alarm ? 1 : 0,
+                                                    doors ? 1 : 0,
+                                                    bonnet ? 1 : 0,
+                                                    bonnet ? 1 : 0,
+                                                    objective ? 1 : 0);
+        }
+
+        /// <inheritdoc />
+        public void GetParamsEx(
+            out bool engine,
+            out bool lights,
+            out bool alarm,
+            out bool doors,
+            out bool bonnet,
+            out bool boot,
+            out bool objective)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.GetVehicleParamsEx(
+                                                    this.Id,
+                                                    out var oEngine,
+                                                    out var oLights,
+                                                    out var oAlarm,
+                                                    out var oDoors,
+                                                    out var oBonnet,
+                                                    out var oBoot,
+                                                    out var oObjective);
+
+            engine = oEngine == 1;
+            lights = oLights == 1;
+            alarm = oAlarm == 1;
+            doors = oDoors == 1;
+            bonnet = oBonnet == 1;
+            boot = oBoot == 1;
+            objective = oObjective == 1;
+        }
+
+        /// <inheritdoc />
+        public void SetParamsCarDoors(bool driver, bool passenger, bool backleft, bool backright)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.SetVehicleParamsCarDoors(
+                                                          this.Id,
+                                                          driver ? 1 : 0,
+                                                          passenger ? 1 : 0,
+                                                          backleft ? 1 : 0,
+                                                          backright ? 1 : 0);
+        }
+
+        /// <inheritdoc />
+        public void GetParamsCarDoors(out bool driver, out bool passenger, out bool backleft, out bool backright)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.GetVehicleParamsCarDoors(
+                                                          this.Id,
+                                                          out var oDriver,
+                                                          out var oPassenger,
+                                                          out var oBackleft,
+                                                          out var oBackright);
+
+            driver = oDriver == 1;
+            passenger = oPassenger == 1;
+            backleft = oBackleft == 1;
+            backright = oBackright == 1;
+        }
+
+        /// <inheritdoc />
+        public void SetParamsCarWindows(bool driver, bool passenger, bool backleft, bool backright)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.SetVehicleParamsCarWindows(
+                                                            this.Id,
+                                                            driver ? 1 : 0,
+                                                            passenger ? 1 : 0,
+                                                            backleft ? 1 : 0,
+                                                            backright ? 1 : 0);
+        }
+
+        /// <inheritdoc />
+        public void GetParamsCarWindows(out bool driver, out bool passenger, out bool backleft, out bool backright)
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.vehiclesNatives.GetVehicleParamsCarWindows(
+                                                            this.Id,
+                                                            out var oDriver,
+                                                            out var oPassenger,
+                                                            out var oBackleft,
+                                                            out var oBackright);
+
+            driver = oDriver == 1;
+            passenger = oPassenger == 1;
+            backleft = oBackleft == 1;
+            backright = oBackright == 1;
         }
 
         /// <inheritdoc />
