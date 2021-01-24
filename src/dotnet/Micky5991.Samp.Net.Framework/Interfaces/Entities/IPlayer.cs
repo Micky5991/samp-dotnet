@@ -532,12 +532,40 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// Clears the current animation of the player.
         /// </summary>
         /// <param name="forceSync">true if the animation should only be cleared to other players.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         void ClearAnimations(bool forceSync = false);
 
         /// <summary>
         /// Disables all collisions of other vehicles to this player.
         /// </summary>
         /// <param name="disable">true if all vehicles do not have collisions, false otherwise.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         void DisableRemoteVehicleCollisions(bool disable);
+
+        /// <summary>
+        /// Shows a dialogue to the player. The dialogid can contain 16bit (+32767), negative ids will close all visible dialogs.
+        /// </summary>
+        /// <param name="dialogid">Id that will be passed to the dialog response event.</param>
+        /// <param name="style">Style of the dialog.</param>
+        /// <param name="caption">Title caption of the dialog.</param>
+        /// <param name="info">Content of the dialog. Accepts \t for new tab and \n for new line.</param>
+        /// <param name="buttonLeft">Text on the left visible button.</param>
+        /// <param name="buttonRight">Text on the right button. Leave empty to hide it.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="dialogid"/> is negative.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="caption"/>, <paramref name="info"/>, <paramref name="buttonLeft"/>, <paramref name="buttonRight"/> is null.</exception>
+        void ShowDialog(
+            int dialogid,
+            DialogStyle style,
+            string caption,
+            string info,
+            string buttonLeft,
+            string buttonRight = "");
+
+        /// <summary>
+        /// Hides all currently visible dialogs.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void HideDialogs();
     }
 }
