@@ -932,6 +932,33 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
+        public void ShowDialog(
+            int dialogid,
+            DialogStyle style,
+            string caption,
+            string info,
+            string buttonLeft,
+            string buttonRight = "")
+        {
+            Guard.Argument(dialogid, nameof(dialogid)).NotNegative();
+            Guard.Argument(caption, nameof(caption)).NotNull();
+            Guard.Argument(info, nameof(info)).NotNull();
+            Guard.Argument(buttonLeft, nameof(buttonLeft)).NotNull();
+            Guard.Argument(buttonRight, nameof(buttonRight)).NotNull();
+            Guard.Disposal(this.Disposed);
+
+            this.sampNatives.ShowPlayerDialog(this.Id, dialogid, (int)style, caption, info, buttonLeft, buttonRight);
+        }
+
+        /// <inheritdoc />
+        public void HideDialogs()
+        {
+            Guard.Disposal(this.Disposed);
+
+            this.sampNatives.ShowPlayerDialog(this.Id, -1, 0, string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"<{this.GetType()} ({this.Id}) {this.Name}>";
