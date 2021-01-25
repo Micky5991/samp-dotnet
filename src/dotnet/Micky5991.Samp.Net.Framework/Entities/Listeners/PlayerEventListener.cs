@@ -42,6 +42,19 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
             this.eventAggregator.Subscribe<NativePlayerRequestSpawnEvent>(this.OnPlayerRequestSpawn);
             this.eventAggregator.Subscribe<NativePlayerSpawnEvent>(this.OnPlayerSpawn);
             this.eventAggregator.Subscribe<NativePlayerUpdateEvent>(this.OnPlayerUpdate);
+            this.eventAggregator.Subscribe<NativePlayerStateChangeEvent>(this.OnPlayerStateChange);
+        }
+
+        private void OnPlayerStateChange(NativePlayerStateChangeEvent eventdata)
+        {
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerUpdateEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            this.eventAggregator.Publish(new PlayerStateChange(player, (PlayerState)eventdata.Oldstate, (PlayerState)eventdata.Newstate));
         }
 
         private void OnPlayerUpdate(NativePlayerUpdateEvent eventdata)

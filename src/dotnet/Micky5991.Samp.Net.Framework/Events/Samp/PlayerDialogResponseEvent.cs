@@ -1,3 +1,4 @@
+using Dawn;
 using Micky5991.EventAggregator.Elements;
 using Micky5991.Samp.Net.Framework.Enums;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
@@ -19,6 +20,11 @@ namespace Micky5991.Samp.Net.Framework.Events.Samp
         /// <param name="inputText">Value of the dialog that has been entered or the text of the list item that has been selected.</param>
         public PlayerDialogResponseEvent(IPlayer player, int dialogId, DialogResponse response, int listItem, string inputText)
         {
+            Guard.Argument(player, nameof(player)).NotNull();
+            Guard.Argument(inputText, nameof(inputText)).NotNull();
+
+            Guard.Disposal(player.Disposed, nameof(player));
+
             this.Player = player;
             this.DialogId = dialogId;
             this.Response = response;

@@ -41,6 +41,46 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
         {
             this.eventAggregator.Subscribe<NativeVehicleDeathEvent>(this.OnVehicleDeath);
             this.eventAggregator.Subscribe<NativeVehicleSpawnEvent>(this.OnVehicleSpawn);
+            this.eventAggregator.Subscribe<NativePlayerEnterVehicleEvent>(this.OnVehicleEnter);
+            this.eventAggregator.Subscribe<NativePlayerExitVehicleEvent>(this.OnVehicleExit);
+        }
+
+        private void OnVehicleEnter(NativePlayerEnterVehicleEvent eventdata)
+        {
+            if (this.vehiclePool.Entities.TryGetValue(eventdata.Vehicleid, out var vehicle) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerEnterVehicleEvent)} from vehicle {eventdata.Vehicleid}, but the vehicle could not be found.");
+
+                return;
+            }
+
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerEnterVehicleEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            this.eventAggregator.Publish(new PlayerEnterVehicle(player, vehicle, eventdata.Ispassenger));
+        }
+
+        private void OnVehicleExit(NativePlayerExitVehicleEvent eventdata)
+        {
+            if (this.vehiclePool.Entities.TryGetValue(eventdata.Vehicleid, out var vehicle) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerExitVehicleEvent)} from vehicle {eventdata.Vehicleid}, but the vehicle could not be found.");
+
+                return;
+            }
+
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerExitVehicleEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            this.eventAggregator.Publish(new PlayerExitVehicle(player, vehicle));
         }
 
         private void OnVehicleSpawn(NativeVehicleSpawnEvent eventdata)
