@@ -249,37 +249,6 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
-        public AnimationData? Animation
-        {
-            get
-            {
-                Guard.Disposal(this.Disposed);
-
-                var index = this.AnimationIndex;
-
-                if (index == 0)
-                {
-                    return null;
-                }
-
-                this.playersNatives.GetAnimationName(index, out var animationLibrary, 32, out var animationName, 32);
-
-                return new AnimationData(animationLibrary, animationName);
-            }
-        }
-
-        /// <inheritdoc />
-        public int AnimationIndex
-        {
-            get
-            {
-                Guard.Disposal(this.Disposed);
-
-                return this.playersNatives.GetPlayerAnimationIndex(this.Id);
-            }
-        }
-
-        /// <inheritdoc />
         public int Interior
         {
             get
@@ -294,35 +263,6 @@ namespace Micky5991.Samp.Net.Framework.Entities
                 Guard.Disposal(this.Disposed);
 
                 this.playersNatives.SetPlayerInterior(this.Id, value);
-            }
-        }
-
-        /// <inheritdoc />
-        public Weaponstate Weaponstate
-        {
-            get
-            {
-                Guard.Disposal(this.Disposed);
-
-                return (Weaponstate)this.playersNatives.GetPlayerWeaponState(this.Id);
-            }
-        }
-
-        /// <inheritdoc />
-        public Weapon CurrentWeapon
-        {
-            get
-            {
-                Guard.Disposal(this.Disposed);
-
-                return (Weapon)this.playersNatives.GetPlayerWeapon(this.Id);
-            }
-
-            set
-            {
-                Guard.Disposal(this.Disposed);
-
-                this.playersNatives.SetPlayerArmedWeapon(this.Id, (int)value);
             }
         }
 
@@ -482,89 +422,6 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
-        public FightStyle FightStyle
-        {
-            get
-            {
-                Guard.Disposal(this.Disposed);
-
-                return (FightStyle)this.playersNatives.GetPlayerFightingStyle(this.Id);
-            }
-
-            set
-            {
-                Guard.Disposal(this.Disposed);
-
-                this.playersNatives.SetPlayerFightingStyle(this.Id, (int)value);
-            }
-        }
-
-        /// <inheritdoc />
-        public SpecialAction SpecialAction
-        {
-            get
-            {
-                Guard.Disposal(this.Disposed);
-
-                return (SpecialAction)this.playersNatives.GetPlayerSpecialAction(this.Id);
-            }
-
-            set
-            {
-                Guard.Disposal(this.Disposed);
-
-                this.playersNatives.SetPlayerSpecialAction(this.Id, (int)value);
-            }
-        }
-
-        /// <inheritdoc />
-        public int? VehicleId
-        {
-            get
-            {
-                Guard.Disposal(this.Disposed);
-
-                var vehicleId = this.playersNatives.GetPlayerVehicleID(this.Id);
-
-                if (vehicleId == SampConstants.InvalidVehicleId)
-                {
-                    return null;
-                }
-
-                return vehicleId;
-            }
-        }
-
-        /// <inheritdoc />
-        public int? VehicleSeat
-        {
-            get
-            {
-                Guard.Disposal(this.Disposed);
-
-                var seat = this.playersNatives.GetPlayerVehicleSeat(this.Id);
-
-                if (seat == -1)
-                {
-                    return null;
-                }
-
-                return seat;
-            }
-        }
-
-        /// <inheritdoc />
-        public bool PutPlayerIntoVehicle(IVehicle vehicle, int seat = 0)
-        {
-            Guard.Argument(vehicle, nameof(vehicle)).NotNull();
-            Guard.Argument(seat, nameof(seat)).NotNegative();
-            Guard.Disposal(this.Disposed);
-            Guard.Disposal(vehicle.Disposed, nameof(vehicle));
-
-            return this.playersNatives.PutPlayerInVehicle(this.Id, vehicle.Id, seat);
-        }
-
-        /// <inheritdoc />
         public void SendMessage(Color color, string message)
         {
             Guard.Argument(message).NotNull();
@@ -603,48 +460,6 @@ namespace Micky5991.Samp.Net.Framework.Entities
             Guard.Disposal(this.Disposed);
 
             this.playersNatives.SpawnPlayer(this.Id);
-        }
-
-        /// <inheritdoc />
-        public int GetCurrentWeaponAmmo()
-        {
-            Guard.Disposal(this.Disposed);
-
-            return this.playersNatives.GetPlayerAmmo(this.Id);
-        }
-
-        /// <inheritdoc />
-        public void SetWeaponAmmo(Weapon weapon, int ammo)
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.SetPlayerAmmo(this.Id, (int)weapon, ammo);
-        }
-
-        /// <inheritdoc />
-        public void GivePlayerWeapon(Weapon weapon, int ammo)
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.GivePlayerWeapon(this.Id, (int)weapon, ammo);
-        }
-
-        /// <inheritdoc />
-        public void ResetWeapons()
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.ResetPlayerWeapons(this.Id);
-        }
-
-        /// <inheritdoc />
-        public WeaponData GetWeaponData(int slot)
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.GetPlayerWeaponData(this.Id, slot, out var weapon, out var ammo);
-
-            return new WeaponData((Weapon)weapon, ammo);
         }
 
         /// <inheritdoc />
@@ -717,29 +532,6 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
-        public void SetSkillLevel(Weaponskill skill, int level)
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.SetPlayerSkillLevel(this.Id, (int)skill, level);
-        }
-
-        /// <inheritdoc />
-        public int? GetSurfingVehicleId()
-        {
-            Guard.Disposal(this.Disposed);
-
-            var vehicle = this.playersNatives.GetPlayerSurfingVehicleID(this.Id);
-
-            if (vehicle == SampConstants.InvalidVehicleId)
-            {
-                return null;
-            }
-
-            return vehicle;
-        }
-
-        /// <inheritdoc />
         public int? GetSurfingObjectId()
         {
             Guard.Disposal(this.Disposed);
@@ -764,83 +556,6 @@ namespace Micky5991.Samp.Net.Framework.Entities
         }
 
         /// <inheritdoc />
-        public void GetLastShotVectors(out Vector3 originPosition, out Vector3 hitPosition)
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.GetPlayerLastShotVectors(
-                                                         this.Id,
-                                                         out var originX,
-                                                         out var originY,
-                                                         out var originZ,
-                                                         out var hitPosX,
-                                                         out var hitPosY,
-                                                         out var hitPosZ);
-
-            originPosition = new Vector3(originX, originY, originZ);
-            hitPosition = new Vector3(hitPosX, hitPosY, hitPosZ);
-        }
-
-        /// <inheritdoc />
-        public bool SetAttachedObject(
-            int index,
-            int modelid,
-            int bone,
-            Vector3 offset,
-            Vector3 rotation,
-            Vector3 scale,
-            int materialColor1 = 0,
-            int materialColor2 = 0)
-        {
-            Guard.Argument(index, nameof(index)).NotNegative().Max(PlayersConstants.MaxPlayerAttachedObjects);
-            Guard.Disposal(this.Disposed);
-
-            return this.playersNatives.SetPlayerAttachedObject(
-                                                               this.Id,
-                                                               index,
-                                                               modelid,
-                                                               bone,
-                                                               offset.X,
-                                                               offset.Y,
-                                                               offset.Z,
-                                                               rotation.X,
-                                                               rotation.Y,
-                                                               rotation.Z,
-                                                               scale.X,
-                                                               scale.Y,
-                                                               scale.Z,
-                                                               materialColor1,
-                                                               materialColor2);
-        }
-
-        /// <inheritdoc />
-        public void RemoveAttachedObject(int index)
-        {
-            Guard.Argument(index, nameof(index)).NotNegative().Max(PlayersConstants.MaxPlayerAttachedObjects);
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.RemovePlayerAttachedObject(this.Id, index);
-        }
-
-        /// <inheritdoc />
-        public bool IsAttachedObjectSlotUsed(int index)
-        {
-            Guard.Argument(index, nameof(index)).NotNegative().Max(PlayersConstants.MaxPlayerAttachedObjects);
-            Guard.Disposal(this.Disposed);
-
-            return this.playersNatives.IsPlayerAttachedObjectSlotUsed(this.Id, index);
-        }
-
-        /// <inheritdoc />
-        public void EditAttachedObject(int index)
-        {
-            Guard.Argument(index, nameof(index)).NotNegative().Max(PlayersConstants.MaxPlayerAttachedObjects);
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.EditAttachedObject(this.Id, index);
-        }
-
-        /// <inheritdoc />
         public void SetChatBubble(string text, Color color, float drawDistance, TimeSpan expireTime)
         {
             Guard.Argument(text, nameof(text)).NotNull().MaxLength(PlayersConstants.MaxChatbubbleLength);
@@ -853,14 +568,6 @@ namespace Micky5991.Samp.Net.Framework.Entities
                                                     color.ToRgba(),
                                                     drawDistance,
                                                     (int)expireTime.TotalMilliseconds);
-        }
-
-        /// <inheritdoc />
-        public void RemoveFromVehicle()
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.RemovePlayerFromVehicle(this.Id);
         }
 
         /// <inheritdoc />
@@ -885,50 +592,6 @@ namespace Micky5991.Samp.Net.Framework.Entities
             Guard.Disposal(this.Disposed);
 
             this.playersNatives.PlayerPlaySound(this.Id, sound, 0, 0, 0);
-        }
-
-        /// <inheritdoc />
-        public void ApplyAnimation(
-            AnimationData animation,
-            float delta,
-            bool loop,
-            bool lockX,
-            bool lockY,
-            bool freeze,
-            TimeSpan time,
-            bool forceSync = false)
-        {
-            Guard.Disposal(this.Disposed);
-
-            var (animationLibrary, animationName) = animation;
-
-            this.playersNatives.ApplyAnimation(
-                                               this.Id,
-                                               animationLibrary,
-                                               animationName,
-                                               delta,
-                                               loop,
-                                               lockX,
-                                               lockY,
-                                               freeze,
-                                               (int)time.TotalMilliseconds,
-                                               forceSync);
-        }
-
-        /// <inheritdoc />
-        public void ClearAnimations(bool forceSync = false)
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.ClearAnimations(this.Id, forceSync);
-        }
-
-        /// <inheritdoc />
-        public void DisableRemoteVehicleCollisions(bool disable)
-        {
-            Guard.Disposal(this.Disposed);
-
-            this.playersNatives.DisableRemoteVehicleCollisions(this.Id, disable);
         }
 
         /// <inheritdoc />
