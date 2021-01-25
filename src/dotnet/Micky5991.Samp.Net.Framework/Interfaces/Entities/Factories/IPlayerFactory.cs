@@ -1,7 +1,6 @@
-using Micky5991.Samp.Net.Framework.Interfaces.Entities;
-using Micky5991.Samp.Net.Framework.Interfaces.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 
-namespace Micky5991.Samp.Net.Framework.Interfaces.Factories
+namespace Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories
 {
     /// <summary>
     /// Factory that will be used when a player instance should be created.

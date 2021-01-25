@@ -2,10 +2,9 @@ using System;
 using System.Numerics;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Exceptions;
-using Micky5991.Samp.Net.Framework.Interfaces.Entities;
-using Micky5991.Samp.Net.Framework.Interfaces.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 
-namespace Micky5991.Samp.Net.Framework.Interfaces.Factories
+namespace Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories
 {
     /// <summary>
     /// Factory to create vehicles.

@@ -2,7 +2,7 @@ using System.Linq;
 using AutoMapper;
 using Micky5991.Samp.Net.Commands.Extensions;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
-using Micky5991.Samp.Net.Framework.Interfaces.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 
 namespace Micky5991.Samp.Net.Commands.Mapping.TypeConverters
 {

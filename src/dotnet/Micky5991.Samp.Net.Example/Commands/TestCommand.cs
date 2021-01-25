@@ -3,7 +3,7 @@ using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
-using Micky5991.Samp.Net.Framework.Interfaces.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 
 namespace Micky5991.Samp.Net.Example.Commands
 {
