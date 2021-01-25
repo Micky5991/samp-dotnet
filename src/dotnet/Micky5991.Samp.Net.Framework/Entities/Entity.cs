@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
 namespace Micky5991.Samp.Net.Framework.Entities
 {
     /// <inheritdoc />
-    public abstract class Entity : IEntity
+    public abstract partial class Entity : IEntity
     {
         private readonly int id;
 
@@ -16,6 +18,8 @@ namespace Micky5991.Samp.Net.Framework.Entities
         protected Entity(int id)
         {
             this.id = id;
+
+            this.Data = new Dictionary<string, object?>().ToImmutableDictionary();
         }
 
         /// <inheritdoc />
