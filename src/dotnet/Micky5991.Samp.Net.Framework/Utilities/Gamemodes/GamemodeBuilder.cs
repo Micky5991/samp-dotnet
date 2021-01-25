@@ -14,8 +14,8 @@ using Micky5991.Samp.Net.Framework.Elements.Entities.Factories;
 using Micky5991.Samp.Net.Framework.Elements.Entities.Listeners;
 using Micky5991.Samp.Net.Framework.Elements.Entities.Pools;
 using Micky5991.Samp.Net.Framework.Interfaces;
-using Micky5991.Samp.Net.Framework.Interfaces.Factories;
-using Micky5991.Samp.Net.Framework.Interfaces.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes

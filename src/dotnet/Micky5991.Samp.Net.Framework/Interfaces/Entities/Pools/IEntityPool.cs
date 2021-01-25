@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Immutable;
-using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
-namespace Micky5991.Samp.Net.Framework.Interfaces.Pools
+namespace Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools
 {
     /// <summary>
     /// General interface of a container which handles current available entities of type <typeparamref name="T"/> on this server.
