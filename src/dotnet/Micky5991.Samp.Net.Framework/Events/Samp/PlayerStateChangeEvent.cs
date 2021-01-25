@@ -1,3 +1,5 @@
+using System;
+using Dawn;
 using Micky5991.EventAggregator.Elements;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
@@ -15,8 +17,14 @@ namespace Micky5991.Samp.Net.Framework.Events.Samp
         /// <param name="player">Player that changed the state.</param>
         /// <param name="oldState">Old state of the player.</param>
         /// <param name="newState">New state of the player.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="player"/> is null.</exception>
+        /// <exception cref="ObjectDisposedException"><paramref name="player"/> was disposed.</exception>
         public PlayerStateChangeEvent(IPlayer player, PlayerState oldState, PlayerState newState)
         {
+            Guard.Argument(player, nameof(player)).NotNull();
+
+            Guard.Disposal(player.Disposed, nameof(player));
+
             this.Player = player;
             this.OldState = oldState;
             this.NewState = newState;

@@ -1,4 +1,5 @@
 using System;
+using Dawn;
 using Micky5991.EventAggregator.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
@@ -17,6 +18,10 @@ namespace Micky5991.Samp.Net.Framework.Events.Samp
         /// <exception cref="ObjectDisposedException"><paramref name="vehicle"/> was disposed.</exception>
         public VehicleRespawnEvent(IVehicle vehicle)
         {
+            Guard.Argument(vehicle, nameof(vehicle)).NotNull();
+
+            Guard.Disposal(vehicle.Disposed, nameof(vehicle));
+
             this.Vehicle = vehicle;
         }
 
