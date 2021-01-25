@@ -3,7 +3,7 @@ using Dawn;
 using Micky5991.EventAggregator.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
-namespace Micky5991.Samp.Net.Framework.Events.Players
+namespace Micky5991.Samp.Net.Framework.Events.Samp
 {
     /// <summary>
     /// Specialized event that will be triggered when a known player sends a chat message.
