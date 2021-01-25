@@ -195,7 +195,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         protected virtual GamemodeBuilder AddEntityListeners()
         {
             this.serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>()
-                .AddTransient<IEntityListener, PlayerEventListener>();
+                .AddTransient<IEntityListener, PlayerEventListener>()
+                .AddTransient<IEntityListener, VehicleEventListener>();
 
             return this;
         }

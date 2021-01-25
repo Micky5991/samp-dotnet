@@ -1,7 +1,7 @@
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Events.Players;
-using Micky5991.Samp.Net.Framework.Interfaces;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +10,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
     /// <summary>
     /// Attaches event handlers that handle common native events.
     /// </summary>
-    public class PlayerEventListener : IEntityListener
+    public class PlayerEventListener : EventListenerBase
     {
         private readonly IEventAggregator eventAggregator;
 
@@ -25,6 +25,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
         /// <param name="logger">Needed logger for this instance.</param>
         /// <param name="playerPool">Needed playerpool for this instance.</param>
         public PlayerEventListener(IEventAggregator eventAggregator, ILogger<PlayerEventListener> logger, IPlayerPool playerPool)
+            : base(eventAggregator)
         {
             this.eventAggregator = eventAggregator;
             this.logger = logger;
@@ -32,10 +33,87 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
         }
 
         /// <inheritdoc />
-        public void Attach()
+        public override void Attach()
         {
             this.eventAggregator.Subscribe<NativePlayerTextEvent>(this.OnPlayerChat);
             this.eventAggregator.Subscribe<NativePlayerCommandTextEvent>(this.OnPlayerCommand);
+            this.eventAggregator.Subscribe<NativePlayerDeathEvent>(this.OnPlayerDeath);
+            this.eventAggregator.Subscribe<NativePlayerRequestClassEvent>(this.OnPlayerRequestClass);
+            this.eventAggregator.Subscribe<NativePlayerRequestSpawnEvent>(this.OnPlayerRequestSpawn);
+            this.eventAggregator.Subscribe<NativePlayerSpawnEvent>(this.OnPlayerSpawn);
+            this.eventAggregator.Subscribe<NativePlayerUpdateEvent>(this.OnPlayerUpdate);
+        }
+
+        private void OnPlayerUpdate(NativePlayerUpdateEvent eventdata)
+        {
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerUpdateEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            this.WrapCancellableEvent(eventdata, new PlayerUpdate(player));
+        }
+
+        private void OnPlayerSpawn(NativePlayerSpawnEvent eventdata)
+        {
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerSpawnEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            this.WrapCancellableEvent(eventdata, new PlayerSpawnEvent(player));
+        }
+
+        private void OnPlayerRequestSpawn(NativePlayerRequestSpawnEvent eventdata)
+        {
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerRequestSpawnEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            this.WrapCancellableEvent(eventdata, new PlayerRequestSpawn(player));
+        }
+
+        private void OnPlayerRequestClass(NativePlayerRequestClassEvent eventdata)
+        {
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerRequestClassEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            this.eventAggregator.Publish(new PlayerRequestClassEvent(player, eventdata.Classid));
+        }
+
+        private void OnPlayerDeath(NativePlayerDeathEvent eventdata)
+        {
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerDeathEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            IPlayer? killer = null;
+
+            if (eventdata.Killerid != SampConstants.InvalidPlayerId)
+            {
+                if (this.playerPool.Entities.TryGetValue(eventdata.Killerid, out killer) == false)
+                {
+                    this.logger.LogWarning($"Received a {nameof(NativePlayerDeathEvent)} from killer {eventdata.Killerid}, but the player could not be found.");
+
+                    return;
+                }
+            }
+
+            this.WrapCancellableEvent(eventdata, new PlayerDeathEvent(player, killer, eventdata.Reason));
         }
 
         private void OnPlayerCommand(NativePlayerCommandTextEvent eventdata)
@@ -47,9 +125,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
                 return;
             }
 
-            var commandEvent = this.eventAggregator.Publish(new PlayerCommandEvent(player, eventdata.Cmdtext));
-
-            eventdata.Cancelled = commandEvent.Cancelled;
+            this.WrapCancellableEvent(eventdata, new PlayerCommandEvent(player, eventdata.Cmdtext));
         }
 
         private void OnPlayerChat(NativePlayerTextEvent eventdata)
@@ -61,9 +137,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
                 return;
             }
 
-            var textEvent = this.eventAggregator.Publish(new PlayerTextEvent(player, eventdata.Text));
-
-            eventdata.Cancelled = textEvent.Cancelled;
+            this.WrapCancellableEvent(eventdata, new PlayerTextEvent(player, eventdata.Text));
         }
     }
 }

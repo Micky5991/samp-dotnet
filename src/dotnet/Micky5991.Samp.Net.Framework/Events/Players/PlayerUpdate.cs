@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Framework.Events.Players
     /// <summary>
     /// Event that will be triggered when a player update was sent to the server.
     /// </summary>
-    public class PlayerUpdate : EventBase
+    public class PlayerUpdate : CancellableEventBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerUpdate"/> class.

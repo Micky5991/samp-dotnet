@@ -8,17 +8,17 @@ namespace Micky5991.Samp.Net.Framework.Events.Players
     /// <summary>
     /// Event that will be triggered when a player died.
     /// </summary>
-    public class PlayerDeathEvent : EventBase
+    public class PlayerDeathEvent : CancellableEventBase
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerDeathEvent"/> class.
         /// </summary>
         /// <param name="player">Player that has been killed.</param>
         /// <param name="killer">Optional killer that killed the <paramref name="player"/>.</param>
+        /// <param name="reason">Numerical reason of death.</param>
         /// <exception cref="ArgumentNullException"><paramref name="player"/> is null.</exception>
         /// <exception cref="ObjectDisposedException"><paramref name="player"/> or <paramref name="killer"/> was disposed.</exception>
-        public PlayerDeathEvent(IPlayer player, IPlayer? killer)
+        public PlayerDeathEvent(IPlayer player, IPlayer? killer, int reason)
         {
             Guard.Argument(player, nameof(player)).NotNull();
             Guard.Disposal(player.Disposed, nameof(player));
@@ -30,6 +30,7 @@ namespace Micky5991.Samp.Net.Framework.Events.Players
 
             this.Player = player;
             this.Killer = killer;
+            this.Reason = reason;
         }
 
         /// <summary>
@@ -41,5 +42,10 @@ namespace Micky5991.Samp.Net.Framework.Events.Players
         /// Gets the optional killer of this <see cref="Player"/>.
         /// </summary>
         public IPlayer? Killer { get; }
+
+        /// <summary>
+        /// Gets the reason why the player died.
+        /// </summary>
+        public int Reason { get; }
     }
 }

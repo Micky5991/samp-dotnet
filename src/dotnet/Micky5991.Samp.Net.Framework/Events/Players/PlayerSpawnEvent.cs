@@ -8,7 +8,7 @@ namespace Micky5991.Samp.Net.Framework.Events.Players
     /// <summary>
     /// Event that will be triggered when a player spawned.
     /// </summary>
-    public class PlayerSpawnEvent : EventBase
+    public class PlayerSpawnEvent : CancellableEventBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerSpawnEvent"/> class.
