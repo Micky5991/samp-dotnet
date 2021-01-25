@@ -54,7 +54,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
                 return;
             }
 
-            this.eventAggregator.Publish(new PlayerStateChange(player, (PlayerState)eventdata.Oldstate, (PlayerState)eventdata.Newstate));
+            this.eventAggregator.Publish(new PlayerStateChangeEvent(player, (PlayerState)eventdata.Oldstate, (PlayerState)eventdata.Newstate));
         }
 
         private void OnPlayerUpdate(NativePlayerUpdateEvent eventdata)
@@ -66,7 +66,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
                 return;
             }
 
-            this.WrapCancellableEvent(eventdata, new PlayerUpdate(player));
+            this.WrapCancellableEvent(eventdata, new PlayerUpdateEvent(player));
         }
 
         private void OnPlayerSpawn(NativePlayerSpawnEvent eventdata)
@@ -90,7 +90,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
                 return;
             }
 
-            this.WrapCancellableEvent(eventdata, new PlayerRequestSpawn(player));
+            this.WrapCancellableEvent(eventdata, new PlayerRequestSpawnEvent(player));
         }
 
         private void OnPlayerRequestClass(NativePlayerRequestClassEvent eventdata)

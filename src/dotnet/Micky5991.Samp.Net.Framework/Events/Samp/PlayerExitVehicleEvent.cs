@@ -6,19 +6,18 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 namespace Micky5991.Samp.Net.Framework.Events.Samp
 {
     /// <summary>
-    /// Event that will be triggered when the player enters the vehicle.
+    /// Event that will be triggered when a player exists.
     /// </summary>
-    public class PlayerEnterVehicle : EventBase
+    public class PlayerExitVehicleEvent : EventBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PlayerEnterVehicle"/> class.
+        /// Initializes a new instance of the <see cref="PlayerExitVehicleEvent"/> class.
         /// </summary>
-        /// <param name="player">Player that tried to enter the vehicle.</param>
-        /// <param name="vehicle">Vehicle which the <paramref name="player"/> tried to enter.</param>
-        /// <param name="isPassenger">true if the player was about to become the driver, false otherwise.</param>
+        /// <param name="player">Player that exited the <paramref name="vehicle"/>.</param>
+        /// <param name="vehicle">Vehicle that has been exited.</param>
         /// <exception cref="ArgumentNullException"><paramref name="player"/> or <paramref name="vehicle"/> is null.</exception>
         /// <exception cref="ObjectDisposedException"><paramref name="player"/> or <paramref name="vehicle"/> was disposed.</exception>
-        public PlayerEnterVehicle(IPlayer player, IVehicle vehicle, bool isPassenger)
+        public PlayerExitVehicleEvent(IPlayer player, IVehicle vehicle)
         {
             Guard.Argument(player, nameof(player)).NotNull();
             Guard.Argument(vehicle, nameof(vehicle)).NotNull();
@@ -28,22 +27,16 @@ namespace Micky5991.Samp.Net.Framework.Events.Samp
 
             this.Player = player;
             this.Vehicle = vehicle;
-            this.IsPassenger = isPassenger;
         }
 
         /// <summary>
-        /// Gets the player that tries to enter the vehicle.
+        /// Gets the player that exited the <see cref="Vehicle"/>.
         /// </summary>
         public IPlayer Player { get; }
 
         /// <summary>
-        /// Gets the vehicle which the <see cref="Player"/> tried to enter.
+        /// Gets the vehicle that has been exited.
         /// </summary>
         public IVehicle Vehicle { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether the <see cref="Player"/> tries to enter the vehicle as a driver.
-        /// </summary>
-        public bool IsPassenger { get; }
     }
 }

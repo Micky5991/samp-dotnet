@@ -61,7 +61,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
                 return;
             }
 
-            this.eventAggregator.Publish(new PlayerEnterVehicle(player, vehicle, eventdata.Ispassenger));
+            this.eventAggregator.Publish(new PlayerEnterVehicleEvent(player, vehicle, eventdata.Ispassenger));
         }
 
         private void OnVehicleExit(NativePlayerExitVehicleEvent eventdata)
@@ -80,7 +80,7 @@ namespace Micky5991.Samp.Net.Framework.Entities.Listeners
                 return;
             }
 
-            this.eventAggregator.Publish(new PlayerExitVehicle(player, vehicle));
+            this.eventAggregator.Publish(new PlayerExitVehicleEvent(player, vehicle));
         }
 
         private void OnVehicleSpawn(NativeVehicleSpawnEvent eventdata)
