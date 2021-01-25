@@ -8,7 +8,7 @@ namespace Micky5991.Samp.Net.Framework.Events.Samp
     /// <summary>
     /// Event that will be triggered when the player enters the vehicle.
     /// </summary>
-    public class PlayerEnterVehicleEvent : EventBase
+    public class PlayerEnterVehicleEvent : CancellableEventBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerEnterVehicleEvent"/> class.
