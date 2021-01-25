@@ -7,15 +7,15 @@ namespace Micky5991.Samp.Net.Framework.Events.Samp
     /// <summary>
     /// Event that will be triggered when the player state changed.
     /// </summary>
-    public class PlayerStateChange : EventBase
+    public class PlayerStateChangeEvent : EventBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PlayerStateChange"/> class.
+        /// Initializes a new instance of the <see cref="PlayerStateChangeEvent"/> class.
         /// </summary>
         /// <param name="player">Player that changed the state.</param>
         /// <param name="oldState">Old state of the player.</param>
         /// <param name="newState">New state of the player.</param>
-        public PlayerStateChange(IPlayer player, PlayerState oldState, PlayerState newState)
+        public PlayerStateChangeEvent(IPlayer player, PlayerState oldState, PlayerState newState)
         {
             this.Player = player;
             this.OldState = oldState;

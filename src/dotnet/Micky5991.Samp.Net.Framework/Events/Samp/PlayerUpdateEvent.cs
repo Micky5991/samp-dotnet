@@ -6,13 +6,13 @@ namespace Micky5991.Samp.Net.Framework.Events.Samp
     /// <summary>
     /// Event that will be triggered when a player update was sent to the server.
     /// </summary>
-    public class PlayerUpdate : CancellableEventBase
+    public class PlayerUpdateEvent : CancellableEventBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PlayerUpdate"/> class.
+        /// Initializes a new instance of the <see cref="PlayerUpdateEvent"/> class.
         /// </summary>
         /// <param name="player">Player that has been updated.</param>
-        public PlayerUpdate(IPlayer player)
+        public PlayerUpdateEvent(IPlayer player)
         {
             this.Player = player;
         }
