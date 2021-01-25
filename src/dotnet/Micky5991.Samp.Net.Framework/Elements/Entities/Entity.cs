@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
-namespace Micky5991.Samp.Net.Framework.Entities
+namespace Micky5991.Samp.Net.Framework.Elements.Entities
 {
     /// <inheritdoc />
     public abstract partial class Entity : IEntity

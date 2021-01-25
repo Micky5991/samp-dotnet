@@ -7,7 +7,7 @@ using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 using Microsoft.Extensions.Logging;
 
-namespace Micky5991.Samp.Net.Framework.Entities.Listeners
+namespace Micky5991.Samp.Net.Framework.Elements.Entities.Listeners
 {
     /// <inheritdoc />
     public class PlayerPoolListener : IEntityListener
