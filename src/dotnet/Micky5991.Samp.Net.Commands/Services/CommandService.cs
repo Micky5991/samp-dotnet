@@ -11,7 +11,7 @@ using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Commands.Events;
 using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Interfaces;
-using Micky5991.Samp.Net.Framework.Events.Players;
+using Micky5991.Samp.Net.Framework.Events.Samp;
 using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Commands.Services

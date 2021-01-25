@@ -11,7 +11,7 @@ using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers;
-using Micky5991.Samp.Net.Framework.Events.Players;
+using Micky5991.Samp.Net.Framework.Events.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -123,8 +123,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void ServiceStarterSubscribesToEventAggregator()
         {
             Expression<Func<IEventAggregator, ISubscription>> subscribeExpression = x => x.Subscribe(
-                                                       It.IsAny<IEventAggregator.EventHandlerDelegate<PlayerCommandEvent
-                                                       >>(),
+                                                       It.IsAny<IEventAggregator.EventHandlerDelegate<PlayerCommandEvent>>(),
                                                        true,
                                                        EventPriority.Normal,
                                                        ThreadTarget.PublisherThread);

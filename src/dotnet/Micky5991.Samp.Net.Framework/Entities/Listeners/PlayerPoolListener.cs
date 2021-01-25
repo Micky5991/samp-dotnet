@@ -2,7 +2,7 @@ using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Enums;
-using Micky5991.Samp.Net.Framework.Events.Players;
+using Micky5991.Samp.Net.Framework.Events.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 using Microsoft.Extensions.Logging;

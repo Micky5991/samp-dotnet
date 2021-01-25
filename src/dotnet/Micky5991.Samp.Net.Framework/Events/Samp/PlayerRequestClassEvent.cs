@@ -2,7 +2,7 @@ using Dawn;
 using Micky5991.EventAggregator.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
-namespace Micky5991.Samp.Net.Framework.Events.Players
+namespace Micky5991.Samp.Net.Framework.Events.Samp
 {
     /// <summary>
     /// Event that will be triggered when the player requests a class on spawn.
