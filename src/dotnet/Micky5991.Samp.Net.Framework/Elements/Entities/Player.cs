@@ -10,7 +10,7 @@ using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 
-namespace Micky5991.Samp.Net.Framework.Entities
+namespace Micky5991.Samp.Net.Framework.Elements.Entities
 {
     /// <inheritdoc cref="IPlayer"/>
     public partial class Player : Entity, IPlayer

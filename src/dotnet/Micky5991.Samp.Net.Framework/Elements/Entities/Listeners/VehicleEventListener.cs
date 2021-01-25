@@ -5,7 +5,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 using Microsoft.Extensions.Logging;
 
-namespace Micky5991.Samp.Net.Framework.Entities.Listeners
+namespace Micky5991.Samp.Net.Framework.Elements.Entities.Listeners
 {
     /// <summary>
     /// Listens for specific <see cref="IVehicle"/> events and converts them to better event parameters.

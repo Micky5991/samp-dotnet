@@ -4,7 +4,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 
-namespace Micky5991.Samp.Net.Framework.Entities.Factories
+namespace Micky5991.Samp.Net.Framework.Elements.Entities.Factories
 {
     /// <inheritdoc />
     public class PlayerFactory : IPlayerFactory
