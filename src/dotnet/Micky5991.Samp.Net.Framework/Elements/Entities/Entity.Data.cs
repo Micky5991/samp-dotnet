@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using Dawn;
 
-namespace Micky5991.Samp.Net.Framework.Entities
+namespace Micky5991.Samp.Net.Framework.Elements.Entities
 {
     /// <inheritdoc cref="Entity"/>
     public abstract partial class Entity

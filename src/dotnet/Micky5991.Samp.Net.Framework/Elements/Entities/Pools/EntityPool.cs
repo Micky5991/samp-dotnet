@@ -6,7 +6,7 @@ using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 
-namespace Micky5991.Samp.Net.Framework.Entities.Pools
+namespace Micky5991.Samp.Net.Framework.Elements.Entities.Pools
 {
     /// <inheritdoc />
     public abstract class EntityPool<T> : IEntityPool<T>

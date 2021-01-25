@@ -1,7 +1,7 @@
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces;
 
-namespace Micky5991.Samp.Net.Framework.Entities.Listeners
+namespace Micky5991.Samp.Net.Framework.Elements.Entities.Listeners
 {
     /// <summary>
     /// Base that provides general methods for easy handling.

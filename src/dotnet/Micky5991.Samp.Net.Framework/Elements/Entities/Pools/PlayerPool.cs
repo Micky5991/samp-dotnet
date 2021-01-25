@@ -6,7 +6,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Pools;
 
-namespace Micky5991.Samp.Net.Framework.Entities.Pools
+namespace Micky5991.Samp.Net.Framework.Elements.Entities.Pools
 {
     /// <summary>
     /// Implements a player handler.
