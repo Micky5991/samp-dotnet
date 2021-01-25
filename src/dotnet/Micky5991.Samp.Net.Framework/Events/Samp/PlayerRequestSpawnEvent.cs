@@ -6,13 +6,13 @@ namespace Micky5991.Samp.Net.Framework.Events.Samp
     /// <summary>
     /// Event that will be triggered when a player requests a spawn on class selection.
     /// </summary>
-    public class PlayerRequestSpawn : CancellableEventBase
+    public class PlayerRequestSpawnEvent : CancellableEventBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PlayerRequestSpawn"/> class.
+        /// Initializes a new instance of the <see cref="PlayerRequestSpawnEvent"/> class.
         /// </summary>
         /// <param name="player">Player that requested the spawn.</param>
-        public PlayerRequestSpawn(IPlayer player)
+        public PlayerRequestSpawnEvent(IPlayer player)
         {
             this.Player = player;
         }
