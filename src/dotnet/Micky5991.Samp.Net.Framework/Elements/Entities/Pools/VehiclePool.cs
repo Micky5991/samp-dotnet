@@ -3,8 +3,8 @@ using System.Numerics;
 using Dawn;
 using Micky5991.Samp.Net.Core.Natives.Vehicles;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
-using Micky5991.Samp.Net.Framework.Interfaces.Factories;
-using Micky5991.Samp.Net.Framework.Interfaces.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 
 namespace Micky5991.Samp.Net.Framework.Elements.Entities.Pools
 {

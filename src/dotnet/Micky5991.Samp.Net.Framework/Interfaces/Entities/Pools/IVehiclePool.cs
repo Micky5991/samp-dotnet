@@ -3,9 +3,8 @@ using System.Numerics;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Core.Natives.Vehicles;
 using Micky5991.Samp.Net.Framework.Exceptions;
-using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
-namespace Micky5991.Samp.Net.Framework.Interfaces.Pools
+namespace Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools
 {
     /// <summary>
     /// Container of <see cref="IVehicle"/> instances.
