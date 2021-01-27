@@ -618,7 +618,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         {
             Guard.Disposal(this.Disposed);
 
-            this.sampNatives.ShowPlayerDialog(this.Id, -1, 0, string.Empty, string.Empty, string.Empty, string.Empty);
+            this.sampNatives.ShowPlayerDialog(this.Id, -1, 0, " ", " ", " ", " ");
         }
 
         /// <inheritdoc />
