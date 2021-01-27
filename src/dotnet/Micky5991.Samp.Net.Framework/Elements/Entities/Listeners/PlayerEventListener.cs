@@ -1,5 +1,6 @@
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Framework.Enums;
 using Micky5991.Samp.Net.Framework.Events.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
@@ -43,6 +44,25 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Listeners
             this.eventAggregator.Subscribe<NativePlayerSpawnEvent>(this.OnPlayerSpawn);
             this.eventAggregator.Subscribe<NativePlayerUpdateEvent>(this.OnPlayerUpdate);
             this.eventAggregator.Subscribe<NativePlayerStateChangeEvent>(this.OnPlayerStateChange);
+            this.eventAggregator.Subscribe<NativeDialogResponseEvent>(this.OnPlayerDialogResponse);
+        }
+
+        private void OnPlayerDialogResponse(NativeDialogResponseEvent eventdata)
+        {
+            if (this.playerPool.Entities.TryGetValue(eventdata.Playerid, out var player) == false)
+            {
+                this.logger.LogWarning($"Received a {nameof(NativePlayerUpdateEvent)} from player {eventdata.Playerid}, but the player could not be found.");
+
+                return;
+            }
+
+            this.eventAggregator.Publish(
+                                         new PlayerDialogResponseEvent(
+                                                                       player,
+                                                                       eventdata.Dialogid,
+                                                                       (DialogResponse)eventdata.Response,
+                                                                       eventdata.Listitem,
+                                                                       eventdata.Inputtext));
         }
 
         private void OnPlayerStateChange(NativePlayerStateChangeEvent eventdata)
