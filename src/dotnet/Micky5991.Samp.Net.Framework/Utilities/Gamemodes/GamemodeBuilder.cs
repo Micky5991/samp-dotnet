@@ -16,6 +16,8 @@ using Micky5991.Samp.Net.Framework.Elements.Entities.Pools;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Services;
+using Micky5991.Samp.Net.Framework.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
@@ -51,7 +53,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
                 .AddNatives()
                 .AddEntityFactories()
                 .AddEntityPools()
-                .AddEntityListeners();
+                .AddEntityListeners()
+                .AddDialogHandler();
 
             return this;
         }
@@ -197,6 +200,19 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>()
                 .AddTransient<IEntityListener, PlayerEventListener>()
                 .AddTransient<IEntityListener, VehicleEventListener>();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Registers the <see cref="IDialogHandler"/> implementation and attaches to needed events.
+        /// </summary>
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddDialogHandler()
+        {
+            this.serviceCollection
+                .AddSingleton<IEntityListener, DialogHandler>()
+                .AddSingleton<IDialogHandler, DialogHandler>();
 
             return this;
         }

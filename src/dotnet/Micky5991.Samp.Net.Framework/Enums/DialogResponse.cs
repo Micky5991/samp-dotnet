@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Framework.Enums
     public enum DialogResponse
     {
         /// <summary>
-        /// The right button has been pressed
+        /// The right button has been pressed or ESC has been pressed.
         /// </summary>
         RightButton,
 

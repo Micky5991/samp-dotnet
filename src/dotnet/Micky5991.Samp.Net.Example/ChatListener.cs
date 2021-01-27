@@ -2,8 +2,10 @@ using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Framework.Elements.Dialogs;
 using Micky5991.Samp.Net.Framework.Events.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Example
@@ -22,7 +24,16 @@ namespace Micky5991.Samp.Net.Example
 
         private readonly IPlayerPool playerPool;
 
-        public ChatListener(IEventAggregator eventAggregator, ILogger<ChatListener> logger, IPlayersNatives playersNatives, ISampNatives sampNatives, IVehiclePool vehiclePool, IPlayerPool playerPool)
+        private readonly IDialogHandler dialogHandler;
+
+        public ChatListener(
+            IEventAggregator eventAggregator,
+            ILogger<ChatListener> logger,
+            IPlayersNatives playersNatives,
+            ISampNatives sampNatives,
+            IVehiclePool vehiclePool,
+            IPlayerPool playerPool,
+            IDialogHandler dialogHandler)
         {
             this.eventAggregator = eventAggregator;
             this.logger = logger;
@@ -30,6 +41,7 @@ namespace Micky5991.Samp.Net.Example
             this.sampNatives = sampNatives;
             this.vehiclePool = vehiclePool;
             this.playerPool = playerPool;
+            this.dialogHandler = dialogHandler;
         }
 
         public void Attach()
@@ -38,10 +50,9 @@ namespace Micky5991.Samp.Net.Example
 
             this.eventAggregator.Subscribe<PlayerTextEvent>(this.OnPlayerChat);
             this.eventAggregator.Subscribe<PlayerConnectEvent>(this.OnPlayerConnect);
-            this.eventAggregator.Subscribe<NativePlayerRequestClassEvent>(this.OnPlayerRequestClass);
+            this.eventAggregator.Subscribe<PlayerRequestClassEvent>(this.OnPlayerRequestClass);
             this.eventAggregator.Subscribe<NativePlayerRequestSpawnEvent>(this.OnPlayerRequestSpawn);
-            this.eventAggregator.Subscribe<NativeDialogResponseEvent>(OnPlayerRespondDialog);
-            this.eventAggregator.Subscribe<NativePlayerSpawnEvent>(OnPlayerSpawn, eventPriority: EventPriority.Highest);
+            this.eventAggregator.Subscribe<NativePlayerSpawnEvent>(this.OnPlayerSpawn, eventPriority: EventPriority.Highest);
         }
 
         private void OnGamemodeInit(NativeGameModeInitEvent eventdata)
@@ -56,15 +67,6 @@ namespace Micky5991.Samp.Net.Example
             eventdata.Cancelled = false;
         }
 
-        private void OnPlayerRespondDialog(NativeDialogResponseEvent eventdata)
-        {
-            if (eventdata.Dialogid == 2)
-            {
-                this.logger.LogInformation($"Spawn player {eventdata.Playerid}");
-                this.playersNatives.SpawnPlayer(eventdata.Playerid);
-            }
-        }
-
         private void OnPlayerRequestSpawn(NativePlayerRequestSpawnEvent eventdata)
         {
             this.logger.LogInformation($"Player {eventdata.Playerid} requested spawn");
@@ -73,18 +75,26 @@ namespace Micky5991.Samp.Net.Example
             // eventdata.Cancelled = true;
         }
 
-        private void OnPlayerRequestClass(NativePlayerRequestClassEvent eventdata)
+        private async void OnPlayerRequestClass(PlayerRequestClassEvent eventdata)
         {
-            this.logger.LogInformation($"Player {eventdata.Playerid} requested class");
-            this.playersNatives.SpawnPlayer(eventdata.Playerid);
+            this.logger.LogInformation($"Player {eventdata.Player} requested class");
 
-            this.sampNatives.ShowPlayerDialog(eventdata.Playerid, 2, SampConstants.DialogStylePassword, "Test", "COOL", "OK", "abort");
+            var dialog = new TextInputDialog();
+            dialog.SetCaption("Hey");
+            dialog.SetMessage("Login pls");
+            dialog.SetButtons("Login");
 
-            // eventdata.Cancelled = true;
+            var response = await this.dialogHandler.ShowDialogAsync(eventdata.Player, dialog);
+
+            this.logger.LogInformation($"Text: {response.InputText}");
+
+            eventdata.Player.Spawn();
         }
 
         private void OnPlayerConnect(PlayerConnectEvent eventdata)
         {
+            eventdata.Player.HideDialogs();
+
             this.logger.LogInformation($"Player {eventdata.Player.Name} connected");
         }
 
