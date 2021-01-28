@@ -38,7 +38,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             attribute.Group.Should()
                      .BeNullOrEmpty();
 
-            attribute.Help.Should()
+            attribute.Description.Should()
                      .BeNullOrEmpty();
         }
 
@@ -53,7 +53,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             attribute.Group.Should().Be("veh");
 
-            attribute.Help.Should()
+            attribute.Description.Should()
                      .BeNullOrEmpty();
         }
 
@@ -62,7 +62,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var attribute = new CommandAttribute("veh", "create")
             {
-                Help = "Help me!"
+                Description = "Help me!"
             };
 
             attribute.Name.Should()
@@ -71,7 +71,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             attribute.Group.Should().Be("veh");
 
-            attribute.Help.Should().Be("Help me!");
+            attribute.Description.Should().Be("Help me!");
         }
 
         [TestMethod]
@@ -79,14 +79,14 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var attribute = new CommandAttribute("veh", "create")
             {
-                Help = "Help me!"
+                Description = "Help me!"
             };
 
-            attribute.Help.Should().Be("Help me!");
+            attribute.Description.Should().Be("Help me!");
 
-            attribute.Help = "Or not";
+            attribute.Description = "Or not";
 
-            attribute.Help.Should().Be("Or not");
+            attribute.Description.Should().Be("Or not");
         }
     }
 }

@@ -85,6 +85,7 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             if (this.TryGetCommandFromArgumentText(
                                                    eventdata.CommandText.Substring(1),
+                                                   true,
                                                    out var potentialCommands,
                                                    out var groupName,
                                                    out var remainingArgumentText) == false)
@@ -120,6 +121,7 @@ namespace Micky5991.Samp.Net.Commands.Services
 
         internal bool TryGetCommandFromArgumentText(
             string argumentText,
+            bool skipAlias,
             out IDictionary<string, ICommand> potentialCommands,
             out string groupName,
             out string remainingArgumentText)
@@ -140,15 +142,25 @@ namespace Micky5991.Samp.Net.Commands.Services
                     groupName = group;
 
                     remainingArgumentText = string.Empty;
-                    potentialCommands = groupCommands.ToDictionary(x => $"{group} {x.Key}", x => x.Value);
+
+                    IEnumerable<KeyValuePair<string, ICommand>> commands = groupCommands;
+                    if (skipAlias)
+                    {
+                        // Add filter to remove commands aliases.
+                        commands = groupCommands.Where(x => x.Value.AliasNames.Contains(x.Key) == false);
+                    }
+
+                    potentialCommands = commands.ToDictionary(x => $"{group} {x.Key}", x => x.Value);
 
                     return false;
                 }
 
+                // Or this command is inside ungrouped-group.
                 if (this.Commands.TryGetValue(string.Empty, out groupCommands))
                 {
                     groupName = string.Empty;
 
+                    // Wanted command found, return.
                     if (groupCommands.TryGetValue(argumentParts[0], out var command))
                     {
                         remainingArgumentText = string.Empty;
@@ -162,8 +174,10 @@ namespace Micky5991.Samp.Net.Commands.Services
                 }
             }
 
+            // Entered more parts, search directly for two parts.
             if (argumentParts.Length >= 2)
             {
+                // Command has been found in group.
                 if (this.Commands.TryGetValue(argumentParts[0], out var groupCommands) &&
                     groupCommands.TryGetValue(argumentParts[1], out var command))
                 {
@@ -178,6 +192,7 @@ namespace Micky5991.Samp.Net.Commands.Services
                     return true;
                 }
 
+                // Command has been found in nongrouped-group.
                 if (this.Commands.TryGetValue(string.Empty, out groupCommands) &&
                     groupCommands.TryGetValue(argumentParts[0], out command))
                 {
@@ -241,30 +256,39 @@ namespace Micky5991.Samp.Net.Commands.Services
                 foreach (var command in createdCommands)
                 {
                     var groupName = (command.Group ?? string.Empty).Trim();
+                    var commandName = command.Name.Trim();
 
                     if (result.TryGetValue(groupName, out var groupCommands) == false)
                     {
+                        // Commandgroup does not exist, create.
                         result[groupName] = new Dictionary<string, ICommand>
                         {
-                            { command.Name, command },
+                            { commandName, command },
                         };
 
-                        foreach (var aliasName in command.AliasNames)
+                        groupCommands = result[groupName];
+                    }
+                    else
+                    {
+                        // Commandgroup exists, add to group
+                        if (groupCommands.TryGetValue(commandName, out _))
                         {
-                            result[groupName][aliasName] = command;
+                            throw new DuplicateCommandException(commandName, groupName);
                         }
 
-                        continue;
+                        groupCommands[commandName] = command;
                     }
 
-                    var commandName = command.Name.Trim();
-
-                    if (groupCommands.TryGetValue(commandName, out _))
+                    // Add all aliasnames to group.
+                    foreach (var aliasName in command.AliasNames)
                     {
-                        throw new DuplicateCommandException(commandName, groupName);
-                    }
+                        if (groupCommands.TryGetValue(aliasName, out _))
+                        {
+                            throw new DuplicateCommandException(aliasName, groupName);
+                        }
 
-                    groupCommands[commandName] = command;
+                        groupCommands[aliasName] = command;
+                    }
                 }
             }
 

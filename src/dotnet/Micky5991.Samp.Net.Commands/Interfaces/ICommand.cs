@@ -36,6 +36,11 @@ namespace Micky5991.Samp.Net.Commands.Interfaces
         public string HelpSignature { get; }
 
         /// <summary>
+        /// Gets the help description for this command.
+        /// </summary>
+        public string Description { get; }
+
+        /// <summary>
         /// Executes the command with the specific sender and arguments.
         /// </summary>
         /// <param name="player">Sender that executed the command.</param>

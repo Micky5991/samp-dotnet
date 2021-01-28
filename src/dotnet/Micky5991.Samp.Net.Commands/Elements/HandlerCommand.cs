@@ -26,18 +26,20 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <param name="group">Optional group of this command.</param>
         /// <param name="name">Name of the command.</param>
         /// <param name="aliasNames">Alias names which are also available.</param>
+        /// <param name="description">Description of this command.</param>
         /// <param name="parameters">Parameter information about this command.</param>
         /// <param name="commandHandler">Target instance of this command.</param>
         /// <param name="executor">Executor action to trigger the command.</param>
         public HandlerCommand(
             ILogger<HandlerCommand> logger,
-            [CanBeNull] string? @group,
-            [NotNull] string name,
-            [NotNull] string[] aliasNames,
-            [NotNull] IReadOnlyList<ParameterDefinition> parameters,
+            string? @group,
+            string name,
+            string[] aliasNames,
+            string? description,
+            IReadOnlyList<ParameterDefinition> parameters,
             ICommandHandler commandHandler,
             Func<object[], object> executor)
-            : base(@group, name, aliasNames, parameters)
+            : base(@group, name, aliasNames, description, parameters)
         {
             Guard.Argument(logger, nameof(logger)).NotNull();
             Guard.Argument(executor, nameof(executor)).NotNull();

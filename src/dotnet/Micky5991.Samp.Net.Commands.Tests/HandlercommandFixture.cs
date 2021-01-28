@@ -33,7 +33,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             this.playerMock = new Mock<IPlayer>();
             this.fakeExecutor = _ => { };
 
-            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), "grouped", "command", Array.Empty<string>(), new []
+            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), "grouped", "command", Array.Empty<string>(),  null, new []
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null),
                 new ParameterDefinition("allow", typeof(bool), false, null),
@@ -51,7 +51,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingInvalidConstructorLoggerArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(null!, null, "a", Array.Empty<string>(), new[]
+            Action act = () => new HandlerCommand(null!, null, "a", Array.Empty<string>(), null, new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
@@ -64,7 +64,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingInvalidConstructorNameArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null, null!, Array.Empty<string>(), new[]
+            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null, null!, Array.Empty<string>(), null, new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
@@ -82,6 +82,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                   null,
                                                   "ok",
                                                   Array.Empty<string>(),
+                                                  null,
                                                   null!,
                                                   this.commandHandlerMock.Object,
                                                   _ => null!);
@@ -97,6 +98,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                   null,
                                                   "ok",
                                                   Array.Empty<string>(),
+                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("player", typeof(IPlayer), false, null)
@@ -115,6 +117,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                   null,
                                                   "ok",
                                                   Array.Empty<string>(),
+                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("player", typeof(IPlayer), false, null)
@@ -133,6 +136,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                   null,
                                                   "ok",
                                                   Array.Empty<string>(),
+                                                  null,
                                                   Array.Empty<ParameterDefinition>(),
                                                   this.commandHandlerMock.Object,
                                                   null!);
@@ -148,6 +152,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                   null,
                                                   "ok",
                                                   Array.Empty<string>(),
+                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("amount", typeof(int), false, null)
