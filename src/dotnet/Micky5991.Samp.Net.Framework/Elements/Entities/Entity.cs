@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
 using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
@@ -11,6 +12,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
     {
         private readonly int id;
 
+        private readonly CancellationTokenSource cancellationTokenSource;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Entity"/> class.
         /// </summary>
@@ -20,6 +23,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
             this.id = id;
 
             this.Data = new Dictionary<string, object?>().ToImmutableDictionary();
+
+            this.cancellationTokenSource = new CancellationTokenSource();
         }
 
         /// <inheritdoc />
@@ -37,6 +42,9 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         public bool Disposed { get; private set; }
 
         /// <inheritdoc />
+        public CancellationToken CancellationToken => this.cancellationTokenSource.Token;
+
+        /// <inheritdoc />
         public bool Valid()
         {
             return this.Disposed == false;
@@ -46,6 +54,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         public void Dispose()
         {
             Guard.Disposal(this.Disposed);
+
+            this.cancellationTokenSource.Cancel();
 
             this.DisposeEntity();
 

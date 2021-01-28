@@ -39,7 +39,7 @@ namespace Micky5991.Samp.Net.Framework.Services
         }
 
         /// <inheritdoc />
-        public Task<DialogResponseData> ShowDialogAsync(IPlayer player, IDialog dialog)
+        public async Task<DialogResponseData> ShowDialogAsync(IPlayer player, IDialog dialog)
         {
             Guard.Argument(player, nameof(player)).NotNull();
             Guard.Argument(dialog, nameof(dialog)).NotNull();
@@ -48,40 +48,55 @@ namespace Micky5991.Samp.Net.Framework.Services
 
             var taskCompletionSource = new TaskCompletionSource<DialogResponseData>();
 
-            if (player.TryGetData(LastDialogIdKey, out int dialogId))
+            void CancelTaskCompletion()
             {
-                dialogId += 7;
-            }
+                this.logger.LogInformation("Cancelled.");
 
-            void ResponseHandler(PlayerDialogResponseEvent e)
-            {
-                if (e.DialogId != dialogId)
+                if (taskCompletionSource.Task.IsCompleted)
                 {
-                    this.logger.LogWarning($"Player {e.Player} waits for dialog {dialogId}, but received {e.DialogId}, ignoring.");
-
                     return;
                 }
 
-                taskCompletionSource.SetResult(new DialogResponseData(e.Response, e.ListItem, e.InputText));
-
-                player.TryRemoveData<Action<PlayerDialogResponseEvent>>(CurrentDialogKey, out _);
+                taskCompletionSource.TrySetCanceled();
             }
 
-            var builtDialog = dialog.Build();
+            using (player.CancellationToken.Register(CancelTaskCompletion))
+            {
+                if (player.TryGetData(LastDialogIdKey, out int dialogId))
+                {
+                    dialogId += 7;
+                }
 
-            player.HideDialogs();
-            player.SetData(CurrentDialogKey, (Action<PlayerDialogResponseEvent>)ResponseHandler);
-            player.SetData(LastDialogIdKey, dialogId);
+                void ResponseHandler(PlayerDialogResponseEvent e)
+                {
+                    if (e.DialogId != dialogId)
+                    {
+                        this.logger.LogWarning($"Player {e.Player} waits for dialog {dialogId}, but received {e.DialogId}, ignoring.");
 
-            player.ShowDialog(
-                              dialogId,
-                              builtDialog.Style,
-                              builtDialog.Caption,
-                              builtDialog.Info,
-                              builtDialog.LeftButton,
-                              builtDialog.RightButton);
+                        return;
+                    }
 
-            return taskCompletionSource.Task;
+                    taskCompletionSource.SetResult(new DialogResponseData(e.Response, e.ListItem, e.InputText));
+
+                    player.TryRemoveData<Action<PlayerDialogResponseEvent>>(CurrentDialogKey, out _);
+                }
+
+                var builtDialog = dialog.Build();
+
+                player.HideDialogs();
+                player.SetData(CurrentDialogKey, (Action<PlayerDialogResponseEvent>)ResponseHandler);
+                player.SetData(LastDialogIdKey, dialogId);
+
+                player.ShowDialog(
+                                  dialogId,
+                                  builtDialog.Style,
+                                  builtDialog.Caption,
+                                  builtDialog.Info,
+                                  builtDialog.LeftButton,
+                                  builtDialog.RightButton);
+
+                return await taskCompletionSource.Task;
+            }
         }
 
         private void OnPlayerDialogResponse(PlayerDialogResponseEvent eventdata)
