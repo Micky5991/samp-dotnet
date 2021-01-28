@@ -161,7 +161,14 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <summary>
         /// Gets the seat this player is current in.
         /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         int? VehicleSeat { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the player is currently in a vehicle.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        bool IsInAnyVehicle { get; }
 
         /// <summary>
         /// Puts the current player into the specified vehicle.

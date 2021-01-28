@@ -1,3 +1,4 @@
+using System;
 using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Players;
@@ -79,10 +80,7 @@ namespace Micky5991.Samp.Net.Example
         {
             this.logger.LogInformation($"Player {eventdata.Player} requested class");
 
-            var dialog = new TextInputDialog();
-            dialog.SetCaption("Hey");
-            dialog.SetMessage("Login pls");
-            dialog.SetButtons("Login");
+            var dialog = new TextInputDialog("Hey", "Login pls", "Login");
 
             var response = await this.dialogHandler.ShowDialogAsync(eventdata.Player, dialog);
 

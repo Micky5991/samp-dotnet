@@ -48,6 +48,13 @@ namespace Micky5991.Samp.Net.Example
 
                 var listener = serviceProvider.GetRequiredService<ChatListener>();
                 listener.Attach();
+
+                var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+
+                AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+                {
+                    logger.LogCritical((Exception)eventArgs.ExceptionObject, $"Unhandled exception has been caught from {sender.GetType()}:");
+                };
             }
             catch (Exception e)
             {

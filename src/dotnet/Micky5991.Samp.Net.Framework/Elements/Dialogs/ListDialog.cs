@@ -14,15 +14,27 @@ namespace Micky5991.Samp.Net.Framework.Elements.Dialogs
         /// </summary>
         public ListDialog()
         {
-            this.ColorResetting = false;
-            this.Rows = new string[0].ToImmutableList();
+            // Empty
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListDialog"/> class.
+        /// </summary>
+        /// <param name="caption">Caption to use for dialog.</param>
+        /// <param name="leftButton">Text on left button on dialog.</param>
+        /// <param name="rightButton">Text on right button on dialog.</param>
+        /// <param name="colorResetting">true if colors should be reset for each row and column.</param>
+        public ListDialog(string caption, string leftButton, string rightButton = "", bool colorResetting = false)
+            : base(caption, leftButton, rightButton)
+        {
+            this.SetColorResetting(colorResetting);
         }
 
         /// <inheritdoc />
         public bool ColorResetting { get; private set; }
 
         /// <inheritdoc />
-        public IImmutableList<string> Rows { get; private set; }
+        public IImmutableList<string> Rows { get; private set; } = new string[0].ToImmutableList();
 
         /// <inheritdoc />
         public void SetColorResetting(bool enabled = true)
