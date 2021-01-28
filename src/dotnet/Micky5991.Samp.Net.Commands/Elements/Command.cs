@@ -17,6 +17,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <param name="group">Optional group name of this command.</param>
         /// <param name="name">Required name of this command.</param>
         /// <param name="aliasNames">Available alias names of this command.</param>
+        /// <param name="description">Optional description of this command.</param>
         /// <param name="parameters">List of parameters of this command.</param>
         /// <exception cref="ArgumentNullException"><paramref name="name"/>, <paramref name="aliasNames"/> or <paramref name="parameters"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="name"/> or <paramref name="group"/> is empty or whitespace, <paramref name="parameters"/> or <paramref name="aliasNames"/>contains null.</exception>
@@ -24,6 +25,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
             string? @group,
             string name,
             string[] aliasNames,
+            string? description,
             IReadOnlyList<ParameterDefinition> parameters)
         {
             Guard.Argument(name, nameof(name)).NotNull().NotWhiteSpace();
@@ -56,6 +58,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
             this.AliasNames = aliasNames;
             this.Group = group;
             this.Parameters = parameters;
+            this.Description = description ?? string.Empty;
 
             this.MinimalArgumentAmount = this.Parameters.Count(x => x.HasDefault == false);
             this.HelpSignature = this.BuildHelpSignature();
@@ -75,6 +78,9 @@ namespace Micky5991.Samp.Net.Commands.Elements
 
         /// <inheritdoc />
         public string HelpSignature { get; }
+
+        /// <inheritdoc />
+        public string Description { get; }
 
         /// <summary>
         /// Gets the minimal required argument amount for this command.

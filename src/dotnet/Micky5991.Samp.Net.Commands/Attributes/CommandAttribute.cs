@@ -45,8 +45,8 @@ namespace Micky5991.Samp.Net.Commands.Attributes
         public string? Group { get; }
 
         /// <summary>
-        /// Gets or sets the optional help text for this command.
+        /// Gets or sets the optional description for this command.
         /// </summary>
-        public string? Help { get; set; }
+        public string? Description { get; set; }
     }
 }

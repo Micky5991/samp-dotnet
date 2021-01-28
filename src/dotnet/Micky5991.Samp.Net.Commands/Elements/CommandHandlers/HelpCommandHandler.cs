@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Extensions;
@@ -29,13 +30,15 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
         /// Command that shows available commands.
         /// </summary>
         /// <param name="player">Player that executed this command.</param>
-        [Command("help")]
-        public void HelpCommand(IPlayer player)
+        [Command("help", Description = "Shows all available commands")]
+        public virtual void HelpCommand(IPlayer player)
         {
             var commandService = (ICommandService)this.serviceProvider.GetRequiredService(typeof(ICommandService));
 
-            player.SendMessage(Color.White, string.Empty);
-            player.SendMessage(Color.White, "== [ Available groups ] ==");
+            player.SendMessage(Color.DeepSkyBlue, string.Empty);
+            player.SendMessage(Color.DeepSkyBlue, "| * Available commands");
+            player.SendMessage(Color.DeepSkyBlue, "| _________________________________________________");
+
             foreach (var command in commandService.Commands)
             {
                 if (command.Key == string.Empty)
@@ -43,16 +46,24 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
                     continue;
                 }
 
-                player.SendMessage(Color.White, $"/{command.Key} - {Color.DarkGray.Embed()}{command.Value.Count} available commands");
+                var availableCommandAmount = command.Value.Count(x => x.Value.AliasNames.Contains(x.Key) == false);
+
+                player.SendMessage(Color.DeepSkyBlue, $"| {Color.White.Embed()}/{command.Key} - {Color.DarkGray.Embed()}{availableCommandAmount} available commands");
             }
 
-            player.SendMessage(Color.White, string.Empty);
+            player.SendMessage(Color.DeepSkyBlue, "|");
 
             if (commandService.Commands.TryGetValue(string.Empty, out var nonGroupedCommands))
             {
                 foreach (var nonGroupedCommand in nonGroupedCommands)
                 {
-                    player.SendMessage(Color.White, $"/{nonGroupedCommand.Key}");
+                    var description = string.Empty;
+                    if (string.IsNullOrWhiteSpace(nonGroupedCommand.Value.Description) == false)
+                    {
+                        description = $"{Color.DarkGray.Embed()}- {nonGroupedCommand.Value.Description}";
+                    }
+
+                    player.SendMessage(Color.DeepSkyBlue, $"| {Color.White.Embed()}/{nonGroupedCommand.Key} {description}");
                 }
             }
         }

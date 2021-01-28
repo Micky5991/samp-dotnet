@@ -4,6 +4,7 @@ using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Commands.Events;
 using Micky5991.Samp.Net.Commands.Interfaces;
+using Micky5991.Samp.Net.Framework.Extensions;
 
 namespace Micky5991.Samp.Net.Commands.Elements.Listeners
 {
@@ -48,20 +49,20 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
                 return;
             }
 
-            eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
+            eventdata.Player.SendMessage(Color.DeepSkyBlue, string.Empty);
 
-            if (string.IsNullOrWhiteSpace(eventdata.GroupName) == false)
-            {
-                eventdata.Player.SendMessage(Color.DarkGray, $"There are {eventdata.PotentialCommands.Count} commands in the group {eventdata.GroupName}:");
-            }
-            else
-            {
-                eventdata.Player.SendMessage(Color.DarkGray, $"There are {eventdata.PotentialCommands.Count} commands available:");
-            }
+            eventdata.Player.SendMessage(Color.DeepSkyBlue, $"| * Group \"{eventdata.GroupName}\" {Color.DarkGray.Embed()}({eventdata.PotentialCommands.Count} commands)");
+            eventdata.Player.SendMessage(Color.DeepSkyBlue, "| _________________________________________________");
 
             foreach (var potentialCommand in eventdata.PotentialCommands)
             {
-                eventdata.Player.SendMessage(Color.DarkGray, $"/{potentialCommand.Key}");
+                var description = string.Empty;
+                if (string.IsNullOrWhiteSpace(potentialCommand.Value.Description) == false)
+                {
+                    description = $"{Color.DarkGray.Embed()} - {potentialCommand.Value.Description}";
+                }
+
+                eventdata.Player.SendMessage(Color.DeepSkyBlue, $"| {Color.White.Embed()}/{potentialCommand.Key} {description}");
             }
         }
 
