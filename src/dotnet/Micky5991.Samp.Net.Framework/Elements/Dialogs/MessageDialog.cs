@@ -14,11 +14,24 @@ namespace Micky5991.Samp.Net.Framework.Elements.Dialogs
         /// </summary>
         public MessageDialog()
         {
-            this.Message = string.Empty;
+            // Empty.
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageDialog"/> class.
+        /// </summary>
+        /// <param name="caption">Caption to use for dialog.</param>
+        /// <param name="message">Message to display in dialog.</param>
+        /// <param name="leftButton">Text on left button on dialog.</param>
+        /// <param name="rightButton">Text on right button on dialog.</param>
+        public MessageDialog(string caption, string message, string leftButton, string rightButton = "")
+            : base(caption, leftButton, rightButton)
+        {
+            this.SetMessage(message);
         }
 
         /// <inheritdoc />
-        public string Message { get; private set; }
+        public string Message { get; private set; } = string.Empty;
 
         /// <inheritdoc />
         public void SetMessage(string text)

@@ -44,6 +44,17 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         }
 
         /// <inheritdoc />
+        public bool IsInAnyVehicle
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                return this.playersNatives.IsPlayerInAnyVehicle(this.Id);
+            }
+        }
+
+        /// <inheritdoc />
         public bool PutPlayerIntoVehicle(IVehicle vehicle, int seat = 0)
         {
             Guard.Argument(vehicle, nameof(vehicle)).NotNull();

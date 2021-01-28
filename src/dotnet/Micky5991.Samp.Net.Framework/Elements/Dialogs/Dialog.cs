@@ -19,6 +19,19 @@ namespace Micky5991.Samp.Net.Framework.Elements.Dialogs
             this.RightButton = string.Empty;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Dialog"/> class.
+        /// </summary>
+        /// <param name="caption">Caption to use for dialog.</param>
+        /// <param name="leftButton">Text on left button on dialog.</param>
+        /// <param name="rightButton">Text on right button on dialog.</param>
+        protected Dialog(string caption, string leftButton, string rightButton = "")
+            : this()
+        {
+            this.SetCaption(caption);
+            this.SetButtons(leftButton, rightButton);
+        }
+
         /// <inheritdoc />
         public string Caption { get; private set; }
 

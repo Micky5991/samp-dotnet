@@ -16,11 +16,24 @@ namespace Micky5991.Samp.Net.Framework.Elements.Dialogs
         /// </summary>
         public HeaderListDialog()
         {
-            this.Headers = new string[0].ToImmutableList();
+            // Empty
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HeaderListDialog"/> class.
+        /// </summary>
+        /// <param name="caption">Caption to use for dialog.</param>
+        /// <param name="headers">Header to be used for list.</param>
+        /// <param name="leftButton">Text on left button on dialog.</param>
+        /// <param name="rightButton">Text on right button on dialog.</param>
+        public HeaderListDialog(string caption, string[] headers, string leftButton, string rightButton = "")
+            : base(caption, leftButton, rightButton, true)
+        {
+            this.SetHeaders(headers);
         }
 
         /// <inheritdoc />
-        public IImmutableList<string> Headers { get; private set; }
+        public IImmutableList<string> Headers { get; private set; } = new string[0].ToImmutableList();
 
         /// <inheritdoc />
         public void SetHeaders(IHeaderListDialog.BuildHeadersDelegate factory)

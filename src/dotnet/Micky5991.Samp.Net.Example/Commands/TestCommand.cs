@@ -29,7 +29,24 @@ namespace Micky5991.Samp.Net.Example.Commands
 
             player.PutPlayerIntoVehicle(vehicle, 0);
 
-            player.SendMessage(Color.LawnGreen, "You have been spawned into a bullet.");
+            player.SendMessage(Color.DeepSkyBlue, "You have been spawned into a bullet.");
+        }
+
+        [Command("veh", "repair")]
+        [CommandAlias("r")]
+        public void Repair(IPlayer player)
+        {
+            if (player.IsInAnyVehicle == false || player.VehicleId.HasValue == false ||
+                this.vehiclePool.Entities.TryGetValue(player.VehicleId.Value, out var vehicle) == false)
+            {
+                player.SendMessage(Color.DarkGray, "You are currently in no vehicle.");
+
+                return;
+            }
+
+            vehicle.Repair();
+
+            player.SendMessage(Color.DeepSkyBlue, "Vehicle has been repaired.");
         }
 
     }

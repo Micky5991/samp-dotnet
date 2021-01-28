@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
@@ -19,6 +20,11 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// Gets a value indicating whether the current entity has been disposed.
         /// </summary>
         bool Disposed { get; }
+
+        /// <summary>
+        /// Gets the cancellation token that will be cancelled when the player disconnects.
+        /// </summary>
+        CancellationToken CancellationToken { get; }
 
         /// <summary>
         /// Gets the current store for <see cref="SetData{T}"/>, <see cref="HasData"/>, <see cref="TryGetData{T}"/>, <see cref="TryRemoveData{T}"/>.
