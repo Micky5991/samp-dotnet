@@ -247,7 +247,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                 .Returns<ICommandHandler>(x =>
                                               new List<ICommand>
                                               {
-                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), groupName, "test", Array.Empty<string>(), new ParameterDefinition[]
+                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), groupName, "test", Array.Empty<string>(), null, new ParameterDefinition[]
                                                   {
                                                       ParameterDefinition.Player(),
                                                   },
@@ -376,6 +376,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                           "verb",
                                           Array.Empty<string>(),
                                           "group",
+                                          null,
                                           new ParameterDefinition[]
                                           {
                                               ParameterDefinition.Player(),
@@ -395,6 +396,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             this.commandService.TryGetCommandFromArgumentText(
                                                               "group verb test",
+                                                              false,
                                                               out var potentialCommands,
                                                               out var groupName,
                                                               out var remainingArgumentText);
@@ -416,6 +418,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                           "verb",
                                           Array.Empty<string>(),
                                           null,
+                                          null,
                                           new ParameterDefinition[]
                                           {
                                               ParameterDefinition.Player(),
@@ -435,6 +438,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var success = this.commandService.TryGetCommandFromArgumentText(
                                                               "verb test",
+                                                              false,
                                                               out var potentialCommands,
                                                               out var groupName,
                                                               out var remainingArgumentText);
@@ -457,6 +461,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                           "verb",
                                           Array.Empty<string>(),
                                           "group",
+                                          null,
                                           new ParameterDefinition[]
                                           {
                                               ParameterDefinition.Player(),
@@ -474,6 +479,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var success = this.commandService.TryGetCommandFromArgumentText(
                                                                             "verb test",
+                                                                            false,
                                                                             out var potentialCommands,
                                                                             out var groupName,
                                                                             out var remainingArgumentText);
@@ -494,6 +500,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                           "verb",
                                           Array.Empty<string>(),
                                           "group",
+                                          null,
                                           new []
                                           {
                                               ParameterDefinition.Player(),
@@ -502,6 +509,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var secondCommand = new TestCommand(
                                           "verb",
                                           Array.Empty<string>(),
+                                          null,
                                           null,
                                           new []
                                           {
@@ -531,6 +539,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var success = this.commandService.TryGetCommandFromArgumentText(
                                                                             "group verb test",
+                                                                            false,
                                                                             out var potentialCommands,
                                                                             out var groupName,
                                                                             out var remainingArgumentText);
@@ -545,6 +554,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             success = this.commandService.TryGetCommandFromArgumentText(
                                                                             "verb test",
+                                                                            false,
                                                                             out potentialCommands,
                                                                             out groupName,
                                                                             out remainingArgumentText);
@@ -568,6 +578,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                           "verb",
                                           Array.Empty<string>(),
                                           "group",
+                                          null,
                                           new []
                                           {
                                               ParameterDefinition.Player(),
@@ -577,6 +588,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                 "othercommand",
                                                 Array.Empty<string>(),
                                                 "group",
+                                                null,
                                                 new []
                                                 {
                                                     ParameterDefinition.Player(),
@@ -586,6 +598,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                 "othercommand",
                                                 Array.Empty<string>(),
                                                 "othergroup",
+                                                null,
                                                 new []
                                                 {
                                                     ParameterDefinition.Player(),
@@ -615,6 +628,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
             var success = this.commandService.TryGetCommandFromArgumentText(
                                                                             "group",
+                                                                            false,
                                                                             out var potentialCommands,
                                                                             out var groupName,
                                                                             out var remainingArgumentText);
@@ -636,6 +650,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => this.commandService.TryGetCommandFromArgumentText(
              argumentText,
+             false,
              out _,
              out _,
              out _);
@@ -648,7 +663,109 @@ namespace Micky5991.Samp.Net.Commands.Tests
             {
                 act.Should().Throw<ArgumentException>().WithMessage("*argumentText*");
             }
+        }
 
+        [TestMethod]
+        public void BuildingSingleCommandHandlerWithMultipleAliasedCommandsInSingleGroupReturnsCorrectAmount()
+        {
+            var firstHandler = new GroupedCommandHandler();
+
+            var firstCommand = new TestCommand(
+                                          "repair",
+                                          new []{ "r", },
+                                          "veh",
+                                          null,
+                                          new []
+                                          {
+                                              ParameterDefinition.Player(),
+                                          });
+
+            var secondCommand = new TestCommand(
+                                                "spawn",
+                                                new []{ "s", },
+                                                "veh",
+                                                null,
+                                                new []
+                                                {
+                                                    ParameterDefinition.Player(),
+                                                });
+
+            this.commandHandlers.Add(firstHandler);
+
+            this.commandFactoryMock
+                .Setup(x => x.BuildFromCommandHandler(firstHandler))
+                .Returns(new List<ICommand>
+                {
+                    firstCommand,
+                    secondCommand,
+                });
+
+            this.RecreateCommandService();
+
+            this.commandService.Start();
+
+            var success = this.commandService.TryGetCommandFromArgumentText(
+                                                                            "veh",
+                                                                            false,
+                                                                            out var potentialCommands,
+                                                                            out var groupName,
+                                                                            out var remainingArgumentText);
+
+            success.Should().BeFalse();
+            potentialCommands.Should()
+                             .NotBeNull()
+                             .And.HaveCount(4)
+                             .And.ContainValues(firstCommand, secondCommand)
+                             .And.ContainKeys("veh spawn", "veh s", "veh repair", "veh r");
+
+            groupName.Should().Be("veh");
+            remainingArgumentText.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void GettingCommandsWithFilteredAliasReturnsOnlyNonAliasedNames()
+        {
+            var firstHandler = new GroupedCommandHandler();
+
+            var firstCommand = new TestCommand(
+                                          "repair",
+                                          new []{ "r", },
+                                          "veh",
+                                          null,
+                                          new []
+                                          {
+                                              ParameterDefinition.Player(),
+                                          });
+
+            this.commandHandlers.Add(firstHandler);
+
+            this.commandFactoryMock
+                .Setup(x => x.BuildFromCommandHandler(firstHandler))
+                .Returns(new List<ICommand>
+                {
+                    firstCommand,
+                });
+
+            this.RecreateCommandService();
+
+            this.commandService.Start();
+
+            var success = this.commandService.TryGetCommandFromArgumentText(
+                                                                            "veh",
+                                                                            true,
+                                                                            out var potentialCommands,
+                                                                            out var groupName,
+                                                                            out var remainingArgumentText);
+
+            success.Should().BeFalse();
+            potentialCommands.Should()
+                             .NotBeNull()
+                             .And.HaveCount(1)
+                             .And.ContainValues(firstCommand)
+                             .And.ContainKeys("veh repair");
+
+            groupName.Should().Be("veh");
+            remainingArgumentText.Should().BeEmpty();
         }
     }
 }

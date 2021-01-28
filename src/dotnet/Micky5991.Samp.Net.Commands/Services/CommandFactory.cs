@@ -4,7 +4,6 @@ using System.Reflection;
 using Dawn;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
-using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -64,7 +63,7 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             var aliasNames = aliasAttributes.Select(x => x.Name).ToArray();
 
-            return new HandlerCommand(this.handlerLogger, attribute.Group, attribute.Name, aliasNames, parameters, handler, x => methodInfo.Invoke(handler, x));
+            return new HandlerCommand(this.handlerLogger, attribute.Group, attribute.Name, aliasNames, attribute.Description, parameters, handler, x => methodInfo.Invoke(handler, x));
         }
     }
 }

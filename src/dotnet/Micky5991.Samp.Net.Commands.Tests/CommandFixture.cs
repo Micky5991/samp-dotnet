@@ -20,7 +20,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [DataRow("grouped")]
         public void CreatingCommandWithCorrectParametersCreatesInstance(string groupName)
         {
-            var command = new TestCommand("command", Array.Empty<string>(), groupName, new ParameterDefinition[]
+            var command = new TestCommand("command", Array.Empty<string>(), groupName, null, new ParameterDefinition[]
             {
                 new ("player", typeof(IPlayer), false, null),
             });
@@ -37,7 +37,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [DataRow(" ")]
         public void CreatingCommandWithInvalidNameArgumentThrowsException(string name)
         {
-            Action act = () => new TestCommand(name, Array.Empty<string>(), "groupName", new ParameterDefinition[]
+            Action act = () => new TestCommand(name, Array.Empty<string>(), "groupName", null, new ParameterDefinition[]
             {
                 new ("player", typeof(IPlayer), false, null),
             });
@@ -48,7 +48,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CreatingCommandWithInvalidAliasNamesArgumentThrowsException()
         {
-            Action act = () => new TestCommand("name", null!, "groupName", new ParameterDefinition[]
+            Action act = () => new TestCommand("name", null!, "groupName", null, new ParameterDefinition[]
             {
                 new ("player", typeof(IPlayer), false, null),
             });
@@ -61,7 +61,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [DataRow(" ")]
         public void CreatingCommandWithInvalidGroupArgumentThrowsException(string group)
         {
-            Action act = () => new TestCommand("name", Array.Empty<string>(), group, new ParameterDefinition[]
+            Action act = () => new TestCommand("name", Array.Empty<string>(), group, null, new ParameterDefinition[]
             {
                 new ("player", typeof(IPlayer), false, null),
             });
@@ -72,7 +72,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingNullAsParameterDefinitionThrowsException()
         {
-            Action act = () => new TestCommand("name", Array.Empty<string>(), null, null!);
+            Action act = () => new TestCommand("name", Array.Empty<string>(), null, null, null!);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*parameter*");
         }
@@ -80,7 +80,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandRequiresPlayerAsFirstArgumentInDefinitionType()
         {
-            Action act = () => new TestCommand("name", Array.Empty<string>(), null, new ParameterDefinition[]
+            Action act = () => new TestCommand("name", Array.Empty<string>(), null, null, new ParameterDefinition[]
             {
                 new ("player", typeof(int), false, null),
             });
@@ -91,7 +91,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandRequiresOptionalParametersToComeLast()
         {
-            Action act = () => new TestCommand("name", Array.Empty<string>(), null, new ParameterDefinition[]
+            Action act = () => new TestCommand("name", Array.Empty<string>(), null, null, new ParameterDefinition[]
             {
                 new ("player", typeof(IPlayer), false, null),
                 new ("color1", typeof(int), true, null),
@@ -107,6 +107,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var testCommand = new TestCommand(
                                               "name",
                                               Array.Empty<string>(),
+                                              null,
                                               null,
                                               new ParameterDefinition[]
                                               {
@@ -124,6 +125,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                               "create",
                                               Array.Empty<string>(),
                                               "veh",
+                                              null,
                                               new ParameterDefinition[]
                                               {
 
@@ -141,6 +143,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                               "create",
                                               Array.Empty<string>(),
                                               "veh",
+                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, 5),
@@ -156,6 +159,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                               "create",
                                               Array.Empty<string>(),
                                               "veh",
+                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, 5),
@@ -172,6 +176,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                               "create",
                                               Array.Empty<string>(),
                                               "veh",
+                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, null),
@@ -189,6 +194,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                               "create",
                                               Array.Empty<string>(),
                                               "veh",
+                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, null),
