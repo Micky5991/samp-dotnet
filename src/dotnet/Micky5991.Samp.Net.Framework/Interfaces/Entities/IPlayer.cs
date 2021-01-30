@@ -575,5 +575,12 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         void HideDialogs();
+
+        /// <summary>
+        /// Checks if the current player is logged into rcon.
+        /// </summary>
+        /// <returns>true if player is rcon admin, false otherwise.</returns>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        bool IsRconAdmin();
     }
 }

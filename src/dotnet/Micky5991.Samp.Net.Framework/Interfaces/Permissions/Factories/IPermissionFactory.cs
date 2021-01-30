@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Permissions.Factories
@@ -12,8 +11,9 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Permissions.Factories
         /// <summary>
         /// Builds a new instance of <see cref="IPermissionContainer"/>.
         /// </summary>
+        /// <param name="permissible">Optional permissible to integrate into cointainer.</param>
         /// <returns>Newly created container.</returns>
-        IPermissionContainer BuildContainer();
+        IPermissionContainer BuildContainer(IPermissible? permissible);
 
         /// <summary>
         /// Calculates the permission context for the given <paramref name="permissible"/>.

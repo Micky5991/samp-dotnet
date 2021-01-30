@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Micky5991.Samp.Net.Framework.Enums.Permissions;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Permissions
 {
@@ -21,5 +22,35 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Permissions
         /// <param name="permission">Permission to check.</param>
         /// <returns>true if the permission is defined, false otherwise.</returns>
         bool IsPermissionSet(string permission);
+
+        /// <summary>
+        /// Attaches the given <paramref name="childPermissionContainer"/> to the container in this entity.
+        /// </summary>
+        /// <param name="childPermissionContainer">Container to add at tier.</param>
+        /// <param name="tier">Tier group of this container, higher value means higher priority.</param>
+        void AttachChildPermissionContainer(IPermissionContainer childPermissionContainer, int tier = 1);
+
+        /// <summary>
+        /// Removes the given permission container from the internal container of this entity.
+        /// </summary>
+        /// <param name="childPermissionContainer">Container to remove from this entity.</param>
+        /// <param name="tier">Tier group where this container has been added to.</param>
+        void RemovePermissionContainer(IPermissionContainer childPermissionContainer, int tier = 1);
+
+        /// <summary>
+        /// Attaches a permission to this entity.
+        /// </summary>
+        /// <param name="permission">Permission to add to this entity.</param>
+        /// <param name="value">Value indicating if the permission will be granted.</param>
+        /// <param name="flags">Flags that describe how this permission should be interpreted.</param>
+        /// <param name="tier">Tier group of this container, higher value means higher priority.</param>
+        /// <param name="neededContexts">Context in which this permission attachment applies. </param>
+        /// <returns>The created attachment for this permission.</returns>
+        IPermissionAttachment AttachPermission(
+            IPermission permission,
+            bool value,
+            PermissionAttachmentFlag flags = PermissionAttachmentFlag.None,
+            int tier = 1,
+            IImmutableDictionary<string, string[]>? neededContexts = null);
     }
 }

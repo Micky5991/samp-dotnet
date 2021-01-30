@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Immutable;
 using System.Drawing;
 using System.Net;
 using System.Numerics;
@@ -24,6 +23,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
 
         private readonly IPlayersNatives playersNatives;
 
+        private readonly IPermissionFactory permissionFactory;
+
         private readonly IPermissionContainer permissionContainer;
 
         /// <summary>
@@ -45,8 +46,9 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
             this.entityRemoval = entityRemoval;
             this.sampNatives = sampNatives;
             this.playersNatives = playersNatives;
+            this.permissionFactory = permissionFactory;
 
-            this.permissionContainer = permissionFactory.BuildContainer();
+            this.permissionContainer = permissionFactory.BuildContainer(this);
         }
 
         /// <inheritdoc />
@@ -628,6 +630,14 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
             Guard.Disposal(this.Disposed);
 
             this.sampNatives.ShowPlayerDialog(this.Id, -1, 0, " ", " ", " ", " ");
+        }
+
+        /// <inheritdoc />
+        public bool IsRconAdmin()
+        {
+            Guard.Disposal(this.Disposed);
+
+            return this.sampNatives.IsPlayerAdmin(this.Id);
         }
 
         /// <inheritdoc />

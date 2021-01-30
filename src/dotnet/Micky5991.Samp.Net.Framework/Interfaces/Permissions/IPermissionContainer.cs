@@ -12,7 +12,7 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Permissions
         /// <summary>
         /// Event that will be triggered when the calulation of the permissions changed.
         /// </summary>
-        event EventHandler<EventArgs> PermissionsUpdated;
+        event EventHandler<EventArgs>? PermissionsUpdated;
 
         /// <summary>
         /// Adds a child <see cref="IPermissionContainer"/> instance with a specific tier.
@@ -22,13 +22,20 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Permissions
         void AttachChildPermissionContainer(IPermissionContainer container, int tier = 1);
 
         /// <summary>
+        /// Removes the given child permission container from this container.
+        /// </summary>
+        /// <param name="childPermissionContainer">Container to remove from this container.</param>
+        /// <param name="tier">Tier group where this container has been added to.</param>
+        void RemovePermissionContainer(IPermissionContainer childPermissionContainer, int tier = 1);
+
+        /// <summary>
         /// Adds a certain permission to the container. Will be merged with every <see cref="IPermissionContainer"/> of the same tier.
         /// </summary>
         /// <param name="permission">Permission that will be set.</param>
         /// <param name="value">Overwritten value of this <paramref name="permission"/>.</param>
         /// <param name="flags">Flags that specifies the handling and interpretation of this attachment.</param>
         /// <param name="tier">Tier group of this container, higher value means higher priority.</param>
-        /// <param name="neededContexts">Context in which this permission applies.</param>
+        /// <param name="neededContexts">Context in which this permission attachment applies.</param>
         /// <returns>Created permission attachment.</returns>
         IPermissionAttachment AttachPermission(
             IPermission permission,
