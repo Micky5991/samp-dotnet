@@ -19,6 +19,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 using Micky5991.Samp.Net.Framework.Interfaces.Services;
 using Micky5991.Samp.Net.Framework.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 {
@@ -78,7 +79,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
         protected virtual GamemodeBuilder AddGamemodeStarter()
         {
-            this.serviceCollection.AddSingleton<IGamemodeStarter, GamemodeStarter>();
+            this.serviceCollection.TryAddSingleton<IGamemodeStarter, GamemodeStarter>();
 
             return this;
         }
@@ -90,7 +91,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
         protected virtual GamemodeBuilder AddLoggerHandler()
         {
-            this.serviceCollection.AddSingleton<ISampLoggerHandler, SampLoggerHandler>();
+            this.serviceCollection.TryAddSingleton<ISampLoggerHandler, SampLoggerHandler>();
 
             return this;
         }
@@ -102,7 +103,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
         protected virtual GamemodeBuilder AddEventAggregator()
         {
-            this.serviceCollection.AddSingleton<IEventAggregator, EventAggregatorService>();
+            this.serviceCollection.TryAddSingleton<IEventAggregator, EventAggregatorService>();
 
             return this;
         }
@@ -126,8 +127,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
         protected virtual GamemodeBuilder AddNativeEventHandling()
         {
-            this.serviceCollection.AddTransient<NativeTypeConverter>()
-                .AddSingleton<INativeEventRegistry, NativeEventRegistry>();
+            this.serviceCollection.AddTransient<NativeTypeConverter>();
+            this.serviceCollection.TryAddSingleton<INativeEventRegistry, NativeEventRegistry>();
 
             return this;
         }
@@ -155,11 +156,11 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
         protected virtual GamemodeBuilder AddNatives()
         {
-            this.serviceCollection.AddTransient<ISampNatives, SampNatives>()
-                .AddTransient<IVehiclesNatives, VehiclesNatives>()
-                .AddTransient<IPlayersNatives, PlayersNatives>()
-                .AddTransient<IActorNatives, ActorNatives>()
-                .AddTransient<IObjectsNatives, ObjectsNatives>();
+            this.serviceCollection.AddTransient<ISampNatives, SampNatives>();
+            this.serviceCollection.AddTransient<IVehiclesNatives, VehiclesNatives>();
+            this.serviceCollection.AddTransient<IPlayersNatives, PlayersNatives>();
+            this.serviceCollection.AddTransient<IActorNatives, ActorNatives>();
+            this.serviceCollection.AddTransient<IObjectsNatives, ObjectsNatives>();
 
             return this;
         }
@@ -171,8 +172,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
         protected virtual GamemodeBuilder AddEntityFactories()
         {
-            this.serviceCollection.AddTransient<IPlayerFactory, PlayerFactory>()
-                .AddTransient<IVehicleFactory, VehicleFactory>();
+            this.serviceCollection.TryAddTransient<IPlayerFactory, PlayerFactory>();
+            this.serviceCollection.TryAddTransient<IVehicleFactory, VehicleFactory>();
 
             return this;
         }
@@ -184,8 +185,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
         protected virtual GamemodeBuilder AddEntityPools()
         {
-            this.serviceCollection.AddSingleton<IPlayerPool, PlayerPool>()
-                .AddSingleton<IVehiclePool, VehiclePool>();
+            this.serviceCollection.TryAddSingleton<IPlayerPool, PlayerPool>();
+            this.serviceCollection.TryAddSingleton<IVehiclePool, VehiclePool>();
 
             return this;
         }
