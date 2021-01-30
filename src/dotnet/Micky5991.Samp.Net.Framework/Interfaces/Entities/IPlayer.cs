@@ -5,13 +5,14 @@ using System.Numerics;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Data;
+using Micky5991.Samp.Net.Framework.Interfaces.Permissions;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
     /// <summary>
     /// Represents a player on the server.
     /// </summary>
-    public interface IPlayer : IMovingWorldEntity
+    public interface IPlayer : IMovingWorldEntity, IPermissible
     {
         /// <summary>
         /// Gets or sets the current name of the player.
