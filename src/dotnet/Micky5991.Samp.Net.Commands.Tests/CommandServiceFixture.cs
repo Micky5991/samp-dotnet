@@ -6,6 +6,7 @@ using AutoMapper;
 using FluentAssertions;
 using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
+using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Interfaces;
@@ -242,12 +243,13 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             this.commandHandlers.Add(new GroupedCommandHandler());
             this.commandHandlers.Add(new DuplicatedGroupedCommandHandler());
+            var attribute = new CommandAttribute(groupName, "test");
 
             this.commandFactoryMock.Setup(x => x.BuildFromCommandHandler(It.IsAny<ICommandHandler>()))
                 .Returns<ICommandHandler>(x =>
                                               new List<ICommand>
                                               {
-                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), groupName, "test", Array.Empty<string>(), null, new ParameterDefinition[]
+                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), attribute, Array.Empty<string>(), new ParameterDefinition[]
                                                   {
                                                       ParameterDefinition.Player(),
                                                   },
@@ -372,11 +374,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void ServiceFindsCorrectCommandAfterCall()
         {
             var handler = new GroupedCommandHandler();
+            var attribute = new CommandAttribute("group", "verb");
             var command = new TestCommand(
-                                          "verb",
+                                          attribute,
                                           Array.Empty<string>(),
-                                          "group",
-                                          null,
                                           new ParameterDefinition[]
                                           {
                                               ParameterDefinition.Player(),
@@ -414,11 +415,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void ServiceFindsCorrectCommandAfterCallNoGroup()
         {
             var handler = new GroupedCommandHandler();
+            var attribute = new CommandAttribute("verb");
             var command = new TestCommand(
-                                          "verb",
+                                          attribute,
                                           Array.Empty<string>(),
-                                          null,
-                                          null,
                                           new ParameterDefinition[]
                                           {
                                               ParameterDefinition.Player(),
@@ -457,11 +457,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void ServiceRequiresGroupNameToFindCommand()
         {
             var handler = new GroupedCommandHandler();
+            var attribute = new CommandAttribute("group", "verb");
             var command = new TestCommand(
-                                          "verb",
+                                          attribute,
                                           Array.Empty<string>(),
-                                          "group",
-                                          null,
                                           new ParameterDefinition[]
                                           {
                                               ParameterDefinition.Player(),
@@ -495,22 +494,20 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var firstHandler = new GroupedCommandHandler();
             var secondHandler = new GroupedCommandHandler();
+            var attribute = new CommandAttribute("group", "verb");
 
             var firstCommand = new TestCommand(
-                                          "verb",
+                                          attribute,
                                           Array.Empty<string>(),
-                                          "group",
-                                          null,
                                           new []
                                           {
                                               ParameterDefinition.Player(),
                                           });
 
+            var noGroupAttribute = new CommandAttribute("verb");
             var secondCommand = new TestCommand(
-                                          "verb",
+                                          noGroupAttribute,
                                           Array.Empty<string>(),
-                                          null,
-                                          null,
                                           new []
                                           {
                                               ParameterDefinition.Player(),
@@ -573,32 +570,29 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var firstHandler = new GroupedCommandHandler();
             var secondHandler = new GroupedCommandHandler();
+            var attribute = new CommandAttribute("group", "verb");
 
             var firstCommand = new TestCommand(
-                                          "verb",
+                                          attribute,
                                           Array.Empty<string>(),
-                                          "group",
-                                          null,
                                           new []
                                           {
                                               ParameterDefinition.Player(),
                                           });
 
+            var otherGroupAttribute = new CommandAttribute("group", "othercommand");
             var secondCommand = new TestCommand(
-                                                "othercommand",
+                                                otherGroupAttribute,
                                                 Array.Empty<string>(),
-                                                "group",
-                                                null,
                                                 new []
                                                 {
                                                     ParameterDefinition.Player(),
                                                 });
 
+            var otherGroupCommandAttribute = new CommandAttribute("othergroup", "othercommand");
             var wrongCommand = new TestCommand(
-                                                "othercommand",
+                                                otherGroupCommandAttribute,
                                                 Array.Empty<string>(),
-                                                "othergroup",
-                                                null,
                                                 new []
                                                 {
                                                     ParameterDefinition.Player(),
@@ -669,22 +663,20 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void BuildingSingleCommandHandlerWithMultipleAliasedCommandsInSingleGroupReturnsCorrectAmount()
         {
             var firstHandler = new GroupedCommandHandler();
+            var repairAttribute = new CommandAttribute("veh", "repair");
 
             var firstCommand = new TestCommand(
-                                          "repair",
+                                          repairAttribute,
                                           new []{ "r", },
-                                          "veh",
-                                          null,
                                           new []
                                           {
                                               ParameterDefinition.Player(),
                                           });
 
+            var spawnAttribute = new CommandAttribute("veh", "spawn");
             var secondCommand = new TestCommand(
-                                                "spawn",
+                                                spawnAttribute,
                                                 new []{ "s", },
-                                                "veh",
-                                                null,
                                                 new []
                                                 {
                                                     ParameterDefinition.Player(),
@@ -726,12 +718,11 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void GettingCommandsWithFilteredAliasReturnsOnlyNonAliasedNames()
         {
             var firstHandler = new GroupedCommandHandler();
+            var attribute = new CommandAttribute("veh", "repair");
 
             var firstCommand = new TestCommand(
-                                          "repair",
+                                          attribute,
                                           new []{ "r", },
-                                          "veh",
-                                          null,
                                           new []
                                           {
                                               ParameterDefinition.Player(),

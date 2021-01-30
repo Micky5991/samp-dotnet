@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using JetBrains.Annotations;
+using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
@@ -25,6 +26,8 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
         private Action<object[]> fakeExecutor;
 
+        private CommandAttribute attribute;
+
         [TestInitialize]
         public void Setup()
         {
@@ -32,8 +35,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
             this.commandHandlerMock = new Mock<ICommandHandler>();
             this.playerMock = new Mock<IPlayer>();
             this.fakeExecutor = _ => { };
+            this.attribute = new CommandAttribute("grouped", "command");
 
-            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), "grouped", "command", Array.Empty<string>(),  null, new []
+            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), this.attribute, Array.Empty<string>(), new []
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null),
                 new ParameterDefinition("allow", typeof(bool), false, null),
@@ -51,7 +55,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingInvalidConstructorLoggerArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(null!, null, "a", Array.Empty<string>(), null, new[]
+            Action act = () => new HandlerCommand(null!, this.attribute, Array.Empty<string>(), new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
@@ -62,16 +66,16 @@ namespace Micky5991.Samp.Net.Commands.Tests
         }
 
         [TestMethod]
-        public void PassingInvalidConstructorNameArgumentThrowsException()
+        public void PassingInvalidConstructorAttributeArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null, null!, Array.Empty<string>(), null, new[]
+            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null!, Array.Empty<string>(), new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
                                                   this.commandHandlerMock.Object,
                                                   _ => null!);
 
-            act.Should().Throw<ArgumentNullException>().WithMessage("*name*");
+            act.Should().Throw<ArgumentNullException>().WithMessage("*attribute*");
         }
 
         [TestMethod]
@@ -79,10 +83,8 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
-                                                  null,
-                                                  "ok",
+                                                  this.attribute,
                                                   Array.Empty<string>(),
-                                                  null,
                                                   null!,
                                                   this.commandHandlerMock.Object,
                                                   _ => null!);
@@ -95,10 +97,8 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
-                                                  null,
-                                                  "ok",
+                                                  this.attribute,
                                                   Array.Empty<string>(),
-                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("player", typeof(IPlayer), false, null)
@@ -114,10 +114,8 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
-                                                  null,
-                                                  "ok",
+                                                  this.attribute,
                                                   Array.Empty<string>(),
-                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("player", typeof(IPlayer), false, null)
@@ -133,10 +131,8 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
-                                                  null,
-                                                  "ok",
+                                                  this.attribute,
                                                   Array.Empty<string>(),
-                                                  null,
                                                   Array.Empty<ParameterDefinition>(),
                                                   this.commandHandlerMock.Object,
                                                   null!);
@@ -149,10 +145,8 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             Action act = () => new HandlerCommand(
                                                   new NullLogger<HandlerCommand>(),
-                                                  null,
-                                                  "ok",
+                                                  this.attribute,
                                                   Array.Empty<string>(),
-                                                  null,
                                                   new[]
                                                   {
                                                       new ParameterDefinition("amount", typeof(int), false, null)
