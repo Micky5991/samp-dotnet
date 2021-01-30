@@ -79,6 +79,11 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
                 case CommandExecutionStatus.Exception:
                     break;
 
+                case CommandExecutionStatus.NoPermission:
+                    eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
+                    eventdata.Player.SendMessage(Color.DarkGray, "You don't have the needed permissions to execute this command.");
+                    break;
+
                 case CommandExecutionStatus.ArgumentTypeMismatch:
                     eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
                     eventdata.Player.SendMessage(Color.DarkGray, "Could not match input to expected types.");

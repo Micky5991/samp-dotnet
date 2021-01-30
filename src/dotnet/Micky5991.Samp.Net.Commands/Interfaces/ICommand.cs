@@ -41,6 +41,11 @@ namespace Micky5991.Samp.Net.Commands.Interfaces
         public string Description { get; }
 
         /// <summary>
+        /// Gets the permission that is needed to execute this command.
+        /// </summary>
+        public string? NeededPermission { get; }
+
+        /// <summary>
         /// Executes the command with the specific sender and arguments.
         /// </summary>
         /// <param name="player">Sender that executed the command.</param>
