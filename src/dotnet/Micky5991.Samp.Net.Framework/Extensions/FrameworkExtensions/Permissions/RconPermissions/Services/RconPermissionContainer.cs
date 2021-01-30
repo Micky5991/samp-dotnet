@@ -6,7 +6,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Permissions;
 using Microsoft.Extensions.Logging;
 
-namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.RconPermissions.Services
+namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions.Services
 {
     /// <summary>
     /// Adds a very simple permission container that only grants <see cref="IPlayer"/> permissions if the player is an admin.
