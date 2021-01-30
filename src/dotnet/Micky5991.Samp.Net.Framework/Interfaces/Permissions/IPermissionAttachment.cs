@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Micky5991.Samp.Net.Framework.Enums.Permissions;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Permissions
@@ -21,5 +22,10 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Permissions
         /// Gets the flags that describe how this attachment should be interpreted.
         /// </summary>
         public PermissionAttachmentFlag Flags { get; }
+
+        /// <summary>
+        /// Gets the optional contexts that the <see cref="IPermissible"/> instantce has to satisfy to grant.
+        /// </summary>
+        public IImmutableDictionary<string, string[]>? NeededContexts { get; }
     }
 }

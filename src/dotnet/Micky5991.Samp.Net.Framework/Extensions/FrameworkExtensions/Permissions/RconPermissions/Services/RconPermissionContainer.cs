@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Dawn;
+using Micky5991.Samp.Net.Framework.Elements.Permissions;
 using Micky5991.Samp.Net.Framework.Enums.Permissions;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Permissions;
@@ -34,13 +36,13 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
         /// <inheritdoc />
         public void AttachChildPermissionContainer(IPermissionContainer childPermissionContainer, int tier = 1)
         {
-            throw new InvalidOperationException($"Could not attach container {childPermissionContainer.GetType()}, because this only reacts to rcon status.");
+            this.logger.LogWarning($"Container {childPermissionContainer.GetType()} has been added, but this extension only checks rcon status.");
         }
 
         /// <inheritdoc />
         public void RemovePermissionContainer(IPermissionContainer childPermissionContainer, int tier = 1)
         {
-            throw new InvalidOperationException($"Could not remove container {childPermissionContainer.GetType()}, because this only reacts to rcon status.");
+            this.logger.LogWarning($"Container {childPermissionContainer.GetType()} has been removed, but this extension only checks rcon status.");
         }
 
         /// <inheritdoc />
@@ -51,7 +53,11 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
             int tier = 1,
             IImmutableDictionary<string, string[]>? neededContexts = null)
         {
-            throw new InvalidOperationException("Could not attach permission, because this only reacts to rcon status.");
+            Guard.Argument(permission, nameof(permission)).NotNull();
+
+            this.logger.LogWarning($"Permission {permission.Name} has been added, but this extension only checks rcon status.");
+
+            return new PermissionAttachment(permission, value, flags, neededContexts);
         }
 
         /// <inheritdoc />
