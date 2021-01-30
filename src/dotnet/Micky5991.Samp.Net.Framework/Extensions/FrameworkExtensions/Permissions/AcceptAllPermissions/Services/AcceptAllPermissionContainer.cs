@@ -26,7 +26,10 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
         }
 
         /// <inheritdoc />
-        public event EventHandler<EventArgs>? PermissionsUpdated;
+        public event EventHandler<EventArgs>? PermissionsUpdated
+        {
+            add { } remove { }
+        }
 
         /// <inheritdoc />
         public void AttachChildPermissionContainer(IPermissionContainer container, int tier = 1)
