@@ -44,14 +44,14 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
 
             if (eventdata.PotentialCommands.Count == 0)
             {
-                eventdata.Player.SendMessage(Color.DarkGray, "This command does not exist.");
+                eventdata.Player.SendMessage(Color.LightGray, "This command does not exist.");
 
                 return;
             }
 
             eventdata.Player.SendMessage(Color.DeepSkyBlue, string.Empty);
 
-            eventdata.Player.SendMessage(Color.DeepSkyBlue, $"| * Group \"{eventdata.GroupName}\" {Color.DarkGray.Embed()}({eventdata.PotentialCommands.Count} commands)");
+            eventdata.Player.SendMessage(Color.DeepSkyBlue, $"| * Group \"{eventdata.GroupName}\" {Color.LightGray.Embed()}({eventdata.PotentialCommands.Count} commands)");
             eventdata.Player.SendMessage(Color.DeepSkyBlue, "| _________________________________________________");
 
             foreach (var potentialCommand in eventdata.PotentialCommands)
@@ -59,7 +59,7 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
                 var description = string.Empty;
                 if (string.IsNullOrWhiteSpace(potentialCommand.Value.Description) == false)
                 {
-                    description = $"{Color.DarkGray.Embed()} - {potentialCommand.Value.Description}";
+                    description = $"{Color.LightGray.Embed()} - {potentialCommand.Value.Description}";
                 }
 
                 eventdata.Player.SendMessage(Color.DeepSkyBlue, $"| {Color.White.Embed()}/{potentialCommand.Key} {description}");
@@ -77,30 +77,37 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
                     break;
 
                 case CommandExecutionStatus.Exception:
+                    eventdata.Player.SendMessage(Color.LightGray, "An error occured during command execution. Try again later.");
                     break;
 
                 case CommandExecutionStatus.NoPermission:
-                    eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
-                    eventdata.Player.SendMessage(Color.DarkGray, "You don't have the needed permissions to execute this command.");
+                    eventdata.Player.SendMessage(Color.LightGray, string.Empty);
+                    eventdata.Player.SendMessage(Color.LightGray, "You don't have the needed permissions to execute this command.");
                     break;
 
                 case CommandExecutionStatus.ArgumentTypeMismatch:
-                    eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
-                    eventdata.Player.SendMessage(Color.DarkGray, "Could not match input to expected types.");
-                    eventdata.Player.SendMessage(Color.DarkGray, $"Use: {eventdata.Command.HelpSignature}");
+                    eventdata.Player.SendMessage(Color.LightGray, string.Empty);
+                    eventdata.Player.SendMessage(Color.LightGray, $"Could not match input to expected types. {(string.IsNullOrWhiteSpace(eventdata.ErrorParameter) == false ? $"Parameter: {eventdata.ErrorParameter}" : string.Empty)}");
+
+                    if (string.IsNullOrWhiteSpace(eventdata.ErrorMessage) == false)
+                    {
+                        eventdata.Player.SendMessage(Color.LightGray, $"Error: {eventdata.ErrorMessage}");
+                    }
+
+                    eventdata.Player.SendMessage(Color.LightGray, $"Use: {eventdata.Command.HelpSignature}");
                     break;
 
                 case CommandExecutionStatus.MissingArgument:
-                    eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
-                    eventdata.Player.SendMessage(Color.DarkGray, "The command misses some arguments:");
-                    eventdata.Player.SendMessage(Color.DarkGray, $"Use: {eventdata.Command.HelpSignature}");
+                    eventdata.Player.SendMessage(Color.LightGray, string.Empty);
+                    eventdata.Player.SendMessage(Color.LightGray, "The command misses some arguments:");
+                    eventdata.Player.SendMessage(Color.LightGray, $"Use: {eventdata.Command.HelpSignature}");
 
                     break;
 
                 case CommandExecutionStatus.TooManyArguments:
-                    eventdata.Player.SendMessage(Color.DarkGray, string.Empty);
-                    eventdata.Player.SendMessage(Color.DarkGray, "You entered too many arguments.");
-                    eventdata.Player.SendMessage(Color.DarkGray, $"Use: {eventdata.Command.HelpSignature}");
+                    eventdata.Player.SendMessage(Color.LightGray, string.Empty);
+                    eventdata.Player.SendMessage(Color.LightGray, "You entered too many arguments.");
+                    eventdata.Player.SendMessage(Color.LightGray, $"Use: {eventdata.Command.HelpSignature}");
                     break;
 
                 default:
