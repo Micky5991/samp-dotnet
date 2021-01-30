@@ -1,5 +1,6 @@
 using System;
 using FluentAssertions;
+using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,10 +21,12 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [DataRow("grouped")]
         public void CreatingCommandWithCorrectParametersCreatesInstance(string groupName)
         {
-            var command = new TestCommand("command", Array.Empty<string>(), groupName, null, new ParameterDefinition[]
-            {
-                new ("player", typeof(IPlayer), false, null),
-            });
+            var attribute = new CommandAttribute(groupName, "command");
+            var command = new TestCommand(attribute, Array.Empty<string>(),
+                                          new ParameterDefinition[]
+                                          {
+                                              new ("player", typeof(IPlayer), false, null),
+                                          });
 
             command.Name.Should().Be("command");
             command.Group.Should().Be(groupName);
@@ -32,47 +35,23 @@ namespace Micky5991.Samp.Net.Commands.Tests
         }
 
         [TestMethod]
-        [DataRow(null)]
-        [DataRow("")]
-        [DataRow(" ")]
-        public void CreatingCommandWithInvalidNameArgumentThrowsException(string name)
-        {
-            Action act = () => new TestCommand(name, Array.Empty<string>(), "groupName", null, new ParameterDefinition[]
-            {
-                new ("player", typeof(IPlayer), false, null),
-            });
-
-            act.Should().Throw<ArgumentException>().WithMessage("*name*");
-        }
-
-        [TestMethod]
         public void CreatingCommandWithInvalidAliasNamesArgumentThrowsException()
         {
-            Action act = () => new TestCommand("name", null!, "groupName", null, new ParameterDefinition[]
-            {
-                new ("player", typeof(IPlayer), false, null),
-            });
+            var attribute = new CommandAttribute("groupName", "name");
+            Action act = () => new TestCommand(attribute, null!,
+                                               new ParameterDefinition[]
+                                               {
+                                                   new ("player", typeof(IPlayer), false, null),
+                                               });
 
             act.Should().Throw<ArgumentException>().WithMessage("*alias*");
         }
 
         [TestMethod]
-        [DataRow("")]
-        [DataRow(" ")]
-        public void CreatingCommandWithInvalidGroupArgumentThrowsException(string group)
-        {
-            Action act = () => new TestCommand("name", Array.Empty<string>(), group, null, new ParameterDefinition[]
-            {
-                new ("player", typeof(IPlayer), false, null),
-            });
-
-            act.Should().Throw<ArgumentException>().WithMessage("*group*");
-        }
-
-        [TestMethod]
         public void PassingNullAsParameterDefinitionThrowsException()
         {
-            Action act = () => new TestCommand("name", Array.Empty<string>(), null, null, null!);
+            var attribute = new CommandAttribute("name");
+            Action act = () => new TestCommand(attribute, Array.Empty<string>(), null!);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*parameter*");
         }
@@ -80,10 +59,12 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandRequiresPlayerAsFirstArgumentInDefinitionType()
         {
-            Action act = () => new TestCommand("name", Array.Empty<string>(), null, null, new ParameterDefinition[]
-            {
-                new ("player", typeof(int), false, null),
-            });
+            var attribute = new CommandAttribute("name");
+            Action act = () => new TestCommand(attribute, Array.Empty<string>(),
+                                               new ParameterDefinition[]
+                                               {
+                                                   new ("player", typeof(int), false, null),
+                                               });
 
             act.Should().Throw<ArgumentException>().WithMessage("*parameter*").WithMessage("*player*");
         }
@@ -91,12 +72,14 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandRequiresOptionalParametersToComeLast()
         {
-            Action act = () => new TestCommand("name", Array.Empty<string>(), null, null, new ParameterDefinition[]
-            {
-                new ("player", typeof(IPlayer), false, null),
-                new ("color1", typeof(int), true, null),
-                new ("color2", typeof(int), false, null),
-            });
+            var attribute = new CommandAttribute("name");
+            Action act = () => new TestCommand(attribute, Array.Empty<string>(),
+                                               new ParameterDefinition[]
+                                               {
+                                                   new ("player", typeof(IPlayer), false, null),
+                                                   new ("color1", typeof(int), true, null),
+                                                   new ("color2", typeof(int), false, null),
+                                               });
 
             act.Should().Throw<ArgumentException>().WithMessage("*default*");
         }
@@ -104,11 +87,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandHelpStringWillBeGeneratedCorrectlyNoGroup()
         {
+            var attribute = new CommandAttribute("name");
             var testCommand = new TestCommand(
-                                              "name",
+                                              attribute,
                                               Array.Empty<string>(),
-                                              null,
-                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, null),
@@ -121,11 +103,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandHelpStringWillBeGeneratedCorrectlyWithGroup()
         {
+            var attribute = new CommandAttribute("veh", "create");
             var testCommand = new TestCommand(
-                                              "create",
+                                              attribute,
                                               Array.Empty<string>(),
-                                              "veh",
-                                              null,
                                               new ParameterDefinition[]
                                               {
 
@@ -139,11 +120,11 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandHelpStringWillBeGeneratedCorrectlyWithoutParameter()
         {
+            var attribute = new CommandAttribute("veh", "create");
+
             var testCommand = new TestCommand(
-                                              "create",
+                                              attribute,
                                               Array.Empty<string>(),
-                                              "veh",
-                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, 5),
@@ -155,11 +136,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandHelpStringWillBeGeneratedCorrectlyWithSingleDefaultParameter()
         {
+            var attribute = new CommandAttribute("veh", "create");
             var testCommand = new TestCommand(
-                                              "create",
+                                              attribute,
                                               Array.Empty<string>(),
-                                              "veh",
-                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, 5),
@@ -172,11 +152,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandHelpStringWillBeGeneratedCorrectlyWithSingleDefaultParameterMultipleParameters()
         {
+            var attribute = new CommandAttribute("veh", "create");
             var testCommand = new TestCommand(
-                                              "create",
+                                              attribute,
                                               Array.Empty<string>(),
-                                              "veh",
-                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, null),
@@ -190,11 +169,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void CommandParameterNamesHaveToBeUnique()
         {
+            var attribute = new CommandAttribute("veh", "create");
             Action act = () => new TestCommand(
-                                              "create",
+                                              attribute,
                                               Array.Empty<string>(),
-                                              "veh",
-                                              null,
                                               new ParameterDefinition[]
                                               {
                                                   new("player", typeof(IPlayer), false, null),
