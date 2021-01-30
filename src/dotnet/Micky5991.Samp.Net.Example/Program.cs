@@ -39,7 +39,7 @@ namespace Micky5991.Samp.Net.Example
 
                 new GamemodeBuilder(serviceCollection)
                     .AddExtensionBuilder(commandExtensionBuilder)
-                    .AddExtensionBuilder(new AcceptAllPermissionBuilder())
+                    .AddExtensionBuilder(new RconPermissionExtension())
                     .AddCoreServices();
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();

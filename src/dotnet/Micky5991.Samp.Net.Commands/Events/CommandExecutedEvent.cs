@@ -15,13 +15,15 @@ namespace Micky5991.Samp.Net.Commands.Events
         /// <param name="player">Player that executed the command.</param>
         /// <param name="executionStatus">Describing status code of this command error.</param>
         /// <param name="errorMessage">Error message built by the service.</param>
+        /// <param name="errorParameter">Parameter that caused an error.</param>
         /// <param name="command">Executed command.</param>
-        public CommandExecutedEvent(IPlayer player, CommandExecutionStatus executionStatus, string? errorMessage, ICommand command)
+        public CommandExecutedEvent(IPlayer player, CommandExecutionStatus executionStatus, string? errorMessage, string? errorParameter, ICommand command)
         {
             this.Player = player;
             this.ExecutionStatus = executionStatus;
             this.ErrorMessage = errorMessage;
             this.Command = command;
+            this.ErrorParameter = errorParameter;
         }
 
         /// <summary>
@@ -43,5 +45,10 @@ namespace Micky5991.Samp.Net.Commands.Events
         /// Gets the error message that was passed for this <see cref="ExecutionStatus"/>.
         /// </summary>
         public string? ErrorMessage { get; }
+
+        /// <summary>
+        /// Gets the parameter that possibly caused the error.
+        /// </summary>
+        public string? ErrorParameter { get; }
     }
 }

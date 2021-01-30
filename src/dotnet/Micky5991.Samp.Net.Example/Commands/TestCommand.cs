@@ -39,7 +39,7 @@ namespace Micky5991.Samp.Net.Example.Commands
             if (player.IsInAnyVehicle == false || player.VehicleId.HasValue == false ||
                 this.vehiclePool.Entities.TryGetValue(player.VehicleId.Value, out var vehicle) == false)
             {
-                player.SendMessage(Color.DarkGray, "You are currently in no vehicle.");
+                player.SendMessage(Color.LightGray, "You are currently in no vehicle.");
 
                 return;
             }

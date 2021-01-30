@@ -12,6 +12,7 @@ using Micky5991.Samp.Net.Commands.Events;
 using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Events.Samp;
+using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Commands.Services
@@ -83,6 +84,9 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             eventdata.Cancelled = true;
 
+            var player = eventdata.Player;
+
+            // Unable to find specific command, return list of possible commands.
             if (this.TryGetCommandFromArgumentText(
                                                    eventdata.CommandText.Substring(1),
                                                    true,
@@ -90,33 +94,85 @@ namespace Micky5991.Samp.Net.Commands.Services
                                                    out var groupName,
                                                    out var remainingArgumentText) == false)
             {
+                var accessibleCommands = this.FilterCommandWithoutPermission(player, potentialCommands);
+
                 this.eventAggregator.Publish(
                                              new UnknownCommandEvent(
-                                                                     eventdata.Player,
+                                                                     player,
                                                                      eventdata.CommandText,
-                                                                     potentialCommands.ToImmutableDictionary(),
+                                                                     accessibleCommands.ToImmutableDictionary(),
                                                                      groupName,
                                                                      remainingArgumentText));
 
                 return;
             }
 
-            void ApplyContext(IMappingOperationOptions options)
+            var command = potentialCommands.Values.First();
+
+            // Do not try to map arguments if the player can not execute the command at all.
+            if (command.CanExecuteCommand(player) == false)
             {
-                options.Items[CommandConstants.CommandExecutorKey] = eventdata.Player;
+                this.eventAggregator.Publish(
+                                             new CommandExecutedEvent(
+                                                                      player,
+                                                                      CommandExecutionStatus.NoPermission,
+                                                                      null,
+                                                                      null,
+                                                                      command));
+
+                return;
             }
 
-            var command = potentialCommands.Values.First();
-            string[] argumentParts = this.SplitArgumentStringToArgumentList(remainingArgumentText, command.Parameters.Count - 1);
-            object[] argumentValues = this.MapArgumentListToTypes(
-                                                                  argumentParts,
-                                                                  command.Parameters.Skip(1).Select(x => x.Type)
-                                                                         .ToList(),
-                                                                  ApplyContext);
+            try
+            {
+                // Apply current player to context of mapping for certain type conversions.
+                void ApplyContext(IMappingOperationOptions options)
+                {
+                    options.Items[CommandConstants.CommandExecutorKey] = player;
+                }
 
-            var status = command.TryExecute(eventdata.Player, argumentValues, out var errorMessage);
+                string[] argumentParts =
+                    this.SplitArgumentStringToArgumentList(remainingArgumentText, command.Parameters.Count - 1);
+                object[] argumentValues = this.MapArgumentListToTypes(
+                                                                      argumentParts,
+                                                                      command.Parameters.Skip(1).Select(x => x.Type)
+                                                                             .ToList(),
+                                                                      ApplyContext);
 
-            this.eventAggregator.Publish(new CommandExecutedEvent(eventdata.Player, status, errorMessage, command));
+                var status = command.TryExecute(player, argumentValues, out var errorMessage);
+
+                this.eventAggregator.Publish(new CommandExecutedEvent(player, status, errorMessage, null, command));
+            }
+            catch (CommandArgumentMapException e)
+            {
+                var parameter = command.Parameters[e.ParameterIndex + 1];
+
+                string? mappingMessage = null;
+                if (e.InnerException != null && e.InnerException.InnerException != null)
+                {
+                    mappingMessage = e.InnerException.InnerException.Message;
+                }
+
+                this.eventAggregator.Publish(
+                                             new CommandExecutedEvent(
+                                                                      player,
+                                                                      CommandExecutionStatus.ArgumentTypeMismatch,
+                                                                      mappingMessage,
+                                                                      parameter.Name,
+                                                                      command));
+            }
+            catch (Exception e)
+            {
+                this.logger.LogTrace(e, $"Command failed to execute. ({player}: \"{eventdata.CommandText}\".");
+
+                this.eventAggregator.Publish(
+                                             new CommandExecutedEvent(
+                                                                      player,
+                                                                      CommandExecutionStatus.Exception,
+                                                                      e.Message,
+                                                                      null,
+                                                                      command));
+            }
         }
 
         internal bool TryGetCommandFromArgumentText(
@@ -239,7 +295,14 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             for (var i = 0; i < arguments.Length; i++)
             {
-                result[i] = this.mapper.Map(arguments[i], typeof(string), types[i], contextApplicator);
+                try
+                {
+                    result[i] = this.mapper.Map(arguments[i], typeof(string), types[i], contextApplicator);
+                }
+                catch (AutoMapperMappingException e)
+                {
+                    throw new CommandArgumentMapException(i, e);
+                }
             }
 
             return result;
@@ -293,6 +356,13 @@ namespace Micky5991.Samp.Net.Commands.Services
             }
 
             return result;
+        }
+
+        private IEnumerable<KeyValuePair<string, ICommand>> FilterCommandWithoutPermission(
+            IPlayer player,
+            IEnumerable<KeyValuePair<string, ICommand>> dictionary)
+        {
+            return dictionary.Where(x => x.Value.CanExecuteCommand(player));
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Drawing;
 using System.Linq;
 using Micky5991.Samp.Net.Commands.Attributes;
@@ -39,28 +40,37 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
             player.SendMessage(Color.DeepSkyBlue, "| * Available commands");
             player.SendMessage(Color.DeepSkyBlue, "| _________________________________________________");
 
-            foreach (var command in commandService.Commands)
+            var commandGroups = (from serviceCommand in commandService.Commands
+                                 where serviceCommand.Value.Any(x => x.Value.CanExecuteCommand(player))
+                                 select serviceCommand).ToList();
+
+            if (commandGroups.Any(x => string.IsNullOrWhiteSpace(x.Key) == false))
             {
-                if (command.Key == string.Empty)
+                foreach (var command in commandGroups)
                 {
-                    continue;
+                    if (command.Key == string.Empty)
+                    {
+                        continue;
+                    }
+
+                    var availableCommandAmount = command.Value.Count(x => x.Value.AliasNames.Contains(x.Key) == false);
+
+                    player.SendMessage(
+                                       Color.DeepSkyBlue,
+                                       $"| {Color.White.Embed()}/{command.Key} - {Color.LightGray.Embed()}{availableCommandAmount} available commands");
                 }
 
-                var availableCommandAmount = command.Value.Count(x => x.Value.AliasNames.Contains(x.Key) == false);
-
-                player.SendMessage(Color.DeepSkyBlue, $"| {Color.White.Embed()}/{command.Key} - {Color.DarkGray.Embed()}{availableCommandAmount} available commands");
+                player.SendMessage(Color.DeepSkyBlue, "|");
             }
-
-            player.SendMessage(Color.DeepSkyBlue, "|");
 
             if (commandService.Commands.TryGetValue(string.Empty, out var nonGroupedCommands))
             {
-                foreach (var nonGroupedCommand in nonGroupedCommands)
+                foreach (var nonGroupedCommand in nonGroupedCommands.Where(x => x.Value.CanExecuteCommand(player)))
                 {
                     var description = string.Empty;
                     if (string.IsNullOrWhiteSpace(nonGroupedCommand.Value.Description) == false)
                     {
-                        description = $"{Color.DarkGray.Embed()}- {nonGroupedCommand.Value.Description}";
+                        description = $"{Color.LightGray.Embed()}- {nonGroupedCommand.Value.Description}";
                     }
 
                     player.SendMessage(Color.DeepSkyBlue, $"| {Color.White.Embed()}/{nonGroupedCommand.Key} {description}");
