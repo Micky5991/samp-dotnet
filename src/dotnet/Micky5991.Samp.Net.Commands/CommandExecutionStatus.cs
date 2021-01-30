@@ -29,5 +29,10 @@ namespace Micky5991.Samp.Net.Commands
         /// Too many arguments have been passed.
         /// </summary>
         TooManyArguments,
+
+        /// <summary>
+        /// You do not have permission to execute this command.
+        /// </summary>
+        NoPermission,
     }
 }

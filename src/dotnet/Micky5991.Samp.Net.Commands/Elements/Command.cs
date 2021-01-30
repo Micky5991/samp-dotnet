@@ -55,6 +55,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
             this.Group = attribute.Group;
             this.Parameters = parameters;
             this.Description = attribute.Description ?? string.Empty;
+            this.NeededPermission = attribute.Permission;
 
             this.MinimalArgumentAmount = this.Parameters.Count(x => x.HasDefault == false);
             this.HelpSignature = this.BuildHelpSignature();
@@ -77,6 +78,9 @@ namespace Micky5991.Samp.Net.Commands.Elements
 
         /// <inheritdoc />
         public string Description { get; }
+
+        /// <inheritdoc />
+        public string? NeededPermission { get; }
 
         /// <summary>
         /// Gets the minimal required argument amount for this command.
@@ -155,6 +159,21 @@ namespace Micky5991.Samp.Net.Commands.Elements
             }
 
             return builder.ToString();
+        }
+
+        /// <summary>
+        /// Checks if the given <paramref name="player"/> is able to execute this command.
+        /// </summary>
+        /// <param name="player">Player to check if the command can be executed.</param>
+        /// <returns>true if the command can be executed, false otherwise.</returns>
+        protected virtual bool CanExecuteCommand(IPlayer player)
+        {
+            if (string.IsNullOrWhiteSpace(this.NeededPermission))
+            {
+                return true;
+            }
+
+            return player.HasPermission(this.NeededPermission!);
         }
     }
 }
