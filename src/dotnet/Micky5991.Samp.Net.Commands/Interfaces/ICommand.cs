@@ -54,5 +54,12 @@ namespace Micky5991.Samp.Net.Commands.Interfaces
         /// <returns>Status of this call after the internal handler has been executed.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="player"/> or <paramref name="arguments"/> is null.</exception>
         CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage);
+
+        /// <summary>
+        /// Checks if the given <paramref name="player"/> is able to execute this command.
+        /// </summary>
+        /// <param name="player">Player to check if the command can be executed.</param>
+        /// <returns>true if the command can be executed, false otherwise.</returns>
+        public bool CanExecuteCommand(IPlayer player);
     }
 }
