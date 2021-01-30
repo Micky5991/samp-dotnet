@@ -16,7 +16,7 @@ namespace Micky5991.Samp.Net.Example.Commands
             this.vehiclePool = vehiclePool;
         }
 
-        [Command("veh", "spawn", Description = "Spawns a temporary vehicle on your location.")]
+        [Command("veh", "spawn", Description = "Spawns a temporary vehicle on your location.", Permission = "example.command.vehicle.spawn")]
         [CommandAlias("s")]
         public void Test(IPlayer player, Vehicle model)
         {
@@ -32,7 +32,7 @@ namespace Micky5991.Samp.Net.Example.Commands
             player.SendMessage(Color.DeepSkyBlue, "You have been spawned into a bullet.");
         }
 
-        [Command("veh", "repair", Description = "Repairs the vehicle you are currently in.")]
+        [Command("veh", "repair", Description = "Repairs the vehicle you are currently in.", Permission = "example.command.vehicle.repair")]
         [CommandAlias("r")]
         public void Repair(IPlayer player)
         {

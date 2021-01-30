@@ -53,6 +53,11 @@ namespace Micky5991.Samp.Net.Commands.Elements
             Guard.Argument(arguments, nameof(arguments)).NotNull();
 
             errorMessage = string.Empty;
+            if (this.CanExecuteCommand(player) == false)
+            {
+                return CommandExecutionStatus.NoPermission;
+            }
+
             if (arguments.Length < this.MinimalArgumentAmount - 1)
             {
                 return CommandExecutionStatus.MissingArgument;
