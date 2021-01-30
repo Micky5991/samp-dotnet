@@ -49,7 +49,7 @@
 
     <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" PrivateAssets="all" />
-      <PackageReference Include="Micky5991.EventAggregator" Version="2.0.1" />
+      <PackageReference Include="Micky5991.EventAggregator" Version="2.0.2" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     </ItemGroup>
 
