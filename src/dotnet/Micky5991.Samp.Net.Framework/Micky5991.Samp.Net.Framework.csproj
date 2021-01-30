@@ -34,8 +34,4 @@
       <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Extensions\DummyExtensions\Permissions" />
-    </ItemGroup>
-
 </Project>
