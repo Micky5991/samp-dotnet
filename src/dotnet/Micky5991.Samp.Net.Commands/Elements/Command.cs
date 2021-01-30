@@ -90,6 +90,17 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <inheritdoc />
         public abstract CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage);
 
+        /// <inheritdoc />
+        public virtual bool CanExecuteCommand(IPlayer player)
+        {
+            if (string.IsNullOrWhiteSpace(this.NeededPermission))
+            {
+                return true;
+            }
+
+            return player.HasPermission(this.NeededPermission!);
+        }
+
         /// <summary>
         /// Validates if the passed arguments are compatible with all parameters.
         /// </summary>
@@ -159,21 +170,6 @@ namespace Micky5991.Samp.Net.Commands.Elements
             }
 
             return builder.ToString();
-        }
-
-        /// <summary>
-        /// Checks if the given <paramref name="player"/> is able to execute this command.
-        /// </summary>
-        /// <param name="player">Player to check if the command can be executed.</param>
-        /// <returns>true if the command can be executed, false otherwise.</returns>
-        protected virtual bool CanExecuteCommand(IPlayer player)
-        {
-            if (string.IsNullOrWhiteSpace(this.NeededPermission))
-            {
-                return true;
-            }
-
-            return player.HasPermission(this.NeededPermission!);
         }
     }
 }
