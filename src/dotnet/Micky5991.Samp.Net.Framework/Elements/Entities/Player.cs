@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Drawing;
 using System.Net;
 using System.Numerics;
@@ -9,6 +10,8 @@ using Micky5991.Samp.Net.Framework.Data;
 using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Permissions;
+using Micky5991.Samp.Net.Framework.Interfaces.Permissions.Factories;
 
 namespace Micky5991.Samp.Net.Framework.Elements.Entities
 {
@@ -21,6 +24,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
 
         private readonly IPlayersNatives playersNatives;
 
+        private readonly IPermissionContainer permissionContainer;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Player"/> class.
         /// </summary>
@@ -28,16 +33,20 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         /// <param name="entityRemoval">Pool removal delgate.</param>
         /// <param name="sampNatives">General samp natives needed for this entity.</param>
         /// <param name="playersNatives">Natives needed for this entity.</param>
+        /// <param name="permissionFactory">Factory that creates a new <see cref="IPermissionContainer"/>.</param>
         public Player(
             int id,
             IPlayerPool.RemoveEntityDelegate entityRemoval,
             ISampNatives sampNatives,
-            IPlayersNatives playersNatives)
+            IPlayersNatives playersNatives,
+            IPermissionFactory permissionFactory)
             : base(id)
         {
             this.entityRemoval = entityRemoval;
             this.sampNatives = sampNatives;
             this.playersNatives = playersNatives;
+
+            this.permissionContainer = permissionFactory.BuildContainer();
         }
 
         /// <inheritdoc />
