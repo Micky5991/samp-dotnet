@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Dawn;
+using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
@@ -14,23 +15,18 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <summary>
         /// Initializes a new instance of the <see cref="Command"/> class.
         /// </summary>
-        /// <param name="group">Optional group name of this command.</param>
-        /// <param name="name">Required name of this command.</param>
+        /// <param name="attribute">Attribute that describes this command.</param>
         /// <param name="aliasNames">Available alias names of this command.</param>
-        /// <param name="description">Optional description of this command.</param>
         /// <param name="parameters">List of parameters of this command.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="name"/>, <paramref name="aliasNames"/> or <paramref name="parameters"/> is null.</exception>
-        /// <exception cref="ArgumentException"><paramref name="name"/> or <paramref name="group"/> is empty or whitespace, <paramref name="parameters"/> or <paramref name="aliasNames"/>contains null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="attribute"/>, <paramref name="aliasNames"/> or <paramref name="parameters"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="parameters"/> or <paramref name="aliasNames"/>contains null.</exception>
         protected Command(
-            string? @group,
-            string name,
+            CommandAttribute attribute,
             string[] aliasNames,
-            string? description,
             IReadOnlyList<ParameterDefinition> parameters)
         {
-            Guard.Argument(name, nameof(name)).NotNull().NotWhiteSpace();
+            Guard.Argument(attribute, nameof(attribute)).NotNull();
             Guard.Argument(aliasNames, nameof(aliasNames)).NotNull().DoesNotContainNull();
-            Guard.Argument(group, nameof(group)).NotWhiteSpace();
             Guard.Argument(parameters, nameof(parameters)).NotEmpty().NotNull().DoesNotContainNull();
             Guard.Argument(parameters.Select(x => x.Name), nameof(parameters)).DoesNotContainDuplicate((_, _) => "All parameter names need to be unique.");
 
@@ -54,11 +50,11 @@ namespace Micky5991.Samp.Net.Commands.Elements
                 lastDefault = definition.HasDefault;
             }
 
-            this.Name = name;
+            this.Name = attribute.Name;
             this.AliasNames = aliasNames;
-            this.Group = group;
+            this.Group = attribute.Group;
             this.Parameters = parameters;
-            this.Description = description ?? string.Empty;
+            this.Description = attribute.Description ?? string.Empty;
 
             this.MinimalArgumentAmount = this.Parameters.Count(x => x.HasDefault == false);
             this.HelpSignature = this.BuildHelpSignature();

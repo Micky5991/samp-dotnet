@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Dawn;
-using JetBrains.Annotations;
+using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Microsoft.Extensions.Logging;
@@ -23,23 +23,19 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// Initializes a new instance of the <see cref="HandlerCommand"/> class.
         /// </summary>
         /// <param name="logger">Logger for this command instance.</param>
-        /// <param name="group">Optional group of this command.</param>
-        /// <param name="name">Name of the command.</param>
+        /// <param name="attribute">General attribute that describes this command.</param>
         /// <param name="aliasNames">Alias names which are also available.</param>
-        /// <param name="description">Description of this command.</param>
         /// <param name="parameters">Parameter information about this command.</param>
         /// <param name="commandHandler">Target instance of this command.</param>
         /// <param name="executor">Executor action to trigger the command.</param>
         public HandlerCommand(
             ILogger<HandlerCommand> logger,
-            string? @group,
-            string name,
+            CommandAttribute attribute,
             string[] aliasNames,
-            string? description,
             IReadOnlyList<ParameterDefinition> parameters,
             ICommandHandler commandHandler,
             Func<object[], object> executor)
-            : base(@group, name, aliasNames, description, parameters)
+            : base(attribute, aliasNames, parameters)
         {
             Guard.Argument(logger, nameof(logger)).NotNull();
             Guard.Argument(executor, nameof(executor)).NotNull();
