@@ -6,6 +6,15 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <CodeAnalysisRuleSet>Micky5991.Samp.Net.Commands.ruleset</CodeAnalysisRuleSet>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Samp.Net.Commands</Title>
+        <Authors>Micky5991</Authors>
+        <Description>Package to handle commands in any SAMP.Net Framework gamemode.</Description>
+        <Copyright>2021 Micky5991</Copyright>
+        <PackageProjectUrl>https://github.com/Micky5991/samp-dotnet</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Micky5991/samp-dotnet</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>
