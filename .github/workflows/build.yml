@@ -239,12 +239,12 @@ jobs:
           cp -r ${{github.workspace}}/artifacts/gamemode-dotnet/* ${{github.workspace}}/package/dotnet/gamemodes/
           cp ${{github.workspace}}/artifacts/plugin-${{matrix.platform}}/${{matrix.plugin-file}} ${{github.workspace}}/package/plugins/
 
-      - name: Download .NET 5.0.2 Windows x86 runtime
+      - name: Download .NET 5.0.3 Windows x86 runtime
         if: matrix.platform == 'windows'
         working-directory: ${{github.workspace}}
         run: |
-          wget https://download.visualstudio.microsoft.com/download/pr/aa281535-ba5d-4fea-a0ec-f47eb90436b4/3b070e6dff1b235d2c9780c52cb36522/dotnet-runtime-5.0.2-win-x86.zip
-          unzip -j dotnet-runtime-5.0.2-win-x86.zip "shared/Microsoft.NETCore.App/5.0.2/*" -d "${{github.workspace}}/package/dotnet/runtime/"
+          wget https://download.visualstudio.microsoft.com/download/pr/18026047-c90d-49a3-a4b4-04424eaa65a2/3f6336a041ea19cdd2233d606a613b8d/dotnet-runtime-5.0.3-win-x86.zip
+          unzip -j dotnet-runtime-5.0.3-win-x86.zip "shared/Microsoft.NETCore.App/5.0.3/*" -d "${{github.workspace}}/package/dotnet/runtime/"
 
       - name: Create ZIP
         if: needs.variables.outputs.istag == 'false'
