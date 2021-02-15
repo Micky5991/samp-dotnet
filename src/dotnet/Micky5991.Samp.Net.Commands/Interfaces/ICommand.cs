@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Micky5991.Samp.Net.Commands.Data.Results;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
@@ -41,25 +43,20 @@ namespace Micky5991.Samp.Net.Commands.Interfaces
         public string Description { get; }
 
         /// <summary>
-        /// Gets the permission that is needed to execute this command.
-        /// </summary>
-        public string? NeededPermission { get; }
-
-        /// <summary>
         /// Executes the command with the specific sender and arguments.
         /// </summary>
         /// <param name="player">Sender that executed the command.</param>
         /// <param name="arguments">Already converted arguments to pass to the handler.</param>
-        /// <param name="errorMessage">Message that should be returned, when the executor was unable to call the command.</param>
-        /// <returns>Status of this call after the internal handler has been executed.</returns>
+        /// <param name="ignorePermissions">true if permission check should be skipped, false otherwise.</param>
+        /// <returns>Status of this call after the internal handler has been executed and message that should be returned, when the executor was unable to call the command..</returns>
         /// <exception cref="ArgumentNullException"><paramref name="player"/> or <paramref name="arguments"/> is null.</exception>
-        CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage);
+        Task<CommandResult> TryExecuteAsync(IPlayer player, object[] arguments, bool ignorePermissions = false);
 
         /// <summary>
         /// Checks if the given <paramref name="player"/> is able to execute this command.
         /// </summary>
         /// <param name="player">Player to check if the command can be executed.</param>
         /// <returns>true if the command can be executed, false otherwise.</returns>
-        public bool CanExecuteCommand(IPlayer player);
+        public Task<bool> CanExecuteCommandAsync(IPlayer player);
     }
 }

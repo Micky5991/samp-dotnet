@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dawn;
 using Micky5991.Samp.Net.Commands.Attributes;
+using Micky5991.Samp.Net.Commands.Data.Results;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Micky5991.Samp.Net.Commands.Elements
 {
@@ -13,59 +15,51 @@ namespace Micky5991.Samp.Net.Commands.Elements
     /// </summary>
     public class HandlerCommand : Command
     {
-        private readonly ILogger<HandlerCommand> logger;
-
-        private readonly ICommandHandler commandHandler;
-
         private readonly Func<object[], object> executor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HandlerCommand"/> class.
         /// </summary>
-        /// <param name="logger">Logger for this command instance.</param>
+        /// <param name="authorizationService">Service that determines if the user has access.</param>
         /// <param name="attribute">General attribute that describes this command.</param>
         /// <param name="aliasNames">Alias names which are also available.</param>
         /// <param name="parameters">Parameter information about this command.</param>
-        /// <param name="commandHandler">Target instance of this command.</param>
         /// <param name="executor">Executor action to trigger the command.</param>
         public HandlerCommand(
-            ILogger<HandlerCommand> logger,
+            IAuthorizationService authorizationService,
             CommandAttribute attribute,
             string[] aliasNames,
             IReadOnlyList<ParameterDefinition> parameters,
-            ICommandHandler commandHandler,
             Func<object[], object> executor)
-            : base(attribute, aliasNames, parameters)
+            : base(authorizationService, attribute, aliasNames, parameters)
         {
-            Guard.Argument(logger, nameof(logger)).NotNull();
             Guard.Argument(executor, nameof(executor)).NotNull();
-            Guard.Argument(commandHandler, nameof(commandHandler)).NotNull();
 
-            this.logger = logger;
-            this.commandHandler = commandHandler;
             this.executor = executor;
         }
 
         /// <inheritdoc />
-        public override CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage)
+        public override async Task<CommandResult> TryExecuteAsync(
+            IPlayer player,
+            object[] arguments,
+            bool skipPermissions)
         {
             Guard.Argument(player, nameof(player)).NotNull();
             Guard.Argument(arguments, nameof(arguments)).NotNull();
 
-            errorMessage = string.Empty;
-            if (this.CanExecuteCommand(player) == false)
+            if (skipPermissions == false && await this.CanExecuteCommandAsync(player) == false)
             {
-                return CommandExecutionStatus.NoPermission;
+                return CommandResult.Failed(CommandExecutionStatus.NoPermission);
             }
 
             if (arguments.Length < this.MinimalArgumentAmount - 1)
             {
-                return CommandExecutionStatus.MissingArgument;
+                return CommandResult.Failed(CommandExecutionStatus.MissingArgument);
             }
 
             if (arguments.Length > this.Parameters.Count)
             {
-                return CommandExecutionStatus.TooManyArguments;
+                return CommandResult.Failed(CommandExecutionStatus.TooManyArguments);
             }
 
             var extendedArguments = new object[this.Parameters.Count];
@@ -77,7 +71,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
 
             if (this.ValidateArgumentTypes(extendedArguments) == false)
             {
-                return CommandExecutionStatus.ArgumentTypeMismatch;
+                return CommandResult.Failed(CommandExecutionStatus.ArgumentTypeMismatch);
             }
 
             try
@@ -86,12 +80,10 @@ namespace Micky5991.Samp.Net.Commands.Elements
             }
             catch (Exception e)
             {
-                errorMessage = e.Message;
-
-                return CommandExecutionStatus.Exception;
+                return CommandResult.Failed(CommandExecutionStatus.Exception, e.Message);
             }
 
-            return CommandExecutionStatus.Ok;
+            return CommandResult.Success();
         }
     }
 }

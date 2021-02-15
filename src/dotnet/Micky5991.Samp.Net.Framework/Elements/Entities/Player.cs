@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Net;
 using System.Numerics;
+using System.Security.Claims;
 using Dawn;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
@@ -49,6 +50,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
             this.permissionFactory = permissionFactory;
 
             this.permissionContainer = permissionFactory.BuildContainer(this);
+
+            this.Principal = new ClaimsPrincipal();
         }
 
         /// <inheritdoc />

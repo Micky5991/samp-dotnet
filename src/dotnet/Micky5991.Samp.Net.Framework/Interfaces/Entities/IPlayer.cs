@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Net;
 using System.Numerics;
+using System.Security.Claims;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Data;
@@ -14,6 +15,8 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
     /// </summary>
     public interface IPlayer : IMovingWorldEntity, IPermissible
     {
+        ClaimsPrincipal Principal { get; }
+
         /// <summary>
         /// Gets or sets the current name of the player.
         /// </summary>

@@ -3,11 +3,11 @@ using System.Reflection;
 using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Example.Commands;
-using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions;
 using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
 using Micky5991.Samp.Net.NLogTarget;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
@@ -28,10 +28,12 @@ namespace Micky5991.Samp.Net.Example
                     .AddLogging(builder =>
                     {
                         builder.SetMinimumLevel(LogLevel.Trace);
+                        builder.AddFilter((category,_) => category != typeof(DefaultAuthorizationService).FullName );
                         builder.AddNLog();
                     })
                     .AddSingleton<ChatListener>()
-                    .AddSingleton<ICommandHandler, TestCommandHandler>();
+                    .AddSingleton<ICommandHandler, TestCommandHandler>()
+                    .AddAuthorizationCore(SetupAuthorization);
 
                 var commandExtensionBuilder = new CommandExtensionBuilder().AddProfilesInAssembly(Assembly.GetExecutingAssembly())
                                                                            .AddProfilesInAssembly<CommandExtensionBuilder>()
@@ -63,6 +65,16 @@ namespace Micky5991.Samp.Net.Example
                 Console.WriteLine($"ERROR: {e.Message}");
                 Console.WriteLine(e.StackTrace);
             }
+        }
+
+        private static void SetupAuthorization(AuthorizationOptions config)
+        {
+            config.AddPolicy("TestPolicy", x => x.RequireAssertion(y => true));
+
+            //
+            // config.DefaultPolicy = new AuthorizationPolicyBuilder()
+            //                        .RequireAssertion(x => true)
+            //                        .Build();
         }
     }
 }
