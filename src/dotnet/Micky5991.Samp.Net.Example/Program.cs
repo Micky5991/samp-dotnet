@@ -70,11 +70,6 @@ namespace Micky5991.Samp.Net.Example
         private static void SetupAuthorization(AuthorizationOptions config)
         {
             config.AddPolicy("TestPolicy", x => x.RequireAssertion(y => true));
-
-            //
-            // config.DefaultPolicy = new AuthorizationPolicyBuilder()
-            //                        .RequireAssertion(x => true)
-            //                        .Build();
         }
     }
 }

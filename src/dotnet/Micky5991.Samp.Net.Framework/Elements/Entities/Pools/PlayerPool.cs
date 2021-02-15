@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -69,7 +70,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Pools
             var sampIdentity = new ClaimsIdentity(
                                                   new[]
                                                   {
-                                                      new Claim(ClaimTypes.Name, player.Name),
+                                                      new Claim(SampClaimTypes.Name, player.Name),
+                                                      new Claim(SampClaimTypes.PlayerId, player.Id.ToString(), ClaimValueTypes.Integer32),
                                                   },
                                                   "SAMP");
 
