@@ -15,6 +15,9 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
     /// </summary>
     public interface IPlayer : IMovingWorldEntity, IPermissible
     {
+        /// <summary>
+        /// Gets the principal instance that should be used for authorization.
+        /// </summary>
         ClaimsPrincipal Principal { get; }
 
         /// <summary>
