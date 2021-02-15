@@ -14,6 +14,11 @@ namespace Micky5991.Samp.Net.Commands.Interfaces
         IImmutableDictionary<string, IImmutableDictionary<string, ICommand>> Commands { get; }
 
         /// <summary>
+        /// Gets all available commands without alias commands in this service instance.
+        /// </summary>
+        IImmutableDictionary<string, IImmutableDictionary<string, ICommand>> NonAliasCommands { get; }
+
+        /// <summary>
         /// Starts all <see cref="ICommandHandler"/> instances and attaches the command listener to the <see cref="IEventAggregator"/>.
         /// </summary>
         void Start();

@@ -5,24 +5,24 @@ using Dawn;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Commands.Interfaces;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Micky5991.Samp.Net.Commands.Services
 {
     /// <inheritdoc />
     public class CommandFactory : ICommandFactory
     {
-        private readonly ILogger<HandlerCommand> handlerLogger;
+        private readonly IAuthorizationService authorizationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandFactory"/> class.
         /// </summary>
-        /// <param name="handlerLogger">Logger needed for <see cref="HandlerCommand"/>.</param>
-        public CommandFactory(ILogger<HandlerCommand> handlerLogger)
+        /// <param name="authorizationService">Service that determines if a certain command can be executed.</param>
+        public CommandFactory(IAuthorizationService authorizationService)
         {
-            Guard.Argument(handlerLogger, nameof(handlerLogger)).NotNull();
+            Guard.Argument(authorizationService, nameof(authorizationService)).NotNull();
 
-            this.handlerLogger = handlerLogger;
+            this.authorizationService = authorizationService;
         }
 
         /// <inheritdoc />
@@ -63,7 +63,7 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             var aliasNames = aliasAttributes.Select(x => x.Name).ToArray();
 
-            return new HandlerCommand(this.handlerLogger, attribute, aliasNames, parameters, handler, x => methodInfo.Invoke(handler, x));
+            return new HandlerCommand(this.authorizationService, attribute, aliasNames, parameters, x => methodInfo.Invoke(handler, x));
         }
     }
 }

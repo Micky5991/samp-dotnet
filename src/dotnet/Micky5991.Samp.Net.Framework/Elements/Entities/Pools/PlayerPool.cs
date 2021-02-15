@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Security.Claims;
 using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories;
@@ -31,6 +33,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Pools
 
             var player = this.playerFactory.CreatePlayer(playerid, this.RemoveEntity);
 
+            this.SetupPlayerIdentity(player);
+
             this.AddEntity(player);
 
             return player;
@@ -56,6 +60,20 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Pools
                                        (position - entry.Value.Position).Length() < distance)
                        .Select(x => x.Value)
                        .ToList();
+        }
+
+        private void SetupPlayerIdentity(IPlayer player)
+        {
+            var principal = player.Principal;
+
+            var sampIdentity = new ClaimsIdentity(
+                                                  new[]
+                                                  {
+                                                      new Claim(ClaimTypes.Name, player.Name),
+                                                  },
+                                                  "SAMP");
+
+            principal.AddIdentity(sampIdentity);
         }
     }
 }

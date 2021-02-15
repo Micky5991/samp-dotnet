@@ -1,4 +1,5 @@
 using Micky5991.EventAggregator.Elements;
+using Micky5991.Samp.Net.Commands.Data.Results;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 
@@ -13,15 +14,13 @@ namespace Micky5991.Samp.Net.Commands.Events
         /// Initializes a new instance of the <see cref="CommandExecutedEvent"/> class.
         /// </summary>
         /// <param name="player">Player that executed the command.</param>
-        /// <param name="executionStatus">Describing status code of this command error.</param>
-        /// <param name="errorMessage">Error message built by the service.</param>
+        /// <param name="result">Result object that describes how the execution resulted.</param>
         /// <param name="errorParameter">Parameter that caused an error.</param>
         /// <param name="command">Executed command.</param>
-        public CommandExecutedEvent(IPlayer player, CommandExecutionStatus executionStatus, string? errorMessage, string? errorParameter, ICommand command)
+        public CommandExecutedEvent(IPlayer player, CommandResult result, string? errorParameter, ICommand? command)
         {
             this.Player = player;
-            this.ExecutionStatus = executionStatus;
-            this.ErrorMessage = errorMessage;
+            this.Result = result;
             this.Command = command;
             this.ErrorParameter = errorParameter;
         }
@@ -32,19 +31,14 @@ namespace Micky5991.Samp.Net.Commands.Events
         public IPlayer Player { get; }
 
         /// <summary>
+        /// Gets the result object that describes how the command executed resulted.
+        /// </summary>
+        public CommandResult Result { get; }
+
+        /// <summary>
         /// Gets the command that has been executed.
         /// </summary>
-        public ICommand Command { get; }
-
-        /// <summary>
-        /// Gets the status after trying to execute a command.
-        /// </summary>
-        public CommandExecutionStatus ExecutionStatus { get; }
-
-        /// <summary>
-        /// Gets the error message that was passed for this <see cref="ExecutionStatus"/>.
-        /// </summary>
-        public string? ErrorMessage { get; }
+        public ICommand? Command { get; }
 
         /// <summary>
         /// Gets the parameter that possibly caused the error.

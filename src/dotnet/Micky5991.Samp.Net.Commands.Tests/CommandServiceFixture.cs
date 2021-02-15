@@ -14,6 +14,7 @@ using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers;
 using Micky5991.Samp.Net.Framework.Events.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -31,6 +32,8 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
         private Mock<ICommandFactory> commandFactoryMock;
 
+        private Mock<IAuthorizationService> authorizationService;
+
         private List<ICommandHandler> commandHandlers;
 
         [TestInitialize]
@@ -39,6 +42,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             this.mapperMock = new Mock<IMapper>();
             this.eventAggregatorMock = new Mock<IEventAggregator>();
             this.commandFactoryMock = new Mock<ICommandFactory>();
+            this.authorizationService = new Mock<IAuthorizationService>();
 
             this.commandHandlers = new List<ICommandHandler>();
 
@@ -249,11 +253,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
                 .Returns<ICommandHandler>(x =>
                                               new List<ICommand>
                                               {
-                                                  new HandlerCommand(new NullLogger<HandlerCommand>(), attribute, Array.Empty<string>(), new ParameterDefinition[]
+                                                  new HandlerCommand(this.authorizationService.Object, attribute, Array.Empty<string>(), new ParameterDefinition[]
                                                   {
                                                       ParameterDefinition.Player(),
                                                   },
-                                                                     x,
                                                                      _ => null!),
                                               });
 
@@ -376,6 +379,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var handler = new GroupedCommandHandler();
             var attribute = new CommandAttribute("group", "verb");
             var command = new TestCommand(
+                                          this.authorizationService.Object,
                                           attribute,
                                           Array.Empty<string>(),
                                           new ParameterDefinition[]
@@ -417,6 +421,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var handler = new GroupedCommandHandler();
             var attribute = new CommandAttribute("verb");
             var command = new TestCommand(
+                                          this.authorizationService.Object,
                                           attribute,
                                           Array.Empty<string>(),
                                           new ParameterDefinition[]
@@ -459,6 +464,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var handler = new GroupedCommandHandler();
             var attribute = new CommandAttribute("group", "verb");
             var command = new TestCommand(
+                                          this.authorizationService.Object,
                                           attribute,
                                           Array.Empty<string>(),
                                           new ParameterDefinition[]
@@ -497,21 +503,23 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var attribute = new CommandAttribute("group", "verb");
 
             var firstCommand = new TestCommand(
-                                          attribute,
-                                          Array.Empty<string>(),
-                                          new []
-                                          {
-                                              ParameterDefinition.Player(),
-                                          });
+                                               this.authorizationService.Object,
+                                               attribute,
+                                               Array.Empty<string>(),
+                                               new []
+                                               {
+                                                   ParameterDefinition.Player(),
+                                               });
 
             var noGroupAttribute = new CommandAttribute("verb");
             var secondCommand = new TestCommand(
-                                          noGroupAttribute,
-                                          Array.Empty<string>(),
-                                          new []
-                                          {
-                                              ParameterDefinition.Player(),
-                                          });
+                                                this.authorizationService.Object,
+                                                noGroupAttribute,
+                                                Array.Empty<string>(),
+                                                new[]
+                                                {
+                                                    ParameterDefinition.Player(),
+                                                });
 
             this.commandHandlers.Add(firstHandler);
             this.commandHandlers.Add(secondHandler);
@@ -573,30 +581,33 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var attribute = new CommandAttribute("group", "verb");
 
             var firstCommand = new TestCommand(
-                                          attribute,
-                                          Array.Empty<string>(),
-                                          new []
-                                          {
-                                              ParameterDefinition.Player(),
-                                          });
+                                               this.authorizationService.Object,
+                                               attribute,
+                                               Array.Empty<string>(),
+                                               new[]
+                                               {
+                                                   ParameterDefinition.Player(),
+                                               });
 
             var otherGroupAttribute = new CommandAttribute("group", "othercommand");
             var secondCommand = new TestCommand(
+                                                this.authorizationService.Object,
                                                 otherGroupAttribute,
                                                 Array.Empty<string>(),
-                                                new []
+                                                new[]
                                                 {
                                                     ParameterDefinition.Player(),
                                                 });
 
             var otherGroupCommandAttribute = new CommandAttribute("othergroup", "othercommand");
             var wrongCommand = new TestCommand(
-                                                otherGroupCommandAttribute,
-                                                Array.Empty<string>(),
-                                                new []
-                                                {
-                                                    ParameterDefinition.Player(),
-                                                });
+                                               this.authorizationService.Object,
+                                               otherGroupCommandAttribute,
+                                               Array.Empty<string>(),
+                                               new[]
+                                               {
+                                                   ParameterDefinition.Player(),
+                                               });
 
             this.commandHandlers.Add(firstHandler);
             this.commandHandlers.Add(secondHandler);
@@ -666,15 +677,17 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var repairAttribute = new CommandAttribute("veh", "repair");
 
             var firstCommand = new TestCommand(
-                                          repairAttribute,
-                                          new []{ "r", },
-                                          new []
-                                          {
-                                              ParameterDefinition.Player(),
-                                          });
+                                               this.authorizationService.Object,
+                                               repairAttribute,
+                                               new[] { "r", },
+                                               new[]
+                                               {
+                                                   ParameterDefinition.Player(),
+                                               });
 
             var spawnAttribute = new CommandAttribute("veh", "spawn");
             var secondCommand = new TestCommand(
+                                                this.authorizationService.Object,
                                                 spawnAttribute,
                                                 new []{ "s", },
                                                 new []
@@ -721,12 +734,13 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var attribute = new CommandAttribute("veh", "repair");
 
             var firstCommand = new TestCommand(
-                                          attribute,
-                                          new []{ "r", },
-                                          new []
-                                          {
-                                              ParameterDefinition.Player(),
-                                          });
+                                               this.authorizationService.Object,
+                                               attribute,
+                                               new[] { "r", },
+                                               new[]
+                                               {
+                                                   ParameterDefinition.Player(),
+                                               });
 
             this.commandHandlers.Add(firstHandler);
 

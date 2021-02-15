@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Micky5991.Samp.Net.Commands.Elements;
-using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using EmptyCommandHandler = Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers.EmptyCommandHandler;
@@ -16,16 +16,20 @@ namespace Micky5991.Samp.Net.Commands.Tests
     [TestClass]
     public class CommandFactoryFixture
     {
+        private Mock<IAuthorizationService> authorizationService;
+
         private CommandFactory commandFactory;
 
         [TestInitialize]
         public void Setup()
         {
-            this.commandFactory = new CommandFactory(new NullLogger<HandlerCommand>());
+            this.authorizationService = new Mock<IAuthorizationService>();
+
+            this.commandFactory = new CommandFactory(this.authorizationService.Object);
         }
 
         [TestMethod]
-        public void InvalidFactoryConstructorArgumentThrowsException()
+        public void InvalidAuthorizationFactoryConstructorArgumentThrowsException()
         {
             Action act = () => new CommandFactory(null!);
 
@@ -114,7 +118,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             command1.Name.Should().Be("command1");
             command1.Group.Should().Be("grouped");
             command1.Parameters.Should().NotBeNull()
-                    .And.ContainInOrder(new ParameterDefinition("player", typeof(IPlayer), false, null));;
+                    .And.ContainInOrder(new ParameterDefinition("player", typeof(IPlayer), false, null));
 
             var command2 = commands.ElementAt(1);
             command2.Should().BeOfType<HandlerCommand>();
@@ -122,7 +126,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             command2.Name.Should().Be("command2");
             command2.Group.Should().BeNull();
             command2.Parameters.Should().NotBeNull()
-                    .And.ContainInOrder(new ParameterDefinition("player", typeof(IPlayer), false, null));;
+                    .And.ContainInOrder(new ParameterDefinition("player", typeof(IPlayer), false, null));
         }
 
         [TestMethod]
@@ -168,7 +172,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         }
 
         [TestMethod]
-        public void CommandHandlerWillBeExecutedCorrectly()
+        public async Task CommandHandlerWillBeExecutedCorrectly()
         {
             var player = new Mock<IPlayer>();
             var handler = new ExecutionTesterCommandHandler();
@@ -176,19 +180,19 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var commands = this.commandFactory.BuildFromCommandHandler(handler);
             var command = commands.First();
 
-            var result = command.TryExecute(player.Object, new object[]
+            var result = await command.TryExecuteAsync(player.Object, new object[]
             {
                 "hello",
                 123,
-                true
-            }, out var errorMessage);
+                true,
+            });
 
-            result.Should().Be(CommandExecutionStatus.Ok);
+            result.Status.Should().Be(CommandExecutionStatus.Ok);
             handler.Arguments.Should().ContainInOrder(player.Object, "hello", 123, true);
         }
 
         [TestMethod]
-        public void MissingValuesWillBeFilledWithDefaultValues()
+        public async Task MissingValuesWillBeFilledWithDefaultValues()
         {
             var player = new Mock<IPlayer>();
             var handler = new ExecutionTesterCommandHandler();
@@ -196,13 +200,13 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var commands = this.commandFactory.BuildFromCommandHandler(handler);
             var command = commands.First();
 
-            var result = command.TryExecute(player.Object, new object[]
+            var result = await command.TryExecuteAsync(player.Object, new object[]
             {
                 "hello",
                 123
-            }, out var errorMessage);
+            });
 
-            result.Should().Be(CommandExecutionStatus.Ok);
+            result.Status.Should().Be(CommandExecutionStatus.Ok);
             handler.Arguments.Should().ContainInOrder(player.Object, "hello", 123, false);
         }
 

@@ -3,13 +3,23 @@ using FluentAssertions;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Micky5991.Samp.Net.Commands.Tests
 {
     [TestClass]
     public class CommandFixture
     {
+        private Mock<IAuthorizationService> authorizationService;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            this.authorizationService = new Mock<IAuthorizationService>();
+        }
+
         [TestMethod]
         public void VerifyTestCommandInheritance()
         {
@@ -22,7 +32,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void CreatingCommandWithCorrectParametersCreatesInstance(string groupName)
         {
             var attribute = new CommandAttribute(groupName, "command");
-            var command = new TestCommand(attribute, Array.Empty<string>(),
+            var command = new TestCommand(
+                                          this.authorizationService.Object,
+                                          attribute,
+                                          Array.Empty<string>(),
                                           new ParameterDefinition[]
                                           {
                                               new ("player", typeof(IPlayer), false, null),
@@ -35,10 +48,29 @@ namespace Micky5991.Samp.Net.Commands.Tests
         }
 
         [TestMethod]
+        public void CreatingCommandWithInvalidAuthorizationServiceArgumentThrowsException()
+        {
+            var attribute = new CommandAttribute("groupName", "name");
+            Action act = () => new TestCommand(
+                                               null!,
+                                               attribute,
+                                               Array.Empty<string>(),
+                                               new ParameterDefinition[]
+                                               {
+                                                   new ("player", typeof(IPlayer), false, null),
+                                               });
+
+            act.Should().Throw<ArgumentException>().WithMessage("*authorization*");
+        }
+
+        [TestMethod]
         public void CreatingCommandWithInvalidAliasNamesArgumentThrowsException()
         {
             var attribute = new CommandAttribute("groupName", "name");
-            Action act = () => new TestCommand(attribute, null!,
+            Action act = () => new TestCommand(
+                                               this.authorizationService.Object,
+                                               attribute,
+                                               null!,
                                                new ParameterDefinition[]
                                                {
                                                    new ("player", typeof(IPlayer), false, null),
@@ -51,7 +83,11 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void PassingNullAsParameterDefinitionThrowsException()
         {
             var attribute = new CommandAttribute("name");
-            Action act = () => new TestCommand(attribute, Array.Empty<string>(), null!);
+            Action act = () => new TestCommand(
+                                               this.authorizationService.Object,
+                                               attribute,
+                                               Array.Empty<string>(),
+                                               null!);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*parameter*");
         }
@@ -60,7 +96,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void CommandRequiresPlayerAsFirstArgumentInDefinitionType()
         {
             var attribute = new CommandAttribute("name");
-            Action act = () => new TestCommand(attribute, Array.Empty<string>(),
+            Action act = () => new TestCommand(
+                                               this.authorizationService.Object,
+                                               attribute,
+                                               Array.Empty<string>(),
                                                new ParameterDefinition[]
                                                {
                                                    new ("player", typeof(int), false, null),
@@ -73,7 +112,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void CommandRequiresOptionalParametersToComeLast()
         {
             var attribute = new CommandAttribute("name");
-            Action act = () => new TestCommand(attribute, Array.Empty<string>(),
+            Action act = () => new TestCommand(
+                                               this.authorizationService.Object,
+                                               attribute,
+                                               Array.Empty<string>(),
                                                new ParameterDefinition[]
                                                {
                                                    new ("player", typeof(IPlayer), false, null),
@@ -89,6 +131,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var attribute = new CommandAttribute("name");
             var testCommand = new TestCommand(
+                                              this.authorizationService.Object,
                                               attribute,
                                               Array.Empty<string>(),
                                               new ParameterDefinition[]
@@ -105,6 +148,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var attribute = new CommandAttribute("veh", "create");
             var testCommand = new TestCommand(
+                                              this.authorizationService.Object,
                                               attribute,
                                               Array.Empty<string>(),
                                               new ParameterDefinition[]
@@ -123,6 +167,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var attribute = new CommandAttribute("veh", "create");
 
             var testCommand = new TestCommand(
+                                              this.authorizationService.Object,
                                               attribute,
                                               Array.Empty<string>(),
                                               new ParameterDefinition[]
@@ -138,6 +183,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var attribute = new CommandAttribute("veh", "create");
             var testCommand = new TestCommand(
+                                              this.authorizationService.Object,
                                               attribute,
                                               Array.Empty<string>(),
                                               new ParameterDefinition[]
@@ -154,6 +200,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var attribute = new CommandAttribute("veh", "create");
             var testCommand = new TestCommand(
+                                              this.authorizationService.Object,
                                               attribute,
                                               Array.Empty<string>(),
                                               new ParameterDefinition[]
@@ -171,6 +218,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var attribute = new CommandAttribute("veh", "create");
             Action act = () => new TestCommand(
+                                               this.authorizationService.Object,
                                               attribute,
                                               Array.Empty<string>(),
                                               new ParameterDefinition[]

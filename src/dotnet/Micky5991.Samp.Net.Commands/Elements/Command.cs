@@ -2,25 +2,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Dawn;
 using Micky5991.Samp.Net.Commands.Attributes;
+using Micky5991.Samp.Net.Commands.Data.Results;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Micky5991.Samp.Net.Commands.Elements
 {
     /// <inheritdoc />
     public abstract class Command : ICommand
     {
+        private readonly IAuthorizationService authorizationService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Command"/> class.
         /// </summary>
         /// <param name="attribute">Attribute that describes this command.</param>
         /// <param name="aliasNames">Available alias names of this command.</param>
         /// <param name="parameters">List of parameters of this command.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="attribute"/>, <paramref name="aliasNames"/> or <paramref name="parameters"/> is null.</exception>
+        /// <param name="authorizationService">Service used to check if an executor is able to use a command.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="attribute"/>, <paramref name="aliasNames"/>, <paramref name="parameters"/> or <paramref name="authorizationService"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="parameters"/> or <paramref name="aliasNames"/>contains null.</exception>
         protected Command(
+            IAuthorizationService authorizationService,
             CommandAttribute attribute,
             string[] aliasNames,
             IReadOnlyList<ParameterDefinition> parameters)
@@ -28,6 +35,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
             Guard.Argument(attribute, nameof(attribute)).NotNull();
             Guard.Argument(aliasNames, nameof(aliasNames)).NotNull().DoesNotContainNull();
             Guard.Argument(parameters, nameof(parameters)).NotEmpty().NotNull().DoesNotContainNull();
+            Guard.Argument(authorizationService, nameof(authorizationService)).NotNull();
             Guard.Argument(parameters.Select(x => x.Name), nameof(parameters)).DoesNotContainDuplicate((_, _) => "All parameter names need to be unique.");
 
             if (parameters.Count >= 1 && parameters[0].Type != typeof(IPlayer))
@@ -36,6 +44,8 @@ namespace Micky5991.Samp.Net.Commands.Elements
                                             "The first entry has to have the player as parameter.",
                                             nameof(parameters));
             }
+
+            this.authorizationService = authorizationService;
 
             var lastDefault = false;
             foreach (var definition in parameters)
@@ -55,7 +65,6 @@ namespace Micky5991.Samp.Net.Commands.Elements
             this.Group = attribute.Group;
             this.Parameters = parameters;
             this.Description = attribute.Description ?? string.Empty;
-            this.NeededPermission = attribute.Permission;
 
             this.MinimalArgumentAmount = this.Parameters.Count(x => x.HasDefault == false);
             this.HelpSignature = this.BuildHelpSignature();
@@ -79,26 +88,20 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <inheritdoc />
         public string Description { get; }
 
-        /// <inheritdoc />
-        public string? NeededPermission { get; }
-
         /// <summary>
         /// Gets the minimal required argument amount for this command.
         /// </summary>
         protected int MinimalArgumentAmount { get; }
 
         /// <inheritdoc />
-        public abstract CommandExecutionStatus TryExecute(IPlayer player, object[] arguments, out string? errorMessage);
+        public abstract Task<CommandResult> TryExecuteAsync(IPlayer player, object[] arguments, bool skipPermissions);
 
         /// <inheritdoc />
-        public virtual bool CanExecuteCommand(IPlayer player)
+        public virtual async Task<bool> CanExecuteCommandAsync(IPlayer player)
         {
-            if (string.IsNullOrWhiteSpace(this.NeededPermission))
-            {
-                return true;
-            }
+            var result = await this.authorizationService.AuthorizeAsync(player.Principal, this, "TestPolicy");
 
-            return player.HasPermission(this.NeededPermission!);
+            return result.Succeeded;
         }
 
         /// <summary>

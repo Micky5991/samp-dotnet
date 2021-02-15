@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,6 +22,8 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
         private Mock<IPlayer> playerMock;
 
+        private Mock<IAuthorizationService> authorizationService;
+
         private HandlerCommand handlerCommand;
 
         private object[] passedArguments;
@@ -31,19 +35,20 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestInitialize]
         public void Setup()
         {
-            this.passedArguments = Array.Empty<object>();
             this.commandHandlerMock = new Mock<ICommandHandler>();
             this.playerMock = new Mock<IPlayer>();
+            this.authorizationService = new Mock<IAuthorizationService>();
+
+            this.passedArguments = Array.Empty<object>();
             this.fakeExecutor = _ => { };
             this.attribute = new CommandAttribute("grouped", "command");
 
-            this.handlerCommand = new HandlerCommand(new NullLogger<HandlerCommand>(), this.attribute, Array.Empty<string>(), new []
+            this.handlerCommand = new HandlerCommand(this.authorizationService.Object, this.attribute, Array.Empty<string>(), new []
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null),
                 new ParameterDefinition("allow", typeof(bool), false, null),
                 new ParameterDefinition("message", typeof(string), true, "cool"),
             },
-                                                     this.commandHandlerMock.Object,
                                                      x =>
                                                      {
                                                          this.fakeExecutor(x);
@@ -53,26 +58,24 @@ namespace Micky5991.Samp.Net.Commands.Tests
         }
 
         [TestMethod]
-        public void PassingInvalidConstructorLoggerArgumentThrowsException()
+        public void PassingInvalidConstructorAuthorizationArgumentThrowsException()
         {
             Action act = () => new HandlerCommand(null!, this.attribute, Array.Empty<string>(), new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
-                                                  this.commandHandlerMock.Object,
                                                   _ => null!);
 
-            act.Should().Throw<ArgumentNullException>().WithMessage("*logger*");
+            act.Should().Throw<ArgumentNullException>().WithMessage("*authorization*");
         }
 
         [TestMethod]
         public void PassingInvalidConstructorAttributeArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(new NullLogger<HandlerCommand>(), null!, Array.Empty<string>(), new[]
+            Action act = () => new HandlerCommand(this.authorizationService.Object,  null!, Array.Empty<string>(), new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
-                                                  this.commandHandlerMock.Object,
                                                   _ => null!);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*attribute*");
@@ -82,45 +85,26 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void PassingInvalidConstructorParametersArgumentThrowsException()
         {
             Action act = () => new HandlerCommand(
-                                                  new NullLogger<HandlerCommand>(),
+                                                  this.authorizationService.Object,
                                                   this.attribute,
                                                   Array.Empty<string>(),
                                                   null!,
-                                                  this.commandHandlerMock.Object,
                                                   _ => null!);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*parameters*");
         }
 
         [TestMethod]
-        public void PassingInvalidConstructorCommandHandlerArgumentThrowsException()
-        {
-            Action act = () => new HandlerCommand(
-                                                  new NullLogger<HandlerCommand>(),
-                                                  this.attribute,
-                                                  Array.Empty<string>(),
-                                                  new[]
-                                                  {
-                                                      new ParameterDefinition("player", typeof(IPlayer), false, null)
-                                                  },
-                                                  null!,
-                                                  _ => null!);
-
-            act.Should().Throw<ArgumentNullException>().WithMessage("*commandHandler*");
-        }
-
-        [TestMethod]
         public void PassingInvalidConstructorExecutorArgumentThrowsException()
         {
             Action act = () => new HandlerCommand(
-                                                  new NullLogger<HandlerCommand>(),
+                                                  this.authorizationService.Object,
                                                   this.attribute,
                                                   Array.Empty<string>(),
                                                   new[]
                                                   {
                                                       new ParameterDefinition("player", typeof(IPlayer), false, null)
                                                   },
-                                                  this.commandHandlerMock.Object,
                                                   null!);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*executor*");
@@ -130,11 +114,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void PassingParameterDefinitionWithNoDefinitionsThrowsException()
         {
             Action act = () => new HandlerCommand(
-                                                  new NullLogger<HandlerCommand>(),
+                                                  this.authorizationService.Object,
                                                   this.attribute,
                                                   Array.Empty<string>(),
                                                   Array.Empty<ParameterDefinition>(),
-                                                  this.commandHandlerMock.Object,
                                                   null!);
 
             act.Should().Throw<ArgumentException>().WithMessage("*parameters*");
@@ -144,85 +127,82 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void PassingParameterDefinitionWithNoPlayerParameterThrowsException()
         {
             Action act = () => new HandlerCommand(
-                                                  new NullLogger<HandlerCommand>(),
+                                                  this.authorizationService.Object,
                                                   this.attribute,
                                                   Array.Empty<string>(),
                                                   new[]
                                                   {
                                                       new ParameterDefinition("amount", typeof(int), false, null)
                                                   },
-                                                  this.commandHandlerMock.Object,
                                                   null!);
 
             act.Should().Throw<ArgumentException>().WithMessage("*parameters*");
         }
 
         [TestMethod]
-        public void CallingCommandExecutesExecutor()
+        public async Task CallingCommandExecutesExecutor()
         {
-            var result = this.handlerCommand.TryExecute(this.playerMock.Object, new object[]
+            var result = await this.handlerCommand.TryExecuteAsync(this.playerMock.Object, new object[]
             {
                 true,
                 "ok"
-            }, out var errorMessage);
+            }, false);
 
-            result.Should().Be(CommandExecutionStatus.Ok);
-            errorMessage.Should().BeEmpty();
+            result.Status.Should().Be(CommandExecutionStatus.Ok);
+            result.Message.Should().BeEmpty();
             this.passedArguments.Should().ContainInOrder(this.playerMock.Object, true, "ok");
         }
 
         [TestMethod]
-        public void PassingInvalidArgumentTypesThrowsException()
+        public async Task PassingInvalidArgumentTypesThrowsException()
         {
-            var result = this.handlerCommand.TryExecute(this.playerMock.Object, new object[]
+            var result = await this.handlerCommand.TryExecuteAsync(this.playerMock.Object, new object[]
             {
                 true,
                 123
-            }, out var errorMessage);
+            }, false);
 
-            result.Should().Be(CommandExecutionStatus.ArgumentTypeMismatch);
+            result.Status.Should().Be(CommandExecutionStatus.ArgumentTypeMismatch);
             this.passedArguments.Should().BeEmpty();
         }
 
         [TestMethod]
-        public void PassingNotEnoughArgumentsWithoutDefaultArgumentsThrowsException()
+        public async Task PassingNotEnoughArgumentsWithoutDefaultArgumentsThrowsException()
         {
-            var result = this.handlerCommand.TryExecute(this.playerMock.Object, new object[]
-            {
-            }, out var errorMessage);
+            var result = await this.handlerCommand.TryExecuteAsync(this.playerMock.Object, Array.Empty<object>(), false);
 
-            result.Should().Be(CommandExecutionStatus.MissingArgument);
+            result.Status.Should().Be(CommandExecutionStatus.MissingArgument);
             this.passedArguments.Should().BeEmpty();
         }
 
         [TestMethod]
-        public void PassingTooManyArgumentsReturnsError()
+        public async Task PassingTooManyArgumentsReturnsError()
         {
-            var result = this.handlerCommand.TryExecute(this.playerMock.Object, new object[]
+            var result = await this.handlerCommand.TryExecuteAsync(this.playerMock.Object, new object[]
             {
                 true,
                 "ok",
                 1,
                 2
-            }, out var errorMessage);
+            }, false);
 
-            result.Should().Be(CommandExecutionStatus.TooManyArguments);
+            result.Status.Should().Be(CommandExecutionStatus.TooManyArguments);
             this.passedArguments.Should().BeEmpty();
         }
 
         [TestMethod]
-        public void ThrowingAnyExceptionInsideCommandReturnsError()
+        public async Task ThrowingAnyExceptionInsideCommandReturnsError()
         {
             this.fakeExecutor = _ => throw new Exception("Any message");
 
-            var result = this.handlerCommand.TryExecute(this.playerMock.Object, new object[]
+            var result = await this.handlerCommand.TryExecuteAsync(this.playerMock.Object, new object[]
             {
                 true,
                 "ok",
-            }, out var errorMessage);
+            }, false);
 
-            result.Should().Be(CommandExecutionStatus.Exception);
-            errorMessage.Should().Be("Any message");
+            result.Status.Should().Be(CommandExecutionStatus.Exception);
+            result.Message.Should().Be("Any message");
             this.passedArguments.Should().BeEmpty();
         }
     }

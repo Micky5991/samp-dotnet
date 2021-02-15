@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Security.Claims;
 using Micky5991.Samp.Net.Framework.Enums.Permissions;
 using Micky5991.Samp.Net.Framework.Interfaces.Permissions;
 
@@ -8,6 +8,9 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
     /// <inheritdoc cref="Player"/>
     public partial class Player
     {
+        /// <inheritdoc />
+        public ClaimsPrincipal Principal { get; }
+
         /// <inheritdoc />
         public bool HasPermission(string permission, bool defaultValue)
         {

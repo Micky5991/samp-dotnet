@@ -2,6 +2,7 @@ using System;
 using System.Collections.Immutable;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Extensions;
@@ -32,7 +33,7 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
         /// </summary>
         /// <param name="player">Player that executed this command.</param>
         [Command("help", Description = "Shows all available commands")]
-        public virtual void HelpCommand(IPlayer player)
+        public virtual async void HelpCommand(IPlayer player)
         {
             var commandService = (ICommandService)this.serviceProvider.GetRequiredService(typeof(ICommandService));
 
@@ -40,9 +41,7 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
             player.SendMessage(Color.DeepSkyBlue, "| * Available commands");
             player.SendMessage(Color.DeepSkyBlue, "| _________________________________________________");
 
-            var commandGroups = (from serviceCommand in commandService.Commands
-                                 where serviceCommand.Value.Any(x => x.Value.CanExecuteCommand(player))
-                                 select serviceCommand).ToList();
+            var commandGroups = await this.RemoveCommandsWithoutPermissionAsync(player, commandService.NonAliasCommands);
 
             if (commandGroups.Any(x => string.IsNullOrWhiteSpace(x.Key) == false))
             {
@@ -53,19 +52,17 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
                         continue;
                     }
 
-                    var availableCommandAmount = command.Value.Count(x => x.Value.AliasNames.Contains(x.Key) == false);
-
                     player.SendMessage(
                                        Color.DeepSkyBlue,
-                                       $"| {Color.White.Embed()}/{command.Key} - {Color.LightGray.Embed()}{availableCommandAmount} available commands");
+                                       $"| {Color.White.Embed()}/{command.Key} - {Color.LightGray.Embed()}{command.Value.Count} available commands");
                 }
 
                 player.SendMessage(Color.DeepSkyBlue, "|");
             }
 
-            if (commandService.Commands.TryGetValue(string.Empty, out var nonGroupedCommands))
+            if (commandGroups.TryGetValue(string.Empty, out var nonGroupedCommands))
             {
-                foreach (var nonGroupedCommand in nonGroupedCommands.Where(x => x.Value.CanExecuteCommand(player)))
+                foreach (var nonGroupedCommand in nonGroupedCommands)
                 {
                     var description = string.Empty;
                     if (string.IsNullOrWhiteSpace(nonGroupedCommand.Value.Description) == false)
@@ -76,6 +73,38 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
                     player.SendMessage(Color.DeepSkyBlue, $"| {Color.White.Embed()}/{nonGroupedCommand.Key} {description}");
                 }
             }
+        }
+
+        private async Task<IImmutableDictionary<string, IImmutableDictionary<string, ICommand>>>
+            RemoveCommandsWithoutPermissionAsync(
+                IPlayer player,
+                IImmutableDictionary<string, IImmutableDictionary<string, ICommand>> commandGroups)
+        {
+            var result = commandGroups;
+
+            foreach (var commandGroup in commandGroups)
+            {
+                result = result.SetItem(commandGroup.Key, await this.RemoveCommandsWithoutPermissionAsync(player, commandGroup.Value));
+            }
+
+            return result;
+        }
+
+        private async Task<IImmutableDictionary<string, ICommand>> RemoveCommandsWithoutPermissionAsync(
+            IPlayer player,
+            IImmutableDictionary<string, ICommand> commands)
+        {
+            var commandTaskMapping = commands
+                .ToDictionary(
+                              x => x,
+                              x => x.Value.CanExecuteCommandAsync(player));
+
+            await Task.WhenAll(commandTaskMapping.Values).ConfigureAwait(false);
+
+            return commandTaskMapping
+                          .Where(x => x.Value.Result)
+                          .Select(x => x.Key)
+                          .ToImmutableDictionary();
         }
     }
 }

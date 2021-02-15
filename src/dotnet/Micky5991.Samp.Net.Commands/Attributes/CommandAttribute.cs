@@ -48,10 +48,5 @@ namespace Micky5991.Samp.Net.Commands.Attributes
         /// Gets or sets the optional description for this command.
         /// </summary>
         public string? Description { get; set; }
-
-        /// <summary>
-        /// Gets or sets the optional permission needed to execute this command.
-        /// </summary>
-        public string? Permission { get; set; }
     }
 }

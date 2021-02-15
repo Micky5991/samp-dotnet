@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
@@ -69,8 +68,9 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
         private void OnCommandExecuted(CommandExecutedEvent eventdata)
         {
             eventdata.Cancelled = true;
+            var commandResult = eventdata.Result;
 
-            switch (eventdata.ExecutionStatus)
+            switch (commandResult.Status)
             {
                 case CommandExecutionStatus.Ok:
                     // Do nothing
@@ -78,40 +78,46 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
 
                 case CommandExecutionStatus.Exception:
                     eventdata.Player.SendMessage(Color.LightGray, "An error occured during command execution. Try again later.");
+
                     break;
 
                 case CommandExecutionStatus.NoPermission:
                     eventdata.Player.SendMessage(Color.LightGray, string.Empty);
                     eventdata.Player.SendMessage(Color.LightGray, "You don't have the needed permissions to execute this command.");
+
                     break;
 
-                case CommandExecutionStatus.ArgumentTypeMismatch:
+                case CommandExecutionStatus.ArgumentTypeMismatch when eventdata.Command != null:
                     eventdata.Player.SendMessage(Color.LightGray, string.Empty);
                     eventdata.Player.SendMessage(Color.LightGray, $"Could not match input to expected types. {(string.IsNullOrWhiteSpace(eventdata.ErrorParameter) == false ? $"Parameter: {eventdata.ErrorParameter}" : string.Empty)}");
 
-                    if (string.IsNullOrWhiteSpace(eventdata.ErrorMessage) == false)
+                    if (string.IsNullOrWhiteSpace(commandResult.Message) == false)
                     {
-                        eventdata.Player.SendMessage(Color.LightGray, $"Error: {eventdata.ErrorMessage}");
+                        eventdata.Player.SendMessage(Color.LightGray, $"Error: {commandResult.Message}");
                     }
 
                     eventdata.Player.SendMessage(Color.LightGray, $"Use: {eventdata.Command.HelpSignature}");
+
                     break;
 
-                case CommandExecutionStatus.MissingArgument:
+                case CommandExecutionStatus.MissingArgument when eventdata.Command != null:
                     eventdata.Player.SendMessage(Color.LightGray, string.Empty);
                     eventdata.Player.SendMessage(Color.LightGray, "The command misses some arguments:");
                     eventdata.Player.SendMessage(Color.LightGray, $"Use: {eventdata.Command.HelpSignature}");
 
                     break;
 
-                case CommandExecutionStatus.TooManyArguments:
+                case CommandExecutionStatus.TooManyArguments when eventdata.Command != null:
                     eventdata.Player.SendMessage(Color.LightGray, string.Empty);
                     eventdata.Player.SendMessage(Color.LightGray, "You entered too many arguments.");
                     eventdata.Player.SendMessage(Color.LightGray, $"Use: {eventdata.Command.HelpSignature}");
+
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    eventdata.Player.SendMessage(Color.LightGray, "An error occured during command execution. Try again later.");
+
+                    break;
             }
         }
     }

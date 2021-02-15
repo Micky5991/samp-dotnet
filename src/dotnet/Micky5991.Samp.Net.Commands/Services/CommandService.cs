@@ -4,10 +4,12 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using AutoMapper;
 using Dawn;
 using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
+using Micky5991.Samp.Net.Commands.Data.Results;
 using Micky5991.Samp.Net.Commands.Events;
 using Micky5991.Samp.Net.Commands.Exceptions;
 using Micky5991.Samp.Net.Commands.Interfaces;
@@ -64,16 +66,29 @@ namespace Micky5991.Samp.Net.Commands.Services
         /// <inheritdoc />
         public IImmutableDictionary<string, IImmutableDictionary<string, ICommand>> Commands { get; private set; }
 
+        /// <inheritdoc />
+        public IImmutableDictionary<string, IImmutableDictionary<string, ICommand>> NonAliasCommands { get; private set; }
+
         /// <inheritdoc/>
         public void Start()
         {
             this.eventAggregator.Subscribe<PlayerCommandEvent>(this.OnPlayerCommand, true, threadTarget: ThreadTarget.PublisherThread);
 
-            this.Commands = this.LoadCommands()
-                                .ToDictionary(
-                                              x => x.Key,
-                                              x => (IImmutableDictionary<string, ICommand>)x.Value.ToImmutableDictionary())
-                                .ToImmutableDictionary();
+            var allCommands = this.LoadCommands();
+
+            this.Commands = allCommands
+                            .ToDictionary(
+                                          x => x.Key,
+                                          x => (IImmutableDictionary<string, ICommand>)x.Value.ToImmutableDictionary())
+                            .ToImmutableDictionary();
+
+            this.NonAliasCommands = allCommands
+                .ToDictionary(
+                              x => x.Key,
+                              x => (IImmutableDictionary<string, ICommand>)x.Value
+                                                                            .Where(y => y.Value.AliasNames.Contains(y.Key) == false)
+                                                                            .ToImmutableDictionary())
+                .ToImmutableDictionary();
 
             this.logger.LogInformation($"{this.Commands.Sum(x => x.Value.Count)} commands have been loaded");
         }
@@ -84,47 +99,52 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             eventdata.Cancelled = true;
 
+            this.ExecuteCommand(eventdata);
+        }
+
+        internal async void ExecuteCommand(PlayerCommandEvent eventdata)
+        {
             var player = eventdata.Player;
-
-            // Unable to find specific command, return list of possible commands.
-            if (this.TryGetCommandFromArgumentText(
-                                                   eventdata.CommandText.Substring(1),
-                                                   true,
-                                                   out var potentialCommands,
-                                                   out var groupName,
-                                                   out var remainingArgumentText) == false)
-            {
-                var accessibleCommands = this.FilterCommandWithoutPermission(player, potentialCommands);
-
-                this.eventAggregator.Publish(
-                                             new UnknownCommandEvent(
-                                                                     player,
-                                                                     eventdata.CommandText,
-                                                                     accessibleCommands.ToImmutableDictionary(),
-                                                                     groupName,
-                                                                     remainingArgumentText));
-
-                return;
-            }
-
-            var command = potentialCommands.Values.First();
-
-            // Do not try to map arguments if the player can not execute the command at all.
-            if (command.CanExecuteCommand(player) == false)
-            {
-                this.eventAggregator.Publish(
-                                             new CommandExecutedEvent(
-                                                                      player,
-                                                                      CommandExecutionStatus.NoPermission,
-                                                                      null,
-                                                                      null,
-                                                                      command));
-
-                return;
-            }
+            ICommand? command = null;
 
             try
             {
+                // Unable to find specific command, return list of possible commands.
+                if (this.TryGetCommandFromArgumentText(
+                                                       eventdata.CommandText.Substring(1),
+                                                       true,
+                                                       out var potentialCommands,
+                                                       out var groupName,
+                                                       out var remainingArgumentText) == false)
+                {
+                    var accessibleCommands = await this.FilterCommandWithoutPermissionAsync(player, potentialCommands).ConfigureAwait(false);
+
+                    this.eventAggregator.Publish(
+                                                 new UnknownCommandEvent(
+                                                                         player,
+                                                                         eventdata.CommandText,
+                                                                         accessibleCommands.ToImmutableDictionary(),
+                                                                         groupName,
+                                                                         remainingArgumentText));
+
+                    return;
+                }
+
+                command = potentialCommands.Values.First();
+
+                // Do not try to map arguments if the player can not execute the command at all.
+                if (await command.CanExecuteCommandAsync(player).ConfigureAwait(false) == false)
+                {
+                    this.eventAggregator.Publish(
+                                                 new CommandExecutedEvent(
+                                                                          player,
+                                                                          CommandResult.Failed(CommandExecutionStatus.NoPermission),
+                                                                          null,
+                                                                          command));
+
+                    return;
+                }
+
                 // Apply current player to context of mapping for certain type conversions.
                 void ApplyContext(IMappingOperationOptions options)
                 {
@@ -139,11 +159,11 @@ namespace Micky5991.Samp.Net.Commands.Services
                                                                              .ToList(),
                                                                       ApplyContext);
 
-                var status = command.TryExecute(player, argumentValues, out var errorMessage);
+                var result = await command.TryExecuteAsync(player, argumentValues, true).ConfigureAwait(false);
 
-                this.eventAggregator.Publish(new CommandExecutedEvent(player, status, errorMessage, null, command));
+                this.eventAggregator.Publish(new CommandExecutedEvent(player, result, null, command));
             }
-            catch (CommandArgumentMapException e)
+            catch (CommandArgumentMapException e) when (command != null)
             {
                 var parameter = command.Parameters[e.ParameterIndex + 1];
 
@@ -156,8 +176,7 @@ namespace Micky5991.Samp.Net.Commands.Services
                 this.eventAggregator.Publish(
                                              new CommandExecutedEvent(
                                                                       player,
-                                                                      CommandExecutionStatus.ArgumentTypeMismatch,
-                                                                      mappingMessage,
+                                                                      CommandResult.Failed(CommandExecutionStatus.ArgumentTypeMismatch, mappingMessage ?? string.Empty),
                                                                       parameter.Name,
                                                                       command));
             }
@@ -168,8 +187,7 @@ namespace Micky5991.Samp.Net.Commands.Services
                 this.eventAggregator.Publish(
                                              new CommandExecutedEvent(
                                                                       player,
-                                                                      CommandExecutionStatus.Exception,
-                                                                      e.Message,
+                                                                      CommandResult.Failed(CommandExecutionStatus.Exception, e.Message),
                                                                       null,
                                                                       command));
             }
@@ -279,7 +297,7 @@ namespace Micky5991.Samp.Net.Commands.Services
                 return Array.Empty<string>();
             }
 
-            return argumentString.Split(new[] { ' ' }, argumentAmount);
+            return argumentString.Split(new[] { ' ', }, argumentAmount);
         }
 
         internal object[] MapArgumentListToTypes(string[] arguments, IList<Type> types, Action<IMappingOperationOptions<object, object>> contextApplicator)
@@ -358,11 +376,20 @@ namespace Micky5991.Samp.Net.Commands.Services
             return result;
         }
 
-        private IEnumerable<KeyValuePair<string, ICommand>> FilterCommandWithoutPermission(
+        private async Task<IEnumerable<KeyValuePair<string, ICommand>>> FilterCommandWithoutPermissionAsync(
             IPlayer player,
             IEnumerable<KeyValuePair<string, ICommand>> dictionary)
         {
-            return dictionary.Where(x => x.Value.CanExecuteCommand(player));
+            var tasks = dictionary
+                .ToDictionary(
+                              x => x,
+                              x => x.Value.CanExecuteCommandAsync(player));
+
+            await Task.WhenAll(tasks.Values).ConfigureAwait(false);
+
+            return tasks
+                   .Where(x => x.Value.Result)
+                   .Select(x => x.Key);
         }
     }
 }
