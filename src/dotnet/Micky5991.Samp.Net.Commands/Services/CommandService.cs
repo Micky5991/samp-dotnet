@@ -61,6 +61,7 @@ namespace Micky5991.Samp.Net.Commands.Services
             this.commandHandlers = commandHandlers.ToList();
 
             this.Commands = new Dictionary<string, IImmutableDictionary<string, ICommand>>().ToImmutableDictionary();
+            this.NonAliasCommands = this.Commands;
         }
 
         /// <inheritdoc />
