@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -42,6 +43,13 @@ namespace Micky5991.Samp.Net.Commands.Tests
             this.passedArguments = Array.Empty<object>();
             this.fakeExecutor = _ => { };
             this.attribute = new CommandAttribute("grouped", "command");
+
+            this.authorizationService.Setup(
+                                            x => x.AuthorizeAsync(
+                                                                  It.IsAny<ClaimsPrincipal>(),
+                                                                  It.IsAny<object>(),
+                                                                  It.IsAny<string>()))
+                .ReturnsAsync(AuthorizationResult.Success());
 
             this.handlerCommand = new HandlerCommand(this.authorizationService.Object, this.attribute, Array.Empty<string>(), new []
             {

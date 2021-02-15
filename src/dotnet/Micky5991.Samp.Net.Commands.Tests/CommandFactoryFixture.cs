@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Micky5991.Samp.Net.Commands.Elements;
@@ -24,6 +25,13 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void Setup()
         {
             this.authorizationService = new Mock<IAuthorizationService>();
+
+            this.authorizationService.Setup(
+                                            x => x.AuthorizeAsync(
+                                                                  It.IsAny<ClaimsPrincipal>(),
+                                                                  It.IsAny<object>(),
+                                                                  It.IsAny<string>()))
+                .ReturnsAsync(AuthorizationResult.Success());
 
             this.commandFactory = new CommandFactory(this.authorizationService.Object);
         }
