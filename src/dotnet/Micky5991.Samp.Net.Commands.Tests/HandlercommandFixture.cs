@@ -1,16 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
-using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -19,11 +15,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
     [TestClass]
     public class HandlercommandFixture
     {
-        private Mock<ICommandHandler> commandHandlerMock;
-
         private Mock<IPlayer> playerMock;
 
-        private Mock<IAuthorizationService> authorizationService;
+        private Mock<IAuthorizationFacade> authorization;
 
         private HandlerCommand handlerCommand;
 
@@ -36,22 +30,21 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestInitialize]
         public void Setup()
         {
-            this.commandHandlerMock = new Mock<ICommandHandler>();
             this.playerMock = new Mock<IPlayer>();
-            this.authorizationService = new Mock<IAuthorizationService>();
+            this.authorization = new Mock<IAuthorizationFacade>();
 
             this.passedArguments = Array.Empty<object>();
             this.fakeExecutor = _ => { };
             this.attribute = new CommandAttribute("grouped", "command");
 
-            this.authorizationService.Setup(
+            this.authorization.Setup(
                                             x => x.AuthorizeAsync(
                                                                   It.IsAny<ClaimsPrincipal>(),
                                                                   It.IsAny<object>(),
-                                                                  It.IsAny<string>()))
+                                                                  It.IsAny<AuthorizeAttribute[]>()))
                 .ReturnsAsync(AuthorizationResult.Success());
 
-            this.handlerCommand = new HandlerCommand(this.authorizationService.Object, this.attribute, Array.Empty<string>(), new []
+            this.handlerCommand = new HandlerCommand(this.authorization.Object, this.attribute, Array.Empty<AuthorizeAttribute>(), Array.Empty<string>(), new []
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null),
                 new ParameterDefinition("allow", typeof(bool), false, null),
@@ -68,7 +61,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingInvalidConstructorAuthorizationArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(null!, this.attribute, Array.Empty<string>(), new[]
+            Action act = () => new HandlerCommand(null!, this.attribute, Array.Empty<AuthorizeAttribute>(), Array.Empty<string>(), new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
@@ -80,7 +73,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void PassingInvalidConstructorAttributeArgumentThrowsException()
         {
-            Action act = () => new HandlerCommand(this.authorizationService.Object,  null!, Array.Empty<string>(), new[]
+            Action act = () => new HandlerCommand(this.authorization.Object,  null!, Array.Empty<AuthorizeAttribute>(), Array.Empty<string>(), new[]
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
@@ -93,8 +86,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void PassingInvalidConstructorParametersArgumentThrowsException()
         {
             Action act = () => new HandlerCommand(
-                                                  this.authorizationService.Object,
+                                                  this.authorization.Object,
                                                   this.attribute,
+                                                  Array.Empty<AuthorizeAttribute>(),
                                                   Array.Empty<string>(),
                                                   null!,
                                                   _ => null!);
@@ -106,8 +100,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void PassingInvalidConstructorExecutorArgumentThrowsException()
         {
             Action act = () => new HandlerCommand(
-                                                  this.authorizationService.Object,
+                                                  this.authorization.Object,
                                                   this.attribute,
+                                                  Array.Empty<AuthorizeAttribute>(),
                                                   Array.Empty<string>(),
                                                   new[]
                                                   {
@@ -122,8 +117,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void PassingParameterDefinitionWithNoDefinitionsThrowsException()
         {
             Action act = () => new HandlerCommand(
-                                                  this.authorizationService.Object,
+                                                  this.authorization.Object,
                                                   this.attribute,
+                                                  Array.Empty<AuthorizeAttribute>(),
                                                   Array.Empty<string>(),
                                                   Array.Empty<ParameterDefinition>(),
                                                   null!);
@@ -135,8 +131,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void PassingParameterDefinitionWithNoPlayerParameterThrowsException()
         {
             Action act = () => new HandlerCommand(
-                                                  this.authorizationService.Object,
+                                                  this.authorization.Object,
                                                   this.attribute,
+                                                  Array.Empty<AuthorizeAttribute>(),
                                                   Array.Empty<string>(),
                                                   new[]
                                                   {

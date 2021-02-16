@@ -7,6 +7,7 @@ using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -17,20 +18,20 @@ namespace Micky5991.Samp.Net.Commands.Tests
     [TestClass]
     public class CommandFactoryFixture
     {
-        private Mock<IAuthorizationService> authorizationService;
+        private Mock<IAuthorizationFacade> authorizationService;
 
         private CommandFactory commandFactory;
 
         [TestInitialize]
         public void Setup()
         {
-            this.authorizationService = new Mock<IAuthorizationService>();
+            this.authorizationService = new Mock<IAuthorizationFacade>();
 
             this.authorizationService.Setup(
                                             x => x.AuthorizeAsync(
                                                                   It.IsAny<ClaimsPrincipal>(),
                                                                   It.IsAny<object>(),
-                                                                  It.IsAny<string>()))
+                                                                  It.IsAny<AuthorizeAttribute[]>()))
                 .ReturnsAsync(AuthorizationResult.Success());
 
             this.commandFactory = new CommandFactory(this.authorizationService.Object);

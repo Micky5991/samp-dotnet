@@ -14,6 +14,7 @@ using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Commands.Tests.Fakes.CommandHandlers;
 using Micky5991.Samp.Net.Framework.Events.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +33,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
 
         private Mock<ICommandFactory> commandFactoryMock;
 
-        private Mock<IAuthorizationService> authorizationService;
+        private Mock<IAuthorizationFacade> authorizationService;
 
         private List<ICommandHandler> commandHandlers;
 
@@ -42,7 +43,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             this.mapperMock = new Mock<IMapper>();
             this.eventAggregatorMock = new Mock<IEventAggregator>();
             this.commandFactoryMock = new Mock<ICommandFactory>();
-            this.authorizationService = new Mock<IAuthorizationService>();
+            this.authorizationService = new Mock<IAuthorizationFacade>();
 
             this.commandHandlers = new List<ICommandHandler>();
 
@@ -253,7 +254,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                 .Returns<ICommandHandler>(x =>
                                               new List<ICommand>
                                               {
-                                                  new HandlerCommand(this.authorizationService.Object, attribute, Array.Empty<string>(), new ParameterDefinition[]
+                                                  new HandlerCommand(this.authorizationService.Object, attribute, Array.Empty<AuthorizeAttribute>(), Array.Empty<string>(), new ParameterDefinition[]
                                                   {
                                                       ParameterDefinition.Player(),
                                                   },
@@ -381,6 +382,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var command = new TestCommand(
                                           this.authorizationService.Object,
                                           attribute,
+                                          Array.Empty<AuthorizeAttribute>(),
                                           Array.Empty<string>(),
                                           new ParameterDefinition[]
                                           {
@@ -423,6 +425,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var command = new TestCommand(
                                           this.authorizationService.Object,
                                           attribute,
+                                          Array.Empty<AuthorizeAttribute>(),
                                           Array.Empty<string>(),
                                           new ParameterDefinition[]
                                           {
@@ -466,6 +469,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var command = new TestCommand(
                                           this.authorizationService.Object,
                                           attribute,
+                                          Array.Empty<AuthorizeAttribute>(),
                                           Array.Empty<string>(),
                                           new ParameterDefinition[]
                                           {
@@ -505,6 +509,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var firstCommand = new TestCommand(
                                                this.authorizationService.Object,
                                                attribute,
+                                               Array.Empty<AuthorizeAttribute>(),
                                                Array.Empty<string>(),
                                                new []
                                                {
@@ -515,6 +520,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var secondCommand = new TestCommand(
                                                 this.authorizationService.Object,
                                                 noGroupAttribute,
+                                                Array.Empty<AuthorizeAttribute>(),
                                                 Array.Empty<string>(),
                                                 new[]
                                                 {
@@ -583,6 +589,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var firstCommand = new TestCommand(
                                                this.authorizationService.Object,
                                                attribute,
+                                               Array.Empty<AuthorizeAttribute>(),
                                                Array.Empty<string>(),
                                                new[]
                                                {
@@ -593,6 +600,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var secondCommand = new TestCommand(
                                                 this.authorizationService.Object,
                                                 otherGroupAttribute,
+                                                Array.Empty<AuthorizeAttribute>(),
                                                 Array.Empty<string>(),
                                                 new[]
                                                 {
@@ -603,6 +611,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var wrongCommand = new TestCommand(
                                                this.authorizationService.Object,
                                                otherGroupCommandAttribute,
+                                               Array.Empty<AuthorizeAttribute>(),
                                                Array.Empty<string>(),
                                                new[]
                                                {
@@ -679,6 +688,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var firstCommand = new TestCommand(
                                                this.authorizationService.Object,
                                                repairAttribute,
+                                               Array.Empty<AuthorizeAttribute>(),
                                                new[] { "r", },
                                                new[]
                                                {
@@ -689,6 +699,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var secondCommand = new TestCommand(
                                                 this.authorizationService.Object,
                                                 spawnAttribute,
+                                                Array.Empty<AuthorizeAttribute>(),
                                                 new []{ "s", },
                                                 new []
                                                 {
@@ -736,6 +747,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             var firstCommand = new TestCommand(
                                                this.authorizationService.Object,
                                                attribute,
+                                               Array.Empty<AuthorizeAttribute>(),
                                                new[] { "r", },
                                                new[]
                                                {

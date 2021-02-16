@@ -16,8 +16,10 @@ using Micky5991.Samp.Net.Framework.Elements.Entities.Pools;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
+using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Micky5991.Samp.Net.Framework.Interfaces.Services;
 using Micky5991.Samp.Net.Framework.Services;
+using Micky5991.Samp.Net.Framework.Services.Facades;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -55,7 +57,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
                 .AddEntityFactories()
                 .AddEntityPools()
                 .AddEntityListeners()
-                .AddDialogHandler();
+                .AddDialogHandler()
+                .AddAuthorizationServices();
 
             return this;
         }
@@ -214,6 +217,18 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.serviceCollection
                 .AddSingleton<IEntityListener, DialogHandler>()
                 .AddSingleton<IDialogHandler, DialogHandler>();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Registers various helper services to use the integrated authorization.
+        /// </summary>
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        protected virtual GamemodeBuilder AddAuthorizationServices()
+        {
+            this.serviceCollection
+                .AddTransient<IAuthorizationFacade, AuthorizationFacade>();
 
             return this;
         }

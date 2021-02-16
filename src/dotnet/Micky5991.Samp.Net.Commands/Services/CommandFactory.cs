@@ -5,6 +5,7 @@ using Dawn;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
 using Micky5991.Samp.Net.Commands.Interfaces;
+using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Micky5991.Samp.Net.Commands.Services
@@ -12,17 +13,17 @@ namespace Micky5991.Samp.Net.Commands.Services
     /// <inheritdoc />
     public class CommandFactory : ICommandFactory
     {
-        private readonly IAuthorizationService authorizationService;
+        private readonly IAuthorizationFacade authorization;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandFactory"/> class.
         /// </summary>
-        /// <param name="authorizationService">Service that determines if a certain command can be executed.</param>
-        public CommandFactory(IAuthorizationService authorizationService)
+        /// <param name="authorization">Service that determines if a certain command can be executed.</param>
+        public CommandFactory(IAuthorizationFacade authorization)
         {
-            Guard.Argument(authorizationService, nameof(authorizationService)).NotNull();
+            Guard.Argument(authorization, nameof(authorization)).NotNull();
 
-            this.authorizationService = authorizationService;
+            this.authorization = authorization;
         }
 
         /// <inheritdoc />
@@ -44,13 +45,17 @@ namespace Micky5991.Samp.Net.Commands.Services
                             .GetCustomAttributes<CommandAliasAttribute>()
                             .ToArray();
 
-                commands.Add(this.BuildCommandFromHandler(commandHandler, attribute, aliasAttributes, method));
+                var authorizeAttributes = method
+                                          .GetCustomAttributes<AuthorizeAttribute>(true)
+                                          .ToArray();
+
+                commands.Add(this.BuildCommandFromHandler(commandHandler, attribute, aliasAttributes, authorizeAttributes, method));
             }
 
             return commands;
         }
 
-        private ICommand BuildCommandFromHandler(ICommandHandler handler, CommandAttribute attribute, IEnumerable<CommandAliasAttribute> aliasAttributes, MethodBase methodInfo)
+        private ICommand BuildCommandFromHandler(ICommandHandler handler, CommandAttribute attribute, IEnumerable<CommandAliasAttribute> aliasAttributes, AuthorizeAttribute[] authorizeAttributes, MethodBase methodInfo)
         {
             var parameters = methodInfo
                              .GetParameters()
@@ -63,7 +68,7 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             var aliasNames = aliasAttributes.Select(x => x.Name).ToArray();
 
-            return new HandlerCommand(this.authorizationService, attribute, aliasNames, parameters, x => methodInfo.Invoke(handler, x));
+            return new HandlerCommand(this.authorization, attribute, authorizeAttributes, aliasNames, parameters, x => methodInfo.Invoke(handler, x));
         }
     }
 }
