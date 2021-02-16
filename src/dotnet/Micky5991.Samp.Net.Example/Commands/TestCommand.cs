@@ -39,7 +39,7 @@ namespace Micky5991.Samp.Net.Example.Commands
             }
         }
 
-        // [Authorize(Policy = "VehicleCommands")]
+        [Authorize(Policy = "VehicleCommands")]
         [Command("veh", "spawn", Description = "Spawns a temporary vehicle on your location.")]
         [CommandAlias("s")]
         public void Test(IPlayer player, Vehicle model)

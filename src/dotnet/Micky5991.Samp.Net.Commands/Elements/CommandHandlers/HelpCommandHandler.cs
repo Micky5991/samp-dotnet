@@ -84,7 +84,15 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
 
             foreach (var commandGroup in commandGroups)
             {
-                result = result.SetItem(commandGroup.Key, await this.RemoveCommandsWithoutPermissionAsync(player, commandGroup.Value));
+                var items = await this.RemoveCommandsWithoutPermissionAsync(player, commandGroup.Value);
+                if (items.Count == 0)
+                {
+                    result = result.Remove(commandGroup.Key);
+
+                    continue;
+                }
+
+                result = result.SetItem(commandGroup.Key, items);
             }
 
             return result;

@@ -8,6 +8,7 @@ using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Data.Results;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Micky5991.Samp.Net.Commands.Elements
@@ -15,27 +16,32 @@ namespace Micky5991.Samp.Net.Commands.Elements
     /// <inheritdoc />
     public abstract class Command : ICommand
     {
-        private readonly IAuthorizationService authorizationService;
+        private readonly IAuthorizationFacade authorization;
+
+        private readonly AuthorizeAttribute[] authorizeAttributes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Command"/> class.
         /// </summary>
         /// <param name="attribute">Attribute that describes this command.</param>
+        /// <param name="authorizeAttributes">Authorize attributes attached to this command.</param>
         /// <param name="aliasNames">Available alias names of this command.</param>
         /// <param name="parameters">List of parameters of this command.</param>
-        /// <param name="authorizationService">Service used to check if an executor is able to use a command.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="attribute"/>, <paramref name="aliasNames"/>, <paramref name="parameters"/> or <paramref name="authorizationService"/> is null.</exception>
+        /// <param name="authorization">Service used to check if an executor is able to use a command.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="attribute"/>, <paramref name="aliasNames"/>, <paramref name="parameters"/> or <paramref name="authorization"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="parameters"/> or <paramref name="aliasNames"/>contains null.</exception>
         protected Command(
-            IAuthorizationService authorizationService,
+            IAuthorizationFacade authorization,
             CommandAttribute attribute,
+            AuthorizeAttribute[] authorizeAttributes,
             string[] aliasNames,
             IReadOnlyList<ParameterDefinition> parameters)
         {
             Guard.Argument(attribute, nameof(attribute)).NotNull();
             Guard.Argument(aliasNames, nameof(aliasNames)).NotNull().DoesNotContainNull();
             Guard.Argument(parameters, nameof(parameters)).NotEmpty().NotNull().DoesNotContainNull();
-            Guard.Argument(authorizationService, nameof(authorizationService)).NotNull();
+            Guard.Argument(authorization, nameof(authorization)).NotNull();
+            Guard.Argument(authorizeAttributes, nameof(authorizeAttributes)).NotNull().DoesNotContainNull();
             Guard.Argument(parameters.Select(x => x.Name), nameof(parameters)).DoesNotContainDuplicate((_, _) => "All parameter names need to be unique.");
 
             if (parameters.Count >= 1 && parameters[0].Type != typeof(IPlayer))
@@ -45,7 +51,8 @@ namespace Micky5991.Samp.Net.Commands.Elements
                                             nameof(parameters));
             }
 
-            this.authorizationService = authorizationService;
+            this.authorization = authorization;
+            this.authorizeAttributes = authorizeAttributes;
 
             var lastDefault = false;
             foreach (var definition in parameters)
@@ -99,7 +106,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
         /// <inheritdoc />
         public virtual async Task<bool> CanExecuteCommandAsync(IPlayer player)
         {
-            var result = await this.authorizationService.AuthorizeAsync(player.Principal, this, "TestPolicy");
+            var result = await this.authorization.AuthorizeAsync(player.Principal, this, this.authorizeAttributes);
 
             return result.Succeeded;
         }

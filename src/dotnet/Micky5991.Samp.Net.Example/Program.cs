@@ -28,7 +28,7 @@ namespace Micky5991.Samp.Net.Example
                     .AddLogging(builder =>
                     {
                         builder.SetMinimumLevel(LogLevel.Trace);
-                        builder.AddFilter((category,_) => category != typeof(DefaultAuthorizationService).FullName );
+                        // builder.AddFilter((category,_) => category != typeof(DefaultAuthorizationService).FullName );
                         builder.AddNLog();
                     })
                     .AddSingleton<ChatListener>()
@@ -69,7 +69,12 @@ namespace Micky5991.Samp.Net.Example
 
         private static void SetupAuthorization(AuthorizationOptions config)
         {
-            config.AddPolicy("TestPolicy", x => x.RequireAssertion(y => true));
+            config.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAssertion(x => false)
+                .Build();
+
+            config.AddPolicy("VehicleCommands", policy => policy.RequireClaim("Role", "Admin"));
+            config.AddPolicy("TestPolicy", policy => policy.RequireAssertion(y => true));
         }
     }
 }
