@@ -1,3 +1,4 @@
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dawn;
@@ -31,7 +32,20 @@ namespace Micky5991.Samp.Net.Framework.Services.Facades
 
             if (attributes.Length > 0)
             {
-                policy = await AuthorizationPolicy.CombineAsync(this.policyProvider, attributes).ConfigureAwait(false);
+                try
+                {
+                    policy = await AuthorizationPolicy.CombineAsync(this.policyProvider, attributes)
+                                                      .ConfigureAwait(false);
+                }
+                catch (InvalidOperationException)
+                {
+                    policy = await this.policyProvider.GetFallbackPolicyAsync();
+
+                    if (policy == null)
+                    {
+                        throw;
+                    }
+                }
             }
 
             if (policy == null)

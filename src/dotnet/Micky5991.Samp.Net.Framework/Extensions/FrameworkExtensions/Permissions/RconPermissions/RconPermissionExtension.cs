@@ -1,6 +1,4 @@
-using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;
-using Micky5991.Samp.Net.Framework.Interfaces.Permissions.Factories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions
@@ -13,7 +11,7 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
         /// <inheritdoc />
         public void Register(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IPermissionFactory, RconPermissionFactory>();
+            // TODO: Add Rconpermissions
         }
     }
 }

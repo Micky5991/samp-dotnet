@@ -6,14 +6,13 @@ using System.Security.Claims;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Data;
-using Micky5991.Samp.Net.Framework.Interfaces.Permissions;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
     /// <summary>
     /// Represents a player on the server.
     /// </summary>
-    public interface IPlayer : IMovingWorldEntity, IPermissible
+    public interface IPlayer : IMovingWorldEntity
     {
         /// <summary>
         /// Gets the principal instance that should be used for authorization.
