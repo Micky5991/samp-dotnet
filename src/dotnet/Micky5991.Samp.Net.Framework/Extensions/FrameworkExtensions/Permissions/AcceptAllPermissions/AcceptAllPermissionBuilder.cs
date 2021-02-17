@@ -17,8 +17,12 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
 
         private void ConfigureAuthorization(AuthorizationOptions config)
         {
-            config.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAssertion(x => true)
-                                                                    .Build();
+            var acceptAllPolicy = new AuthorizationPolicyBuilder()
+                                  .RequireAssertion(x => true)
+                                  .Build();
+
+            config.FallbackPolicy = acceptAllPolicy;
+            config.DefaultPolicy = acceptAllPolicy;
         }
     }
 }

@@ -203,7 +203,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         {
             this.serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>()
                 .AddTransient<IEntityListener, PlayerEventListener>()
-                .AddTransient<IEntityListener, VehicleEventListener>();
+                .AddTransient<IEntityListener, VehicleEventListener>()
+                .AddSingleton<IEntityListener, RconEventListeners>();
 
             return this;
         }
