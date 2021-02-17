@@ -183,7 +183,7 @@ namespace Micky5991.Samp.Net.Commands.Services
             }
             catch (Exception e)
             {
-                this.logger.LogTrace(e, $"Command failed to execute. ({player}: \"{eventdata.CommandText}\".");
+                this.logger.LogWarning(e, $"Command failed to execute. ({player}: \"{eventdata.CommandText}\".");
 
                 this.eventAggregator.Publish(
                                              new CommandExecutedEvent(

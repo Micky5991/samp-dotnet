@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Example.Commands;
@@ -28,7 +29,7 @@ namespace Micky5991.Samp.Net.Example
                     .AddLogging(builder =>
                     {
                         builder.SetMinimumLevel(LogLevel.Trace);
-                        // builder.AddFilter((category,_) => category != typeof(DefaultAuthorizationService).FullName );
+                        builder.AddFilter((category,_) => category != typeof(DefaultAuthorizationService).FullName );
                         builder.AddNLog();
                     })
                     .AddSingleton<ChatListener>()
@@ -70,10 +71,10 @@ namespace Micky5991.Samp.Net.Example
         private static void SetupAuthorization(AuthorizationOptions config)
         {
             config.FallbackPolicy = new AuthorizationPolicyBuilder()
-                .RequireAssertion(x => false)
+                .RequireAssertion(x => true)
                 .Build();
 
-            config.AddPolicy("VehicleCommands", policy => policy.RequireClaim("Role", "Admin"));
+            config.AddPolicy("VehicleCommands", policy => policy.RequireAssertion(x => true));
             config.AddPolicy("TestPolicy", policy => policy.RequireAssertion(y => true));
         }
     }

@@ -1,6 +1,5 @@
-using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;
-using Micky5991.Samp.Net.Framework.Interfaces.Permissions.Factories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions
@@ -13,7 +12,13 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
         /// <inheritdoc />
         public void Register(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IPermissionFactory, AcceptAllPermissionFactory>();
+            serviceCollection.AddAuthorizationCore(this.ConfigureAuthorization);
+        }
+
+        private void ConfigureAuthorization(AuthorizationOptions config)
+        {
+            config.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAssertion(x => true)
+                                                                    .Build();
         }
     }
 }

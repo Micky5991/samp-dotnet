@@ -35,4 +35,9 @@
       <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Extensions\FrameworkExtensions\Permissions\AcceptAllPermissions\Services" />
+      <Folder Include="Extensions\FrameworkExtensions\Permissions\RconPermissions\Services" />
+    </ItemGroup>
+
 </Project>

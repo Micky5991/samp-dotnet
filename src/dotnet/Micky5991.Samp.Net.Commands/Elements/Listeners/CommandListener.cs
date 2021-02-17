@@ -82,7 +82,6 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
                     break;
 
                 case CommandExecutionStatus.NoPermission:
-                    eventdata.Player.SendMessage(Color.LightGray, string.Empty);
                     eventdata.Player.SendMessage(Color.LightGray, "You don't have the needed permissions to execute this command.");
 
                     break;
