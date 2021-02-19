@@ -8,7 +8,7 @@ namespace Micky5991.Samp.Net.Commands.Services
     /// <summary>
     /// Starts the command extension.
     /// </summary>
-    public class CommandExtensionStarter : IExtensionStarter
+    public class CommandExtensionStarter : ISampExtensionStarter
     {
         private readonly ILogger<CommandExtensionStarter> logger;
 

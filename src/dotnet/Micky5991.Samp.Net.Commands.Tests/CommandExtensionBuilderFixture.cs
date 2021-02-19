@@ -14,7 +14,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
     {
         private readonly (Type Service, Type Implementation, Type FakeImplementation)[] services =
         {
-            CreatePair<IExtensionStarter, CommandExtensionStarter, FakeCommandExtensionStarter>(),
+            CreatePair<ISampExtensionStarter, CommandExtensionStarter, FakeCommandSampExtensionStarter>(),
             CreatePair<ICommandFactory, CommandFactory, FakeCommandFactory>(),
             CreatePair<ICommandService, CommandService, FakeCommandService>(),
         };
@@ -30,9 +30,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void CommandExtensionBuilderAddsAllNeededServices()
         {
             var collection = new ServiceCollection();
-            var builder = new CommandExtensionBuilder();
+            var builder = new CommandExtension();
 
-            builder.Register(collection);
+            builder.RegisterServices(collection);
 
             foreach (var (service, implementation, _) in this.services)
             {
@@ -44,7 +44,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void AddingProfileToBuilderRegistersToServiceCollection()
         {
-            var builder = new CommandExtensionBuilder();
+            var builder = new CommandExtension();
 
             builder.AddProfilesInAssembly<CommandExtensionBuilderFixture>();
 
@@ -55,14 +55,14 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void AddingServicesWillFailIfAlreadyRegistered()
         {
             var collection = new ServiceCollection();
-            var builder = new CommandExtensionBuilder();
+            var builder = new CommandExtension();
 
             foreach (var (service, _, fake) in this.services)
             {
                 collection.AddSingleton(service, fake);
             }
 
-            builder.Register(collection);
+            builder.RegisterServices(collection);
 
             foreach (var (service, implementation, fake) in this.services)
             {

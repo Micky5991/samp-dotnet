@@ -1,5 +1,5 @@
-using Micky5991.Samp.Net.Framework.Elements.Entities.Listeners;
 using Micky5991.Samp.Net.Framework.Interfaces;
+using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,15 +8,16 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
     /// <summary>
     /// Extension that provides permission checks if the player is an rcon admin.
     /// </summary>
-    public class RconPermissionExtension : IExtensionBuilder
+    public class RconPermissionExtension : ISampExtension
     {
         /// <inheritdoc />
-        public void Register(IServiceCollection serviceCollection)
+        public void RegisterServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddAuthorizationCore(this.ConfigureAuthorization);
+            serviceCollection.AddTransient<ISampExtensionStarter, RconPermissionSampExtensionStarter>();
         }
 
-        private void ConfigureAuthorization(AuthorizationOptions config)
+        /// <inheritdoc />
+        public void ConfigureAuthorization(AuthorizationOptions config)
         {
             config.DefaultPolicy = new AuthorizationPolicyBuilder()
                                    .AddAuthenticationSchemes("SAMP Rcon")
@@ -26,6 +27,21 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
             config.FallbackPolicy = new AuthorizationPolicyBuilder()
                                     .RequireAssertion(x => true)
                                     .Build();
+        }
+
+        private class RconPermissionSampExtensionStarter : ISampExtensionStarter
+        {
+            private readonly IAuthorizationFacade authorizationFacade;
+
+            public RconPermissionSampExtensionStarter(IAuthorizationFacade authorizationFacade)
+            {
+                this.authorizationFacade = authorizationFacade;
+            }
+
+            public void Start()
+            {
+                this.authorizationFacade.UseDefaultPolicyForUnknownPolicies();
+            }
         }
     }
 }

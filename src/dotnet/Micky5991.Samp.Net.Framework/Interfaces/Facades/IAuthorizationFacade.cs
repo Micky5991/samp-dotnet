@@ -17,5 +17,10 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Facades
         /// <param name="attributes">Attributes defined on this attribute.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         Task<AuthorizationResult> AuthorizeAsync(ClaimsPrincipal principal, object? resource, AuthorizeAttribute[] attributes);
+
+        /// <summary>
+        /// Enables falling back to default policy if the provided policy was not found.
+        /// </summary>
+        void UseDefaultPolicyForUnknownPolicies();
     }
 }
