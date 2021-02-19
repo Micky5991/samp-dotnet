@@ -17,6 +17,8 @@ namespace Micky5991.Samp.Net.Framework.Services.Facades
 
         private readonly ILogger<AuthorizationFacade> logger;
 
+        private bool useDefaultPolicyForUnknownPolicies = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizationFacade"/> class.
         /// </summary>
@@ -46,15 +48,18 @@ namespace Micky5991.Samp.Net.Framework.Services.Facades
                 policy = await AuthorizationPolicy.CombineAsync(this.policyProvider, attributes)
                                                   .ConfigureAwait(false);
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
+                if (this.useDefaultPolicyForUnknownPolicies == false)
+                {
+                    throw;
+                }
+
                 policy = await this.policyProvider.GetDefaultPolicyAsync().ConfigureAwait(false);
                 if (policy == null)
                 {
                     throw;
                 }
-
-                this.logger.LogDebug(e, "Caught expected exception when combining policy provider with authorize attributes, falling back to default policy.");
             }
 
             if (policy == null)
@@ -65,6 +70,14 @@ namespace Micky5991.Samp.Net.Framework.Services.Facades
             }
 
             return await this.authorizationService.AuthorizeAsync(principal, resource, policy).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public void UseDefaultPolicyForUnknownPolicies()
+        {
+            this.useDefaultPolicyForUnknownPolicies = true;
+
+            this.logger.LogInformation("Using default policy for unknown policies has been enabled.");
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 
         private readonly IEnumerable<IEntityListener> entityListeners;
 
-        private readonly IEnumerable<IExtensionStarter> extensions;
+        private readonly IEnumerable<ISampExtensionStarter> extensions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GamemodeStarter"/> class.
@@ -42,7 +42,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             SampSynchronizationContext synchronizationContext,
             ISampLoggerHandler sampLoggerHandler,
             IEnumerable<IEntityListener> entityListeners,
-            IEnumerable<IExtensionStarter> extensions)
+            IEnumerable<ISampExtensionStarter> extensions)
         {
             this.eventAggregator = eventAggregator;
             this.eventRegistry = eventRegistry;

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Example.Commands;
+using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions;
 using Micky5991.Samp.Net.Framework.Interfaces;
-using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
 using Micky5991.Samp.Net.NLogTarget;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,38 +23,16 @@ namespace Micky5991.Samp.Net.Example
             {
                 SampLogTarget.Register();
 
-                Console.WriteLine($"Working directory: {Environment.CurrentDirectory}");
+                var serviceProvider = BuildServiceProvider();
 
-                var serviceCollection = new ServiceCollection()
-                                        .AddLogging(
-                                                    builder =>
-                                                    {
-                                                        builder.AddNLog();
-                                                        builder.SetMinimumLevel(LogLevel.Debug);
-                                                        builder.AddFilter((category, _) => category != typeof(DefaultAuthorizationService).FullName);
-                                                    })
-                                        .AddSingleton<ChatListener>()
-                                        .AddSingleton<ICommandHandler, TestCommandHandler>();
+                var gamemodeStarter = serviceProvider.GetRequiredService<IGamemodeStarter>();
+                var listener = serviceProvider.GetRequiredService<ChatListener>();
+                var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
-                var commandExtensionBuilder = new CommandExtensionBuilder().AddProfilesInAssembly(Assembly.GetExecutingAssembly())
-                                                                           .AddProfilesInAssembly<CommandExtensionBuilder>()
-                                                                           .AddDefaultCommands();
-
-                new GamemodeBuilder(serviceCollection)
-                    .AddExtensionBuilder(commandExtensionBuilder)
-                    .AddExtensionBuilder(new RconPermissionExtension())
-                    .AddCoreServices();
-
-                var serviceProvider = serviceCollection.BuildServiceProvider();
-
-                serviceProvider.GetRequiredService<IGamemodeStarter>()
-                               .StartLogRedirection()
+                gamemodeStarter.StartLogRedirection()
                                .Start();
 
-                var listener = serviceProvider.GetRequiredService<ChatListener>();
                 listener.Attach();
-
-                var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
                 AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
                 {
@@ -65,6 +44,30 @@ namespace Micky5991.Samp.Net.Example
                 Console.WriteLine($"ERROR: {e.Message}");
                 Console.WriteLine(e.StackTrace);
             }
+        }
+
+        private static IServiceProvider BuildServiceProvider()
+        {
+            var serviceCollection = new ServiceCollection()
+                                    .AddLogging(
+                                                builder =>
+                                                {
+                                                    builder.AddNLog();
+                                                    builder.SetMinimumLevel(LogLevel.Debug);
+                                                    builder.AddFilter((category, _) => category != typeof(DefaultAuthorizationService).FullName);
+                                                })
+                                    .AddSampGamemode(
+                                                     g => g
+                                                          .AddAllServices()
+                                                          .AddExtension<CommandExtension>(x => x
+                                                              .AddProfilesInAssembly(Assembly.GetExecutingAssembly())
+                                                              .AddProfilesInAssembly<CommandExtension>()
+                                                              .AddDefaultCommands())
+                                                          .AddExtension<RconPermissionExtension>())
+                                    .AddSingleton<ChatListener>()
+                                    .AddSingleton<ICommandHandler, TestCommandHandler>();
+
+            return serviceCollection.BuildServiceProvider();
         }
     }
 }

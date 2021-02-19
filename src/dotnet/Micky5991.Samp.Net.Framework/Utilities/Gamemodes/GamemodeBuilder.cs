@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using Dawn;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.EventAggregator.Services;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
@@ -32,6 +35,8 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
     {
         private readonly IServiceCollection serviceCollection;
 
+        private readonly List<ISampExtension> extensions;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GamemodeBuilder"/> class.
         /// </summary>
@@ -39,13 +44,48 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         public GamemodeBuilder(IServiceCollection serviceCollection)
         {
             this.serviceCollection = serviceCollection;
+
+            this.extensions = new List<ISampExtension>();
+        }
+
+        /// <summary>
+        /// Adds an extension to the <see cref="GamemodeBuilder"/>.
+        /// </summary>
+        /// <param name="extension">Extension-instance to add.</param>
+        /// <param name="configure">Optional configuration for this extension to avoid double instantiation.</param>
+        /// <typeparam name="T">Actual type of the extension.</typeparam>
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        public virtual GamemodeBuilder AddExtension<T>(T extension, Action<T>? configure = null)
+            where T : class, ISampExtension
+        {
+            Guard.Argument(extension, nameof(extension)).NotNull();
+
+            configure?.Invoke(extension);
+
+            extension.RegisterServices(this.serviceCollection);
+
+            this.extensions.Add(extension);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Instantiates the extension <typeparamref name="T"/> with the parameterless-constructor and executes <see cref="AddExtension{T}(T,System.Action{T}?)"/>.
+        /// </summary>
+        /// <param name="configure">Actions to apply to the extension <paramref name="configure"/>.</param>
+        /// <typeparam name="T">Actual type of the extension.</typeparam>
+        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
+        public virtual GamemodeBuilder AddExtension<T>(Action<T>? configure = null)
+            where T : class, ISampExtension, new()
+        {
+            return this.AddExtension(new T(), configure);
         }
 
         /// <summary>
         /// Registers all core services provided by SAMP.Net.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        public virtual GamemodeBuilder AddCoreServices()
+        public virtual GamemodeBuilder AddAllServices()
         {
             this.AddGamemodeStarter()
                 .AddLoggerHandler()
@@ -64,23 +104,11 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         }
 
         /// <summary>
-        /// Runs the extension builder and registers services provided by it.
-        /// </summary>
-        /// <param name="extensionBuilder"><see cref="IExtensionBuilder"/> to execute and take services.</param>
-        /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        public virtual GamemodeBuilder AddExtensionBuilder(IExtensionBuilder extensionBuilder)
-        {
-            extensionBuilder.Register(this.serviceCollection);
-
-            return this;
-        }
-
-        /// <summary>
         /// Should register the gamemode starter that should boot up the gamemode. Override to replace the default
         /// implementation with your custom starter.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddGamemodeStarter()
+        public virtual GamemodeBuilder AddGamemodeStarter()
         {
             this.serviceCollection.TryAddSingleton<IGamemodeStarter, GamemodeStarter>();
 
@@ -92,7 +120,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// implementation with your custom listener.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddLoggerHandler()
+        public virtual GamemodeBuilder AddLoggerHandler()
         {
             this.serviceCollection.TryAddSingleton<ISampLoggerHandler, SampLoggerHandler>();
 
@@ -104,7 +132,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// Override to replace the default implementation with your custom event aggregator.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddEventAggregator()
+        public virtual GamemodeBuilder AddEventAggregator()
         {
             this.serviceCollection.TryAddSingleton<IEventAggregator, EventAggregatorService>();
 
@@ -116,7 +144,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// Override to replace the default implementation with your custom event aggregator.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddSynchronizationServices()
+        public virtual GamemodeBuilder AddSynchronizationServices()
         {
             this.serviceCollection.AddSingleton<SampSynchronizationContext>();
 
@@ -128,7 +156,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// event handling.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddNativeEventHandling()
+        public virtual GamemodeBuilder AddNativeEventHandling()
         {
             this.serviceCollection.AddTransient<NativeTypeConverter>();
             this.serviceCollection.TryAddSingleton<INativeEventRegistry, NativeEventRegistry>();
@@ -141,7 +169,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// implementation with your custom native event collections.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddNativeEvents()
+        public virtual GamemodeBuilder AddNativeEvents()
         {
             this.serviceCollection.AddTransient<INativeEventCollectionFactory, SampEventCollectionFactory>()
                 .AddTransient<INativeEventCollectionFactory, VehiclesEventCollectionFactory>()
@@ -157,7 +185,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// implementation with your custom natives.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddNatives()
+        public virtual GamemodeBuilder AddNatives()
         {
             this.serviceCollection.AddTransient<ISampNatives, SampNatives>();
             this.serviceCollection.AddTransient<IVehiclesNatives, VehiclesNatives>();
@@ -173,7 +201,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// factories.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddEntityFactories()
+        public virtual GamemodeBuilder AddEntityFactories()
         {
             this.serviceCollection.TryAddTransient<IPlayerFactory, PlayerFactory>();
             this.serviceCollection.TryAddTransient<IVehicleFactory, VehicleFactory>();
@@ -186,7 +214,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// pools.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddEntityPools()
+        public virtual GamemodeBuilder AddEntityPools()
         {
             this.serviceCollection.TryAddSingleton<IPlayerPool, PlayerPool>();
             this.serviceCollection.TryAddSingleton<IVehiclePool, VehiclePool>();
@@ -199,7 +227,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// listeners.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddEntityListeners()
+        public virtual GamemodeBuilder AddEntityListeners()
         {
             this.serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>()
                 .AddTransient<IEntityListener, PlayerEventListener>()
@@ -213,7 +241,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// Registers the <see cref="IDialogHandler"/> implementation and attaches to needed events.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddDialogHandler()
+        public virtual GamemodeBuilder AddDialogHandler()
         {
             this.serviceCollection
                 .AddSingleton<IEntityListener, DialogHandler>()
@@ -226,10 +254,18 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// Registers various helper services to use the integrated authorization.
         /// </summary>
         /// <returns>Current <see cref="GamemodeBuilder"/> instance.</returns>
-        protected virtual GamemodeBuilder AddAuthorizationServices()
+        public virtual GamemodeBuilder AddAuthorizationServices()
         {
             this.serviceCollection
-                .AddTransient<IAuthorizationFacade, AuthorizationFacade>();
+                .AddSingleton<IAuthorizationFacade, AuthorizationFacade>()
+                .AddAuthorizationCore(
+                                      config =>
+                                      {
+                                          foreach (var extension in this.extensions)
+                                          {
+                                            extension.ConfigureAuthorization(config);
+                                          }
+                                      });
 
             return this;
         }

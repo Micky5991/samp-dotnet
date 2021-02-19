@@ -3,7 +3,7 @@ namespace Micky5991.Samp.Net.Framework.Interfaces
     /// <summary>
     /// Starter of a certain extension.
     /// </summary>
-    public interface IExtensionStarter
+    public interface ISampExtensionStarter
     {
         /// <summary>
         /// Starts the services of the extension.

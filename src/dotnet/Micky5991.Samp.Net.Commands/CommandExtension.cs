@@ -11,6 +11,7 @@ using Micky5991.Samp.Net.Commands.Elements.Listeners;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -21,16 +22,16 @@ namespace Micky5991.Samp.Net.Commands
     /// <summary>
     /// Registers all services for the Commands extension.
     /// </summary>
-    public class CommandExtensionBuilder : IExtensionBuilder
+    public class CommandExtension : ISampExtension
     {
         private readonly IList<Assembly> scannableAssemblies = new List<Assembly>();
 
         private readonly IList<Action<IServiceCollection>> serviceCollectionChanges;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandExtensionBuilder"/> class.
+        /// Initializes a new instance of the <see cref="CommandExtension"/> class.
         /// </summary>
-        public CommandExtensionBuilder()
+        public CommandExtension()
         {
             this.serviceCollectionChanges = new List<Action<IServiceCollection>>();
         }
@@ -41,11 +42,11 @@ namespace Micky5991.Samp.Net.Commands
         public IReadOnlyList<Assembly> ScannableAssemblies => new ReadOnlyCollection<Assembly>(this.scannableAssemblies);
 
         /// <summary>
-        /// Adds an assembly to scan for <see cref="Profile"/> implementations. Recommendation: Use your main type or the <see cref="IExtensionStarter"/> implementation for your extension.
+        /// Adds an assembly to scan for <see cref="Profile"/> implementations. Recommendation: Use your main type or the <see cref="ISampExtensionStarter"/> implementation for your extension.
         /// </summary>
         /// <typeparam name="T">Any type of an assembly where profiles are created.</typeparam>
-        /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
-        public CommandExtensionBuilder AddProfilesInAssembly<T>()
+        /// <returns>Current <see cref="CommandExtension"/> instance.</returns>
+        public CommandExtension AddProfilesInAssembly<T>()
         {
             return this.AddProfilesInAssembly(typeof(T).Assembly);
         }
@@ -54,8 +55,8 @@ namespace Micky5991.Samp.Net.Commands
         /// Adds an assembly to scan for <see cref="Profile"/> implementations.
         /// </summary>
         /// <param name="assembly">Assembly to search for <see cref="Profile"/> implementations.</param>
-        /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
-        public CommandExtensionBuilder AddProfilesInAssembly(Assembly assembly)
+        /// <returns>Current <see cref="CommandExtension"/> instance.</returns>
+        public CommandExtension AddProfilesInAssembly(Assembly assembly)
         {
             Guard.Argument(assembly, nameof(assembly)).NotNull();
 
@@ -67,8 +68,8 @@ namespace Micky5991.Samp.Net.Commands
         /// <summary>
         /// Adds default commands like /help.
         /// </summary>
-        /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
-        public CommandExtensionBuilder AddDefaultCommands()
+        /// <returns>Current <see cref="CommandExtension"/> instance.</returns>
+        public CommandExtension AddDefaultCommands()
         {
             this.serviceCollectionChanges.Add(
                                               x =>
@@ -80,9 +81,9 @@ namespace Micky5991.Samp.Net.Commands
         }
 
         /// <inheritdoc/>
-        public void Register(IServiceCollection serviceCollection)
+        public void RegisterServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.TryAddTransient<IExtensionStarter, CommandExtensionStarter>();
+            serviceCollection.TryAddTransient<ISampExtensionStarter, CommandExtensionStarter>();
             serviceCollection.AddTransient<ICommandFactory, CommandFactory>();
             serviceCollection.AddSingleton<ICommandService, CommandService>();
             serviceCollection.AddSingleton<ICommandListener, CommandListener>();
@@ -93,6 +94,12 @@ namespace Micky5991.Samp.Net.Commands
             {
                 collectionChange(serviceCollection);
             }
+        }
+
+        /// <inheritdoc />
+        public void ConfigureAuthorization(AuthorizationOptions options)
+        {
+            // Empty
         }
     }
 }

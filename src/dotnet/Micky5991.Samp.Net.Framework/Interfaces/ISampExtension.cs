@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces
@@ -5,12 +6,18 @@ namespace Micky5991.Samp.Net.Framework.Interfaces
     /// <summary>
     /// Represents an extension with provided services.
     /// </summary>
-    public interface IExtensionBuilder
+    public interface ISampExtension
     {
         /// <summary>
         /// Registers all extension services to the service collection of the gamemode.
         /// </summary>
         /// <param name="serviceCollection">Service collection of the gamemode.</param>
-        void Register(IServiceCollection serviceCollection);
+        void RegisterServices(IServiceCollection serviceCollection);
+
+        /// <summary>
+        /// Configures the authorization of this extension.
+        /// </summary>
+        /// <param name="options">Options instance that will be configured.</param>
+        void ConfigureAuthorization(AuthorizationOptions options);
     }
 }

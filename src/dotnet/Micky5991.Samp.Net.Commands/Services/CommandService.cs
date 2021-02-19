@@ -91,6 +91,14 @@ namespace Micky5991.Samp.Net.Commands.Services
                                                                             .ToImmutableDictionary())
                 .ToImmutableDictionary();
 
+            foreach (var commandGroup in this.NonAliasCommands)
+            {
+                foreach (var command in commandGroup.Value)
+                {
+                    this.logger.LogTrace($"Command found: {command.Value.HelpSignature} {(command.Value.AliasNames.Length > 0 ? $"(+ {command.Value.AliasNames.Length} aliases)" : string.Empty)}");
+                }
+            }
+
             this.logger.LogInformation($"{this.Commands.Sum(x => x.Value.Count)} commands have been loaded");
         }
 
