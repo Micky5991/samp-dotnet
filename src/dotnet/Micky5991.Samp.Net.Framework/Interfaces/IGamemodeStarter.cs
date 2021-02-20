@@ -10,11 +10,5 @@ namespace Micky5991.Samp.Net.Framework.Interfaces
         /// </summary>
         /// <returns>Current <see cref="IGamemodeStarter"/> instance.</returns>
         IGamemodeStarter Start();
-
-        /// <summary>
-        /// Enables log redirection so you can handle any original samp server events in SAMP.Net.
-        /// </summary>
-        /// <returns>Current <see cref="IGamemodeStarter"/> instance.</returns>
-        IGamemodeStarter StartLogRedirection();
     }
 }

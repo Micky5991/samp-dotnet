@@ -2,6 +2,7 @@ using System;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions
@@ -12,20 +13,20 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
     public class AcceptAllPermissionExtension : ISampExtension
     {
         /// <inheritdoc />
-        public void RegisterServices(IServiceCollection serviceCollection)
+        public void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration)
         {
             serviceCollection.AddTransient<ISampExtensionStarter, AcceptAllPermissionStarter>();
         }
 
         /// <inheritdoc />
-        public void ConfigureAuthorization(AuthorizationOptions config)
+        public void ConfigureAuthorization(AuthorizationOptions options, IConfiguration configuration)
         {
             var acceptAllPolicy = new AuthorizationPolicyBuilder()
                                   .RequireAssertion(x => true)
                                   .Build();
 
-            config.FallbackPolicy = acceptAllPolicy;
-            config.DefaultPolicy = acceptAllPolicy;
+            options.FallbackPolicy = acceptAllPolicy;
+            options.DefaultPolicy = acceptAllPolicy;
         }
 
         private class AcceptAllPermissionStarter : ISampExtensionStarter

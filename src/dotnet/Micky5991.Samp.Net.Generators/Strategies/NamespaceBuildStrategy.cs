@@ -145,13 +145,17 @@ namespace Micky5991.Samp.Net.Generators.Strategies
             stringBuilder.AppendLine("private NativeTypeConverter typeConverter;".Indent(indent + 1));
             stringBuilder.AppendLine();
 
+            stringBuilder.AppendLine("private ISampThreadEnforcer sampThreadEnforcer;".Indent(indent + 1));
+            stringBuilder.AppendLine();
+
             stringBuilder.Append(buildTargets[BuilderTarget.Delegates].ToString());
 
             // Constructor
-            stringBuilder.AppendLine($@"public {idlNamespace.Name.ConvertToPascalCase()}Natives(NativeTypeConverter typeConverter)".Indent(indent + 1));
+            stringBuilder.AppendLine($@"public {idlNamespace.Name.ConvertToPascalCase()}Natives(NativeTypeConverter typeConverter, ISampThreadEnforcer sampThreadEnforcer)".Indent(indent + 1));
             stringBuilder.AppendLine("{".Indent(indent + 1));
 
             stringBuilder.AppendLine("this.typeConverter = typeConverter;".Indent(indent + 2));
+            stringBuilder.AppendLine("this.sampThreadEnforcer = sampThreadEnforcer;".Indent(indent + 2));
 
             stringBuilder.AppendLine("}".Indent(indent + 1));
             stringBuilder.AppendLine();

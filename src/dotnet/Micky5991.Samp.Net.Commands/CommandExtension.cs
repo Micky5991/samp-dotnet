@@ -12,6 +12,7 @@ using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -81,7 +82,7 @@ namespace Micky5991.Samp.Net.Commands
         }
 
         /// <inheritdoc/>
-        public void RegisterServices(IServiceCollection serviceCollection)
+        public void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration)
         {
             serviceCollection.TryAddTransient<ISampExtensionStarter, CommandExtensionStarter>();
             serviceCollection.AddTransient<ICommandFactory, CommandFactory>();
@@ -97,7 +98,7 @@ namespace Micky5991.Samp.Net.Commands
         }
 
         /// <inheritdoc />
-        public void ConfigureAuthorization(AuthorizationOptions options)
+        public void ConfigureAuthorization(AuthorizationOptions options, IConfiguration configuration)
         {
             // Empty
         }

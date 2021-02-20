@@ -1,9 +1,11 @@
 using System;
+using System.Configuration;
 using FluentAssertions;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Commands.Tests.Fakes;
 using Micky5991.Samp.Net.Framework.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -31,8 +33,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var collection = new ServiceCollection();
             var builder = new CommandExtension();
+            var configuration = new ConfigurationBuilder().Build();
 
-            builder.RegisterServices(collection);
+            builder.RegisterServices(collection, configuration);
 
             foreach (var (service, implementation, _) in this.services)
             {
@@ -56,13 +59,14 @@ namespace Micky5991.Samp.Net.Commands.Tests
         {
             var collection = new ServiceCollection();
             var builder = new CommandExtension();
+            var config = new ConfigurationBuilder().Build();
 
             foreach (var (service, _, fake) in this.services)
             {
                 collection.AddSingleton(service, fake);
             }
 
-            builder.RegisterServices(collection);
+            builder.RegisterServices(collection, config);
 
             foreach (var (service, implementation, fake) in this.services)
             {

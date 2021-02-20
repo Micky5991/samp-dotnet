@@ -1,6 +1,7 @@
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions
@@ -11,20 +12,20 @@ namespace Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permission
     public class RconPermissionExtension : ISampExtension
     {
         /// <inheritdoc />
-        public void RegisterServices(IServiceCollection serviceCollection)
+        public void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration)
         {
             serviceCollection.AddTransient<ISampExtensionStarter, RconPermissionSampExtensionStarter>();
         }
 
         /// <inheritdoc />
-        public void ConfigureAuthorization(AuthorizationOptions config)
+        public void ConfigureAuthorization(AuthorizationOptions options, IConfiguration configuration)
         {
-            config.DefaultPolicy = new AuthorizationPolicyBuilder()
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
                                    .AddAuthenticationSchemes("SAMP Rcon")
                                    .RequireRole("RconAdmin")
                                    .Build();
 
-            config.FallbackPolicy = new AuthorizationPolicyBuilder()
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
                                     .RequireAssertion(x => true)
                                     .Build();
         }

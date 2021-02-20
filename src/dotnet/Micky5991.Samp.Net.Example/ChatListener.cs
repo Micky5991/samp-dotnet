@@ -1,6 +1,9 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
+using Micky5991.Samp.Net.Core;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Elements.Dialogs;
@@ -21,10 +24,6 @@ namespace Micky5991.Samp.Net.Example
 
         private readonly ISampNatives sampNatives;
 
-        private readonly IVehiclePool vehiclePool;
-
-        private readonly IPlayerPool playerPool;
-
         private readonly IDialogHandler dialogHandler;
 
         public ChatListener(
@@ -32,16 +31,12 @@ namespace Micky5991.Samp.Net.Example
             ILogger<ChatListener> logger,
             IPlayersNatives playersNatives,
             ISampNatives sampNatives,
-            IVehiclePool vehiclePool,
-            IPlayerPool playerPool,
             IDialogHandler dialogHandler)
         {
             this.eventAggregator = eventAggregator;
             this.logger = logger;
             this.playersNatives = playersNatives;
             this.sampNatives = sampNatives;
-            this.vehiclePool = vehiclePool;
-            this.playerPool = playerPool;
             this.dialogHandler = dialogHandler;
         }
 
@@ -49,7 +44,6 @@ namespace Micky5991.Samp.Net.Example
         {
             this.eventAggregator.Subscribe<NativeGameModeInitEvent>(OnGamemodeInit);
 
-            this.eventAggregator.Subscribe<PlayerTextEvent>(this.OnPlayerChat);
             this.eventAggregator.Subscribe<PlayerConnectEvent>(this.OnPlayerConnect);
             this.eventAggregator.Subscribe<PlayerRequestClassEvent>(this.OnPlayerRequestClass);
             this.eventAggregator.Subscribe<NativePlayerRequestSpawnEvent>(this.OnPlayerRequestSpawn);
@@ -58,7 +52,12 @@ namespace Micky5991.Samp.Net.Example
 
         private void OnGamemodeInit(NativeGameModeInitEvent eventdata)
         {
-            this.sampNatives.DisableInteriorEnterExits();
+            Task.Run(
+                     () =>
+                     {
+                         this.sampNatives.DisableInteriorEnterExits();
+                     });
+
         }
 
         private void OnPlayerSpawn(NativePlayerSpawnEvent eventdata)
@@ -95,23 +94,5 @@ namespace Micky5991.Samp.Net.Example
 
             this.logger.LogInformation($"Player {eventdata.Player.Name} connected");
         }
-
-        private void OnPlayerChat(PlayerTextEvent textEvent)
-        {
-            this.logger.LogInformation($"Incoming message: {textEvent.Player}: {textEvent.Text}");
-
-            if (textEvent.Text == "veh")
-            {
-                var vehicle = this.vehiclePool.CreateVehicle(
-                                                             Vehicle.Bullet,
-                                                             textEvent.Player.Position,
-                                                             0,
-                                                             0,
-                                                             150);
-
-                textEvent.Player.PutPlayerIntoVehicle(vehicle, 0);
-            }
-        }
-
     }
 }
