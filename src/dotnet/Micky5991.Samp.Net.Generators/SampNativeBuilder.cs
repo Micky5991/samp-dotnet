@@ -52,6 +52,7 @@ namespace Micky5991.Samp.Net.Generators
             sourceBuilder.Append(@"using System;
 using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Interfaces.Natives;
+using Micky5991.Samp.Net.Core.Interfaces.Interop;
 
 ");
 

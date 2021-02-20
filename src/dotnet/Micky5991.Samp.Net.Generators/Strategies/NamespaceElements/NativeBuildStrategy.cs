@@ -24,6 +24,9 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
         {
             var expectsResult = function.ReturnType != "void";
 
+            bodyBuilder.AppendLine("this.sampThreadEnforcer.EnforceMainThread();".Indent(indent));
+            bodyBuilder.AppendLine();
+
             bodyBuilder.AppendLine("var (arguments, elements) = typeConverter.WriteNativeArguments(new (object Value, int Size)[] {".Indent(indent));
 
             for (var i = 0; i < function.Parameters.Count; i++)
