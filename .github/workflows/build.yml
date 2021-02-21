@@ -270,6 +270,14 @@ jobs:
     needs: [ variables, pack ]
 
     steps:
+      - name: Match Prerelease
+        uses: actions-ecosystem/action-regex-match@v2
+        id: matches-prerelease
+        with:
+          text: ${{ needs.variables.outputs.ref }}
+          regex: '^v?(?:\d+\.?){1,3}(?:\-.*)$'
+          flags: gmi
+
       - name: Download Linux package
         uses: actions/download-artifact@v2.0.8
         with:
@@ -289,15 +297,22 @@ jobs:
           path: "${{github.workspace}}/artifacts"
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: V${{ needs.variables.outputs.version }}
           tag_name: ${{ needs.variables.outputs.version }}
           draft: false
-          prerelease: false
+          prerelease: ${{ steps.matches-prerelease.outputs.match != '' }}
           fail_on_unmatched_files: true
           files: |
             ${{github.workspace}}/artifacts/**/*.nupkg
             ${{github.workspace}}/artifacts/*.zip
+
+      - name: Push NuGet packages
+        if: steps.matches-prerelease.outputs.match == ''
+        run: dotnet nuget push "${{github.workspace}}/artifacts/*/bin/Release/*.nupkg" -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
+
+      - name: Push GitHub packages
+        run: dotnet nuget push "${{github.workspace}}/artifacts/*/bin/Release/*.nupkg" -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/Micky5991/index.json
