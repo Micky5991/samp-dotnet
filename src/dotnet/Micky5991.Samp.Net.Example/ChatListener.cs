@@ -1,14 +1,9 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Micky5991.EventAggregator;
 using Micky5991.EventAggregator.Interfaces;
-using Micky5991.Samp.Net.Core;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Elements.Dialogs;
 using Micky5991.Samp.Net.Framework.Events.Samp;
-using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 using Micky5991.Samp.Net.Framework.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 
@@ -52,12 +47,7 @@ namespace Micky5991.Samp.Net.Example
 
         private void OnGamemodeInit(NativeGameModeInitEvent eventdata)
         {
-            Task.Run(
-                     () =>
-                     {
-                         this.sampNatives.DisableInteriorEnterExits();
-                     });
-
+            this.sampNatives.DisableInteriorEnterExits();
         }
 
         private void OnPlayerSpawn(NativePlayerSpawnEvent eventdata)
