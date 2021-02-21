@@ -102,7 +102,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
 
             await Task.Delay(1);
 
-            this.playersNatives.InterpolateCameraPos(
+            this.playersNatives.InterpolateCameraLookAt(
                                                      this.Id,
                                                      startRotation.X,
                                                      startRotation.Y,
