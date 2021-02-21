@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Net;
 using System.Numerics;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Dawn;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
@@ -210,7 +211,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
             {
                 Guard.Disposal(this.Disposed);
 
-                this.playersNatives.SetPlayerColor(this.Id, value.ToArgb());
+                this.SetColor(value);
             }
         }
 
@@ -461,9 +462,11 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         }
 
         /// <inheritdoc />
-        public void Spawn()
+        public async void Spawn()
         {
             Guard.Disposal(this.Disposed);
+
+            await Task.Delay(1); // Needs to run in next tick.
 
             this.playersNatives.SpawnPlayer(this.Id);
         }
@@ -645,6 +648,13 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         protected override void DisposeEntity()
         {
             this.entityRemoval(this);
+        }
+
+        private async void SetColor(Color color)
+        {
+            await Task.Delay(1); // Needs to run 1 tick after OnPlayerConnect.
+
+            this.playersNatives.SetPlayerColor(this.Id, color.ToArgb());
         }
     }
 }

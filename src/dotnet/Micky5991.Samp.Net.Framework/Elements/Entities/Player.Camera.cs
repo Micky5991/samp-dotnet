@@ -27,7 +27,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
 
             this.ToggleSpectating(true);
 
-            await Task.Delay(1);
+            await Task.Delay(1); // Needs to run 1 tick after spectate change
 
             this.playersNatives.PlayerSpectatePlayer(this.Id, player.Id, (int)spectateMode);
         }
@@ -40,7 +40,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
 
             this.ToggleSpectating(true);
 
-            await Task.Delay(1);
+            await Task.Delay(1); // Needs to run 1 tick after spectate change
 
             this.playersNatives.PlayerSpectateVehicle(this.Id, vehicle.Id, (int)spectateMode);
         }
@@ -58,7 +58,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         {
             Guard.Disposal(this.Disposed);
 
-            await Task.Delay(1);
+            await Task.Delay(1); // Needs to run 1 tick after spectate change
 
             this.playersNatives.SetPlayerCameraPos(this.Id, position.X, position.Y, position.Z);
             this.playersNatives.SetPlayerCameraLookAt(this.Id, rotation.X, rotation.Y, rotation.Z, (int)cutStyle);
@@ -75,7 +75,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
 
             Guard.Disposal(this.Disposed);
 
-            await Task.Delay(1);
+            await Task.Delay(1); // Needs to run 1 tick after spectate change
 
             this.playersNatives.InterpolateCameraPos(
                                                      this.Id,
@@ -100,7 +100,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
 
             Guard.Disposal(this.Disposed);
 
-            await Task.Delay(1);
+            await Task.Delay(1); // Needs to run 1 tick after spectate change
 
             this.playersNatives.InterpolateCameraLookAt(
                                                      this.Id,

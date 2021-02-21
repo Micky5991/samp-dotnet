@@ -65,16 +65,8 @@ namespace Micky5991.Samp.Net.Example
             // eventdata.Cancelled = true;
         }
 
-        private async void OnPlayerRequestClass(PlayerRequestClassEvent eventdata)
+        private void OnPlayerRequestClass(PlayerRequestClassEvent eventdata)
         {
-            this.logger.LogInformation($"Player {eventdata.Player} requested class");
-
-            var dialog = new TextInputDialog("Hey", "Login pls", "Login");
-
-            var response = await this.dialogHandler.ShowDialogAsync(eventdata.Player, dialog);
-
-            this.logger.LogInformation($"Text: {response.InputText}");
-
             eventdata.Player.Spawn();
         }
 

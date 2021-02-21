@@ -646,5 +646,46 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <param name="cutStyle">Style of cut the camera uses.</param>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         void InterpolateCameraLookAt(Vector3 startRotation, Vector3 endRotation, TimeSpan timeSpan, CameraCutStyle cutStyle = CameraCutStyle.CameraMove);
+
+        /// <summary>
+        /// Kicks the player from the server after <paramref name="delay"/>.
+        /// </summary>
+        /// <param name="delay">Time that has to elapse before kick.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void Kick(TimeSpan delay);
+
+        /// <summary>
+        /// Kicks the player from the server instantly.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void Kick();
+
+        /// <summary>
+        /// Bans the player from the server after <paramref name="delay"/>.
+        /// </summary>
+        /// <param name="reason">Reason for this ban.</param>
+        /// <param name="delay">Time before the ban will execute.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void Ban(string reason, TimeSpan delay);
+
+        /// <summary>
+        /// Bans the player from the server instantly.
+        /// </summary>
+        /// <param name="reason">Reason for this ban.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void Ban(string reason);
+
+        /// <summary>
+        /// Bans the player from the server after <paramref name="delay"/>.
+        /// </summary>
+        /// <param name="delay">Time before the ban will execute.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void Ban(TimeSpan delay);
+
+        /// <summary>
+        /// Bans the player from the server instantly.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void Ban();
     }
 }
