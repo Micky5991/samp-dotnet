@@ -13,12 +13,14 @@ namespace Micky5991.Samp.Net.Framework.Interfaces
         /// Registers all extension services to the service collection of the gamemode.
         /// </summary>
         /// <param name="serviceCollection">Service collection of the gamemode.</param>
+        /// <param name="configuration">Constructed configuration.</param>
         void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration);
 
         /// <summary>
         /// Configures the authorization of this extension.
         /// </summary>
         /// <param name="options">Options instance that will be configured.</param>
+        /// <param name="configuration">Constructed configuration.</param>
         void ConfigureAuthorization(AuthorizationOptions options, IConfiguration configuration);
     }
 }
