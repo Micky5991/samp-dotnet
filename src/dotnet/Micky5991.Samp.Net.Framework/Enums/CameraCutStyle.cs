@@ -1,3 +1,5 @@
+using Micky5991.Samp.Net.Core.Natives.Players;
+
 namespace Micky5991.Samp.Net.Framework.Enums
 {
     /// <summary>
@@ -8,11 +10,11 @@ namespace Micky5991.Samp.Net.Framework.Enums
         /// <summary>
         /// Camera will be moved smoothly to the new destination.
         /// </summary>
-        CameraMove = 1,
+        CameraMove = PlayersConstants.CameraMove,
 
         /// <summary>
         /// Camera will be moved instantly to the new destination.
         /// </summary>
-        CameraCut = 2,
+        CameraCut = PlayersConstants.CameraCut,
     }
 }

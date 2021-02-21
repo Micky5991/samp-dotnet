@@ -4,6 +4,7 @@ using System.Reflection;
 using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Example.Commands;
+using Micky5991.Samp.Net.Example.Login.Services;
 using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions;
 using Micky5991.Samp.Net.Framework.Interfaces;
@@ -45,6 +46,7 @@ namespace Micky5991.Samp.Net.Example
                                                       category != typeof(DefaultAuthorizationService).FullName);
                             })
                 .AddSingleton<ChatListener>()
+                .AddSingleton<IEntityListener, LoginScreen>()
                 .AddSingleton<ICommandHandler, TestCommandHandler>()
                 .AddSampCoreServices()
                 .Configure<GamemodeOptions>(x => x.LogRedirection = true);

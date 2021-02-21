@@ -35,8 +35,6 @@ namespace Micky5991.Samp.Net.Framework.Services
         /// <inheritdoc />
         public void Attach()
         {
-            this.logger.LogInformation("BEEE");
-
             this.eventAggregator.Subscribe<PlayerDialogResponseEvent>(this.OnPlayerDialogResponse);
         }
 
