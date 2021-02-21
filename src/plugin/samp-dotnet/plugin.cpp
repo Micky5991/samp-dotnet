@@ -20,7 +20,7 @@ std::string get_config_gamemode_path() {
 }
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
-    return sampgdk::Supports() | SUPPORTS_AMX_NATIVES;
+    return sampgdk::Supports() | SUPPORTS_AMX_NATIVES | SUPPORTS_PROCESS_TICK;
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
