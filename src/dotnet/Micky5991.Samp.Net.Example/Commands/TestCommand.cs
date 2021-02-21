@@ -83,5 +83,13 @@ namespace Micky5991.Samp.Net.Example.Commands
             player.SendMessage(Color.DeepSkyBlue, $"Player received the weapon {weapon} with {ammo} ammo.");
         }
 
+        [Command("player", "kill", Description = "Kills the given player")]
+        public void KillPlayer(IPlayer player, IPlayer target)
+        {
+            target.Health = 0;
+
+            player.SendMessage(Color.DeepSkyBlue, $"Player {target} has been killed.");
+        }
+
     }
 }
