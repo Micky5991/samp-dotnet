@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Data;
+using Micky5991.Samp.Net.Framework.Enums;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
@@ -587,5 +588,63 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// <returns>true if player is rcon admin, false otherwise.</returns>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         bool IsRconAdmin();
+
+        /// <summary>
+        /// Toggles the spectator mode of this player.
+        /// </summary>
+        /// <param name="spectating">true when the spectator mode should be enabled, false otherwise.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void ToggleSpectating(bool spectating);
+
+        /// <summary>
+        /// Starts the spectator mode if not already done and spectates the given <paramref name="player"/>.
+        /// </summary>
+        /// <param name="player">Player to spectate.</param>
+        /// <param name="spectateMode">Mode of the camera while spectating.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void Spectate(IPlayer player, SpectateMode spectateMode = SpectateMode.Normal);
+
+        /// <summary>
+        /// Starts the spectator mode if not already done and spectates the given <paramref name="vehicle"/>.
+        /// </summary>
+        /// <param name="vehicle">Vehicle to spectate.</param>
+        /// <param name="spectateMode">Mode of the camera while spectating.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void Spectate(IVehicle vehicle, SpectateMode spectateMode = SpectateMode.Normal);
+
+        /// <summary>
+        /// Resets the camera of this player to be behind this player.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void SetCameraBehindPlayer();
+
+        /// <summary>
+        /// Sets the camera of the player to the given position and rotation.
+        /// </summary>
+        /// <param name="position">Position of the player camera.</param>
+        /// <param name="rotation">Rotation of the player camera.</param>
+        /// <param name="cutStyle">Style the camera change should be displayed like.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void SetCamera(Vector3 position, Vector3 rotation, CameraCutStyle cutStyle = CameraCutStyle.CameraCut);
+
+        /// <summary>
+        /// Interpolates the camera position to change smoothly from the <paramref name="startPosition"/> to the <paramref name="endPosition"/>.
+        /// </summary>
+        /// <param name="startPosition">Start position of the camera.</param>
+        /// <param name="endPosition">Target position of the camera after <paramref name="timeSpan"/>.</param>
+        /// <param name="timeSpan">Time the camera takes to change.</param>
+        /// <param name="cutStyle">Style of cut the camera uses.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void InterpolateCameraPosition(Vector3 startPosition, Vector3 endPosition, TimeSpan timeSpan, CameraCutStyle cutStyle = CameraCutStyle.CameraMove);
+
+        /// <summary>
+        /// Interpolates the camera rotation to change smoothly from the <paramref name="startRotation"/> to the <paramref name="endRotation"/>.
+        /// </summary>
+        /// <param name="startRotation">Start rotation of the camera.</param>
+        /// <param name="endRotation">Target rotation of the camera after <paramref name="timeSpan"/>.</param>
+        /// <param name="timeSpan">Time the camera takes to change.</param>
+        /// <param name="cutStyle">Style of cut the camera uses.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        void InterpolateCameraLookAt(Vector3 startRotation, Vector3 endRotation, TimeSpan timeSpan, CameraCutStyle cutStyle = CameraCutStyle.CameraMove);
     }
 }
