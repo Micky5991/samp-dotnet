@@ -42,14 +42,14 @@ namespace Micky5991.Samp.Net.Example.Commands
         [Authorize(Policy = "VehicleCommands")]
         [Command("veh", "spawn", Description = "Spawns a temporary vehicle on your location.")]
         [CommandAlias("s")]
-        public void Test(IPlayer player, Vehicle model)
+        public void Test(IPlayer player, Vehicle model, int color1 = 0, int color2 = 0)
         {
             var vehicle = this.vehiclePool.CreateVehicle(
                                                          model,
                                                          player.Position,
                                                          player.Rotation,
-                                                         0,
-                                                         150);
+                                                         color1,
+                                                         color2);
 
             player.PutPlayerIntoVehicle(vehicle, 0);
 
@@ -72,6 +72,15 @@ namespace Micky5991.Samp.Net.Example.Commands
             vehicle.Repair();
 
             player.SendMessage(Color.DeepSkyBlue, "Vehicle has been repaired.");
+        }
+
+        [Authorize]
+        [Command("player", "weapon")]
+        public void GiveWeapon(IPlayer player, IPlayer target, Weapon weapon, int ammo = 100)
+        {
+            target.GivePlayerWeapon(weapon, ammo);
+
+            player.SendMessage(Color.DeepSkyBlue, $"Player received the weapon {weapon} with {ammo} ammo.");
         }
 
     }
