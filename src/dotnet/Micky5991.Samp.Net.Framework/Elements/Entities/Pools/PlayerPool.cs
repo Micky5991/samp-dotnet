@@ -70,6 +70,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Pools
                                                   {
                                                       new Claim(SampClaimTypes.Name, player.Name),
                                                       new Claim(SampClaimTypes.PlayerId, player.Id.ToString(), ClaimValueTypes.Integer32),
+                                                      new Claim(SampClaimTypes.IpAddress, player.Ip.ToString()),
                                                   });
 
             principal.AddIdentity(sampIdentity);

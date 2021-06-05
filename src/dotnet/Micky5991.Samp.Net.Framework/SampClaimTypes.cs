@@ -16,5 +16,10 @@ namespace Micky5991.Samp.Net.Framework
         /// Id of the player which they currently have.
         /// </summary>
         public const string PlayerId = "samp/playerid";
+
+        /// <summary>
+        /// IP Address of the current principal.
+        /// </summary>
+        public const string IpAddress = "samp/ipaddress";
     }
 }

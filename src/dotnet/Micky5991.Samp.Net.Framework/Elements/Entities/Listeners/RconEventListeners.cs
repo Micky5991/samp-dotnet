@@ -55,7 +55,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Listeners
 
             var claims = new[]
             {
-                new Claim("samprcon/ip", eventdata.Ip),
+                new Claim(SampClaimTypes.IpAddress, eventdata.Ip),
                 new Claim(ClaimTypes.Role, "RconAdmin"),
             };
 
