@@ -21,7 +21,7 @@ namespace Micky5991.Samp.Net.Core.Threading
 
         public override SynchronizationContext CreateCopy()
         {
-            return new SampSynchronizationContext();
+            return this;
         }
 
         public override void Post(SendOrPostCallback d, object state)
