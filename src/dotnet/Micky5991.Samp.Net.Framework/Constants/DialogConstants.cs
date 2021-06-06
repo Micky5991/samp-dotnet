@@ -1,4 +1,4 @@
-namespace Micky5991.Samp.Net.Framework
+namespace Micky5991.Samp.Net.Framework.Constants
 {
     /// <summary>
     /// Contains useful constants for dialogs.

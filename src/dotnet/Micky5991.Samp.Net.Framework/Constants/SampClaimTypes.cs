@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Micky5991.Samp.Net.Framework
+namespace Micky5991.Samp.Net.Framework.Constants
 {
     /// <summary>
     /// List of possible claim types for SA:MP.

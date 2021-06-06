@@ -7,6 +7,7 @@ using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Data;
 using Micky5991.Samp.Net.Framework.Enums;
+using Micky5991.Samp.Net.Framework.Interfaces.TextDraws;
 
 namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
 {
@@ -687,5 +688,20 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         void Ban();
+
+        /// <summary>
+        /// Shows the given textdraw to this player.
+        /// </summary>
+        /// <param name="textDraw">Textdraw to draw to the players screen.</param>
+        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="textDraw"/> is null.</exception>
+        void ShowTextDraw(ITextDraw textDraw);
+
+        /// <summary>
+        /// Hides the given textdraw from this players screen.
+        /// </summary>
+        /// <param name="textDraw">Textdraw to stop drawing to the players screen.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="textDraw"/> is null.</exception>
+        void HideTextDraw(ITextDraw textDraw);
     }
 }

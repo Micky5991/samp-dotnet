@@ -3,6 +3,7 @@ using System.Net;
 using System.Security.Claims;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Framework.Constants;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 using Microsoft.Extensions.Logging;

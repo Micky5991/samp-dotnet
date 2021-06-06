@@ -5,7 +5,9 @@ using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Example.Commands;
 using Micky5991.Samp.Net.Example.Login.Services;
+using Micky5991.Samp.Net.Example.Player.Vehicle;
 using Micky5991.Samp.Net.Framework.Extensions;
+using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions;
 using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Options;
@@ -30,7 +32,7 @@ namespace Micky5991.Samp.Net.Example
                          .AddProfilesInAssembly(Assembly.GetExecutingAssembly())
                          .AddDefaultCommands();
 
-            yield return new RconPermissionExtension();
+            yield return new AcceptAllPermissionExtension();
         }
 
         public void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration)
@@ -47,6 +49,7 @@ namespace Micky5991.Samp.Net.Example
                             })
                 .AddSingleton<ChatListener>()
                 .AddSingleton<IEntityListener, LoginScreen>()
+                .AddSingleton<IEntityListener, Speedometer>()
                 .AddSingleton<ICommandHandler, TestCommandHandler>()
                 .AddSampCoreServices()
                 .Configure<GamemodeOptions>(x => x.LogRedirection = true);
@@ -54,6 +57,11 @@ namespace Micky5991.Samp.Net.Example
 
         public void ConfigureAuthorization(AuthorizationOptions options, IConfiguration configuration)
         {
+            // options.AddPolicy("VehicleCommands",
+            //                   b =>
+            //                   {
+            //                       b.RequireRole("RconAdmin");
+            //                   });
         }
 
         public void Start(IServiceProvider serviceProvider, IConfiguration configuration)

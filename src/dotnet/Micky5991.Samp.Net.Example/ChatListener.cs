@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Events.Samp;
-using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Example
 {
@@ -11,17 +10,13 @@ namespace Micky5991.Samp.Net.Example
     {
         private readonly IEventAggregator eventAggregator;
 
-        private readonly ILogger<ChatListener> logger;
-
         private readonly ISampNatives sampNatives;
 
         public ChatListener(
             IEventAggregator eventAggregator,
-            ILogger<ChatListener> logger,
             ISampNatives sampNatives)
         {
             this.eventAggregator = eventAggregator;
-            this.logger = logger;
             this.sampNatives = sampNatives;
         }
 
@@ -34,7 +29,7 @@ namespace Micky5991.Samp.Net.Example
             this.eventAggregator.Subscribe<PlayerDeathEvent>(this.OnPlayerDeath);
         }
 
-        private async void OnPlayerDeath(PlayerDeathEvent eventdata)
+        private async Task OnPlayerDeath(PlayerDeathEvent eventdata)
         {
             var player = eventdata.Player;
 

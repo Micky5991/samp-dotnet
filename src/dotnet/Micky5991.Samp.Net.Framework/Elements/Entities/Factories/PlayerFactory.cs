@@ -1,3 +1,4 @@
+using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
@@ -11,6 +12,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Factories
     {
         private readonly IPlayersNatives playersNatives;
 
+        private readonly IEventAggregator eventAggregator;
+
         private readonly ISampNatives sampNatives;
 
         /// <summary>
@@ -18,12 +21,15 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Factories
         /// </summary>
         /// <param name="sampNatives">General Samp natives needed for <see cref="Player"/>.</param>
         /// <param name="playersNatives">Natives needed for every <see cref="Player"/> instance.</param>
+        /// <param name="eventAggregator">Event Aggregator needed to build player.</param>
         public PlayerFactory(
             ISampNatives sampNatives,
-            IPlayersNatives playersNatives)
+            IPlayersNatives playersNatives,
+            IEventAggregator eventAggregator)
         {
             this.sampNatives = sampNatives;
             this.playersNatives = playersNatives;
+            this.eventAggregator = eventAggregator;
         }
 
         /// <inheritdoc />
@@ -33,7 +39,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Factories
                               playerid,
                               removeEntity,
                               this.sampNatives,
-                              this.playersNatives);
+                              this.playersNatives,
+                              this.eventAggregator);
         }
     }
 }

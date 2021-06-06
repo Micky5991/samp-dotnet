@@ -22,6 +22,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Micky5991.Samp.Net.Framework.Interfaces.Services;
 using Micky5991.Samp.Net.Framework.Services;
 using Micky5991.Samp.Net.Framework.Services.Facades;
+using Micky5991.Samp.Net.Framework.Services.Syncer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -180,6 +181,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         {
             serviceCollection.TryAddTransient<IPlayerFactory, PlayerFactory>();
             serviceCollection.TryAddTransient<IVehicleFactory, VehicleFactory>();
+            serviceCollection.TryAddTransient<IMainTimerFactory, MainTimerFactory>();
 
             return this;
         }
@@ -210,6 +212,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             serviceCollection.AddTransient<IEntityListener, PlayerEventListener>();
             serviceCollection.AddTransient<IEntityListener, VehicleEventListener>();
             serviceCollection.AddSingleton<IEntityListener, RconEventListeners>();
+            serviceCollection.AddSingleton<IEntityListener, PlayerTextDrawSyncer>();
 
             return this;
         }

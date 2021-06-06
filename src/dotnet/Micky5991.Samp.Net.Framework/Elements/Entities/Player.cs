@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dawn;
+using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Players;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Data;
@@ -23,6 +24,8 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
 
         private readonly IPlayersNatives playersNatives;
 
+        private readonly IEventAggregator eventAggregator;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Player"/> class.
         /// </summary>
@@ -30,16 +33,19 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         /// <param name="entityRemoval">Pool removal delgate.</param>
         /// <param name="sampNatives">General samp natives needed for this entity.</param>
         /// <param name="playersNatives">Natives needed for this entity.</param>
+        /// <param name="eventAggregator">Event aggregator used for events triggered inside player.</param>
         public Player(
             int id,
             IPlayerPool.RemoveEntityDelegate entityRemoval,
             ISampNatives sampNatives,
-            IPlayersNatives playersNatives)
+            IPlayersNatives playersNatives,
+            IEventAggregator eventAggregator)
             : base(id)
         {
             this.entityRemoval = entityRemoval;
             this.sampNatives = sampNatives;
             this.playersNatives = playersNatives;
+            this.eventAggregator = eventAggregator;
 
             this.Principal = new ClaimsPrincipal();
         }

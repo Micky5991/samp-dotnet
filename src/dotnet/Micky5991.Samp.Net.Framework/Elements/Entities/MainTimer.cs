@@ -46,6 +46,12 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
         }
 
         /// <inheritdoc />
+        public void Stop()
+        {
+            this.timer.Stop();
+        }
+
+        /// <inheritdoc />
         public void Dispose()
         {
             this.timer.Dispose();

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Security.Claims;
 using Dawn;
+using Micky5991.Samp.Net.Framework.Constants;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
