@@ -23,6 +23,16 @@ namespace Micky5991.Samp.Net.Generators.Strategies.NamespaceElements
         public override void BuildFunctionBody(IdlFunction function, StringBuilder bodyBuilder, int indent)
         {
             var expectsResult = function.ReturnType != "void";
+            var tracingArguments = function.Parameters
+                                           .Where(x => x.Attribute.IsOut() == false)
+                                           .Select(
+                                                   x =>
+                                                       $"{{{this.parameterBuildStrategy.BuildParameterName(x.Name)}}}");
+
+
+
+            bodyBuilder.AppendLine($"this.logger.LogTrace($\"Native used: {function.Name}({string.Join(", ", tracingArguments)})\");".Indent(indent));
+            bodyBuilder.AppendLine();
 
             bodyBuilder.AppendLine("this.sampThreadEnforcer.EnforceMainThread();".Indent(indent));
             bodyBuilder.AppendLine();

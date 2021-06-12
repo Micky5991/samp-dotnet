@@ -137,8 +137,9 @@ namespace Micky5991.Samp.Net.Generators.Strategies
         private void BuildNamespaceNativesClass(BuilderTargetCollection buildTargets, IdlNamespace idlNamespace, int indent)
         {
             var stringBuilder = buildTargets[BuilderTarget.Types];
+            var className = $"{idlNamespace.Name.ConvertToPascalCase()}Natives";
 
-            stringBuilder.AppendLine($"public class {idlNamespace.Name.ConvertToPascalCase()}Natives : I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
+            stringBuilder.AppendLine($"public class {className} : I{idlNamespace.Name.ConvertToPascalCase()}Natives".Indent(indent));
             stringBuilder.AppendLine("{".Indent(indent));
 
             // Field
@@ -148,14 +149,18 @@ namespace Micky5991.Samp.Net.Generators.Strategies
             stringBuilder.AppendLine("private ISampThreadEnforcer sampThreadEnforcer;".Indent(indent + 1));
             stringBuilder.AppendLine();
 
+            stringBuilder.AppendLine($"private ILogger<{className}> logger;".Indent(indent + 1));
+            stringBuilder.AppendLine();
+
             stringBuilder.Append(buildTargets[BuilderTarget.Delegates].ToString());
 
             // Constructor
-            stringBuilder.AppendLine($@"public {idlNamespace.Name.ConvertToPascalCase()}Natives(NativeTypeConverter typeConverter, ISampThreadEnforcer sampThreadEnforcer)".Indent(indent + 1));
+            stringBuilder.AppendLine($@"public {className}(NativeTypeConverter typeConverter, ISampThreadEnforcer sampThreadEnforcer, ILogger<{className}> logger)".Indent(indent + 1));
             stringBuilder.AppendLine("{".Indent(indent + 1));
 
             stringBuilder.AppendLine("this.typeConverter = typeConverter;".Indent(indent + 2));
             stringBuilder.AppendLine("this.sampThreadEnforcer = sampThreadEnforcer;".Indent(indent + 2));
+            stringBuilder.AppendLine("this.logger = logger;".Indent(indent + 2));
 
             stringBuilder.AppendLine("}".Indent(indent + 1));
             stringBuilder.AppendLine();

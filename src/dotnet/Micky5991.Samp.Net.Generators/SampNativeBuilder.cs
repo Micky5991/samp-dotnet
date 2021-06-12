@@ -50,6 +50,7 @@ namespace Micky5991.Samp.Net.Generators
 
             var sourceBuilder = new StringBuilder();
             sourceBuilder.Append(@"using System;
+using Microsoft.Extensions.Logging;
 using Micky5991.Samp.Net.Core.Interop;
 using Micky5991.Samp.Net.Core.Interfaces.Natives;
 using Micky5991.Samp.Net.Core.Interfaces.Interop;
