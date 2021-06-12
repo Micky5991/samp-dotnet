@@ -54,6 +54,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
                 .AddEntityPools(serviceCollection)
                 .AddEntityListeners(serviceCollection)
                 .AddDialogHandler(serviceCollection)
+                .AddUtilityServices(serviceCollection)
                 .AddAuthorizationServices(serviceCollection);
 
             return this;
@@ -226,6 +227,18 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         {
             serviceCollection.AddSingleton<IEntityListener, DialogHandler>();
             serviceCollection.AddSingleton<IDialogHandler, DialogHandler>();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Registers all utiltiy services to use.
+        /// </summary>
+        /// <param name="serviceCollection">Target to add the services to.</param>
+        /// <returns>Current <see cref="GamemodeServicesBuilder"/> instance.</returns>
+        protected virtual GamemodeServicesBuilder AddUtilityServices(IServiceCollection serviceCollection)
+        {
+            serviceCollection.TryAddTransient<IVehicleMeta, VehicleMeta>();
 
             return this;
         }
