@@ -8,21 +8,21 @@ namespace Micky5991.Samp.Net.Generators.Test
         {
             var builder = new SampNativeBuilder();
 
-            var result = builder.GenerateCode(new []
+            var filePaths = new[]
             {
                 Path.GetFullPath("Definitions/natives.a_samp.idl"),
                 Path.GetFullPath("Definitions/natives.a_players.idl"),
                 Path.GetFullPath("Definitions/natives.a_actor.idl"),
                 Path.GetFullPath("Definitions/natives.a_objects.idl"),
                 Path.GetFullPath("Definitions/natives.a_vehicles.idl"),
+            };
 
-                Path.GetFullPath("Definitions/constants.a_objects.txt"),
-                Path.GetFullPath("Definitions/constants.a_samp.txt"),
-                Path.GetFullPath("Definitions/constants.a_players.txt"),
-                Path.GetFullPath("Definitions/constants.a_vehicles.txt"),
-            });
+            foreach (var filePath in filePaths)
+            {
+                var result = builder.GenerateCode(filePath, out var idlNamespace);
 
-            File.WriteAllText("result.cs", result);
+                File.WriteAllText($"result_{idlNamespace.Name}.cs", result);
+            }
         }
     }
 }

@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Micky5991.Samp.Net.Generators.Contracts;
+using Micky5991.Samp.Net.Generators.Data;
 using Micky5991.Samp.Net.Generators.Strategies;
 using Micky5991.Samp.Net.Generators.Strategies.NamespaceElements;
 using Micky5991.Samp.Net.Generators.Strategies.Parameters;
@@ -23,30 +25,28 @@ namespace Micky5991.Samp.Net.Generators
             return this.fileNameExpression.IsMatch(filename);
         }
 
-        public string GenerateCode(IList<string> filePaths)
+        public string GenerateCode(string filePath, out IdlNamespace idlNamespace)
         {
             var builderTargets = new BuilderTargetCollection
             {
-                BuilderTarget.Namespaces
+                BuilderTarget.Namespaces,
             };
 
-            foreach (var path in filePaths)
+            var parameterBuildStrategy = new ParameterBuildStrategy();
+            var elementBuildStrategies = new List<IElementBuildStrategy>
             {
-                var parameterBuildStrategy = new ParameterBuildStrategy();
-                var elementBuildStrategies = new List<IElementBuildStrategy>
-                {
-                    new NativeBuildStrategy(parameterBuildStrategy),
-                    new CallbackBuildStrategy(parameterBuildStrategy),
-                    new ConstantBuildStrategy(),
-                };
-                var namespaceBuildStrategy = new NamespaceBuildStrategy(elementBuildStrategies);
+                new NativeBuildStrategy(parameterBuildStrategy),
+                new CallbackBuildStrategy(parameterBuildStrategy),
+                new ConstantBuildStrategy(),
+            };
+            var namespaceBuildStrategy = new NamespaceBuildStrategy(elementBuildStrategies);
 
-                using var stream = new StreamReader(path);
+            using var stream = new StreamReader(filePath);
 
-                var idlNamespace = namespaceBuildStrategy.Parse(path, stream);
+            idlNamespace = namespaceBuildStrategy.Parse(filePath, stream);
 
-                namespaceBuildStrategy.Build(builderTargets, idlNamespace, 0);
-            }
+            builderTargets[BuilderTarget.Namespaces].AppendLine($"// {filePath}");
+            namespaceBuildStrategy.Build(builderTargets, idlNamespace, 0);
 
             var sourceBuilder = new StringBuilder();
             sourceBuilder.Append(@"using System;

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Linq;
+using Micky5991.Samp.Net.Generators.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -28,9 +29,13 @@ namespace Micky5991.Samp.Net.Generators
                                          .Select(x => x.Path)
                                          .ToList();
 
-            var code = builder.GenerateCode(additionalFiles);
+            foreach (var additionalFile in additionalFiles)
+            {
+                var code = builder.GenerateCode(additionalFile, out var idlNamespace);
 
-            context.AddSource("SampNatives.cs", SourceText.From(code, Encoding.UTF8));
+                context.AddSource($"{idlNamespace.Name.ConvertToPascalCase()}.cs", SourceText.From(code, Encoding.UTF8));
+            }
+
         }
     }
 }
