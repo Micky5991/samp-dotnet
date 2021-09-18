@@ -41,6 +41,18 @@ namespace Micky5991.Samp.Net.Example
         private void OnGamemodeInit(NativeGameModeInitEvent eventdata)
         {
             this.sampNatives.DisableInteriorEnterExits();
+            this.sampNatives.AddPlayerClass(
+                                            0,
+                                            1541.4635f,
+                                            -1675.2650f,
+                                            13.5526f,
+                                            90f,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0);
         }
 
         private void OnPlayerRequestClass(PlayerRequestClassEvent eventdata)
