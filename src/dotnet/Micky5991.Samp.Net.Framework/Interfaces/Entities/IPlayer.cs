@@ -14,7 +14,7 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
     /// <summary>
     /// Represents a player on the server.
     /// </summary>
-    public interface IPlayer : IMovingWorldEntity
+    public interface IPlayer : IMovingWorldEntity, ILivingWorldEntity
     {
         /// <summary>
         /// Gets the principal instance that should be used for authorization.
@@ -51,12 +51,6 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Entities
         /// </summary>
         /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
         Color Color { get; set; }
-
-        /// <summary>
-        /// Gets or sets the current health of this player.
-        /// </summary>
-        /// <exception cref="ObjectDisposedException"><see cref="IPlayer"/> is disposed.</exception>
-        float Health { get; set; }
 
         /// <summary>
         /// Gets or sets the current armor of this player.

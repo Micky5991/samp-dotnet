@@ -108,7 +108,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
             {
                 Guard.Disposal(this.Disposed);
 
-                this.vehiclesNatives.GetVehiclePos(this.Id, out var x, out var y, out var z);
+                this.vehiclesNatives.GetVehicleVelocity(this.Id, out var x, out var y, out var z);
 
                 return new Vector3(x, y, z);
             }
@@ -117,7 +117,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
             {
                 Guard.Disposal(this.Disposed);
 
-                this.vehiclesNatives.SetVehiclePos(this.Id, value.X, value.Y, value.Z);
+                this.vehiclesNatives.SetVehicleVelocity(this.Id, value.X, value.Y, value.Z);
             }
         }
 
@@ -136,6 +136,26 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities
                 Guard.Disposal(this.Disposed);
 
                 this.vehiclesNatives.SetVehicleVirtualWorld(this.Id, value);
+            }
+        }
+
+        /// <inheritdoc />
+        public float Health
+        {
+            get
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.GetVehicleHealth(this.Id, out var health);
+
+                return health;
+            }
+
+            set
+            {
+                Guard.Disposal(this.Disposed);
+
+                this.vehiclesNatives.SetVehicleHealth(this.Id, value);
             }
         }
 
