@@ -81,6 +81,24 @@ namespace Micky5991.Samp.Net.Example.Commands
             player.SendMessage(Color.DeepSkyBlue, "Vehicle has been repaired.");
         }
 
+        [Authorize(Policy = "VehicleCommands")]
+        [Command("veh", "destroy", Description = "Destroys the vehicle you are currently in.")]
+        [CommandAlias("d")]
+        public void Destroy(IPlayer player)
+        {
+            if (player.IsInAnyVehicle == false || player.VehicleId.HasValue == false ||
+                this.vehiclePool.Entities.TryGetValue(player.VehicleId.Value, out var vehicle) == false)
+            {
+                player.SendMessage(Color.LightGray, "You are currently in no vehicle.");
+
+                return;
+            }
+
+            vehicle.Destroy();
+
+            player.SendMessage(Color.DeepSkyBlue, "Vehicle has been destroyed.");
+        }
+
         [Authorize]
         [Command("player", "weapon")]
         public void GiveWeapon(IPlayer player, IPlayer target, Weapon weapon, int ammo = 100)
