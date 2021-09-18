@@ -166,8 +166,9 @@ namespace Micky5991.Samp.Net.Example.Player.Vehicle
 
             var speedometer = speedometers.First();
 
-            var speed = vehicle.Velocity.Length() * 100 * DistanceFactor;
-            var health = (vehicle.Health - 250) / 750;
+            distance = Math.Max(0, distance);
+            var speed = Math.Max(0, vehicle.Velocity.Length() * 100 * DistanceFactor);
+            var health = Math.Max(0, (vehicle.Health - 250) / 750);
             var convertedDistance = distance / 1000 * (1 / DistanceFactor);
 
             speedometer.Text = string.Join(
