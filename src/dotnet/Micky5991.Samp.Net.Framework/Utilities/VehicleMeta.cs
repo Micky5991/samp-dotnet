@@ -3,6 +3,7 @@ using Micky5991.Samp.Net.Framework.Interfaces;
 
 namespace Micky5991.Samp.Net.Framework.Utilities
 {
+    /// <inheritdoc cref="IVehicleMeta"/>
     public class VehicleMeta : IVehicleMeta
     {
         private static readonly string[] VehicleNames =
