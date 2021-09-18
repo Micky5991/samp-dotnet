@@ -6,13 +6,13 @@ using Micky5991.Samp.Net.Framework.Events.Samp;
 
 namespace Micky5991.Samp.Net.Example
 {
-    public class ChatListener
+    public class ExampleStarter
     {
         private readonly IEventAggregator eventAggregator;
 
         private readonly ISampNatives sampNatives;
 
-        public ChatListener(
+        public ExampleStarter(
             IEventAggregator eventAggregator,
             ISampNatives sampNatives)
         {

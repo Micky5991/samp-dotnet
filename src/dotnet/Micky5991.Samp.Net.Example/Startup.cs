@@ -8,7 +8,6 @@ using Micky5991.Samp.Net.Example.Login.Services;
 using Micky5991.Samp.Net.Example.Player.Vehicle;
 using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions;
-using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.RconPermissions;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Options;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +46,7 @@ namespace Micky5991.Samp.Net.Example
                                                   (category, _) =>
                                                       category != typeof(DefaultAuthorizationService).FullName);
                             })
-                .AddSingleton<ChatListener>()
+                .AddSingleton<ExampleStarter>()
                 .AddSingleton<IEntityListener, LoginScreen>()
                 .AddSingleton<IEntityListener, Speedometer>()
                 .AddSingleton<ICommandHandler, TestCommandHandler>()
@@ -66,7 +65,7 @@ namespace Micky5991.Samp.Net.Example
 
         public void Start(IServiceProvider serviceProvider, IConfiguration configuration)
         {
-            var chatListener = serviceProvider.GetRequiredService<ChatListener>();
+            var chatListener = serviceProvider.GetRequiredService<ExampleStarter>();
             chatListener.Attach();
         }
     }
