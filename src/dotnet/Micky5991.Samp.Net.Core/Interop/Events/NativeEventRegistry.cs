@@ -61,7 +61,7 @@ namespace Micky5991.Samp.Net.Core.Interop.Events
             {
                 if (arguments == null)
                 {
-                    arguments = new CallbackArgument[0];
+                    arguments = Array.Empty<CallbackArgument>();
                 }
 
                 if (this.builders.TryGetValue(name, out var definition) == false)

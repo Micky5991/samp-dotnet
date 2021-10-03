@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Drawing;
 using Dawn;
@@ -34,7 +35,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Dialogs
         }
 
         /// <inheritdoc />
-        public IImmutableList<string> Headers { get; private set; } = new string[0].ToImmutableList();
+        public IImmutableList<string> Headers { get; private set; } = Array.Empty<string>().ToImmutableList();
 
         /// <inheritdoc />
         public void SetHeaders(IHeaderListDialog.BuildHeadersDelegate factory)

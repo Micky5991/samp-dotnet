@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using Dawn;
 using Micky5991.Samp.Net.Core.Natives.Samp;
@@ -35,7 +36,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Dialogs
         public bool ColorResetting { get; private set; }
 
         /// <inheritdoc />
-        public IImmutableList<string> Rows { get; private set; } = new string[0].ToImmutableList();
+        public IImmutableList<string> Rows { get; private set; } = Array.Empty<string>().ToImmutableList();
 
         /// <inheritdoc />
         public void SetColorResetting(bool enabled = true)
