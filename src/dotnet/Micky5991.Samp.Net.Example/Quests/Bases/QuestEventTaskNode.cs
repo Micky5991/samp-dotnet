@@ -5,7 +5,7 @@ using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Quests.Entities;
 using Micky5991.Quests.Interfaces.Nodes;
 
-namespace Micky5991.Samp.Net.Example.Quests
+namespace Micky5991.Samp.Net.Example.Quests.Bases
 {
     public abstract class QuestEventTaskNode : QuestTaskNode
     {
