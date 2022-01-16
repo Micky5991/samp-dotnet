@@ -3,17 +3,20 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Micky5991.Quests.Interfaces.Services;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
+using Micky5991.Samp.Net.Example.Quests;
+using Micky5991.Samp.Net.Example.Services;
 using Micky5991.Samp.Net.Framework.Constants;
 using Micky5991.Samp.Net.Framework.Elements.TextDraws;
 using Micky5991.Samp.Net.Framework.Enums;
 using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
-using Micky5991.Samp.Net.Framework.Interfaces.TextDraws;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Example.Commands
 {
@@ -21,9 +24,18 @@ namespace Micky5991.Samp.Net.Example.Commands
     {
         private readonly IVehiclePool vehiclePool;
 
-        public TestCommandHandler(IVehiclePool vehiclePool)
+        private readonly IQuestFactory questFactory;
+
+        private readonly PlayerQuestsManager playerQuestsManager;
+
+        private readonly ILogger<TestCommandHandler> logger;
+
+        public TestCommandHandler(IVehiclePool vehiclePool, IQuestFactory questFactory, PlayerQuestsManager playerQuestsManager, ILogger<TestCommandHandler> logger)
         {
             this.vehiclePool = vehiclePool;
+            this.questFactory = questFactory;
+            this.playerQuestsManager = playerQuestsManager;
+            this.logger = logger;
         }
 
         [Command("claims", Description = "Lists all claims of the given user")]
@@ -114,6 +126,30 @@ namespace Micky5991.Samp.Net.Example.Commands
             target.Health = 0;
 
             player.SendMessage(Color.DeepSkyBlue, $"Player {target} has been killed.");
+        }
+
+        [Command("player", "quest", Description = "Gives the player the welcome quest")]
+        public void GiveWelcomeQuest(IPlayer player, IPlayer target)
+        {
+            var quest = this.questFactory.BuildQuest<WelcomeQuest>();
+            this.playerQuestsManager.GivePlayerQuest(player, quest);
+
+            player.SendMessage(Color.DeepSkyBlue, $"Player {target} received the quest {quest.Title}.");
+        }
+
+        [Command("player", "qr", Description = "Refreshes the current player quests")]
+        public void RefreshWelcomeQuest(IPlayer player, IPlayer target)
+        {
+            try
+            {
+                this.playerQuestsManager.RefreshQuests(player);
+
+                player.SendMessage(Color.DeepSkyBlue, $"Quest display of {target} has been refreshed.");
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e, "An error occured");
+            }
         }
 
         [Authorize]

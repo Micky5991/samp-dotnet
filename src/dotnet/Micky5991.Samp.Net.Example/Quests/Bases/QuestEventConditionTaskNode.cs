@@ -9,7 +9,7 @@ namespace Micky5991.Samp.Net.Example.Quests.Bases
 {
     public abstract class QuestEventConditionTaskNode : QuestConditonNode
     {
-        private IImmutableSet<ISubscription> eventSubscriptions;
+        private IImmutableSet<ISubscription> eventSubscriptions = ImmutableHashSet<ISubscription>.Empty;
 
         protected QuestEventConditionTaskNode([NotNull] IQuestRootNode rootNode)
             : base(rootNode)

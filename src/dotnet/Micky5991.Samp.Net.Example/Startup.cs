@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Micky5991.Quests.Interfaces.Services;
+using Micky5991.Quests.Services;
 using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Example.Commands;
 using Micky5991.Samp.Net.Example.Login.Services;
 using Micky5991.Samp.Net.Example.Player.Vehicle;
+using Micky5991.Samp.Net.Example.Services;
 using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions;
 using Micky5991.Samp.Net.Framework.Interfaces;
@@ -15,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using QuestRegistry = Micky5991.Samp.Net.Example.Services.QuestRegistry;
 
 namespace Micky5991.Samp.Net.Example
 {
@@ -36,6 +40,8 @@ namespace Micky5991.Samp.Net.Example
 
         public void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration)
         {
+            var questRegistry = new QuestRegistry();
+
             serviceCollection
                 .AddLogging(
                             builder =>
@@ -49,9 +55,15 @@ namespace Micky5991.Samp.Net.Example
                 .AddSingleton<ExampleStarter>()
                 .AddSingleton<IEntityListener, LoginScreen>()
                 .AddSingleton<IEntityListener, Speedometer>()
+                .AddSingleton<IEntityListener, PlayerQuestsManager>()
                 .AddSingleton<ICommandHandler, TestCommandHandler>()
+                .AddSingleton<PlayerQuestsManager>()
+                .AddSingleton(_ => questRegistry)
+                .AddTransient<IQuestFactory, QuestFactory>()
                 .AddSampCoreServices()
                 .Configure<GamemodeOptions>(x => x.LogRedirection = true);
+
+            questRegistry.AddQuestsToServiceCollection(serviceCollection);
         }
 
         public void ConfigureAuthorization(AuthorizationOptions options, IConfiguration configuration)
