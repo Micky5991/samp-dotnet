@@ -38,6 +38,6 @@
         "plugins/samp-dotnet.dll"
       ]
     }
-  ]
+  ],
   "local": false
 }
