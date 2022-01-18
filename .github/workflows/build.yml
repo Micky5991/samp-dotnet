@@ -174,8 +174,11 @@ jobs:
         with:
           version: '1.9.1'
 
+      - name: Move own runtimes.json file to .samp folder
+        run: mkdir -p ~/.samp/ && cp ../.samp/* ~/.samp/
+
       - name: Build Gamemode
-        run: (sampctl p build --forceEnsure --verbose || true) && cat ~/.samp/runtimes.json
+        run: sampctl p build --forceEnsure --verbose
 
       - name: Save empty SA:MP gamemode file
         uses: actions/upload-artifact@v2.2.2
