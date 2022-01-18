@@ -175,7 +175,7 @@ jobs:
           version: '1.9.1'
 
       - name: Create runtimes.json file
-        run: mkdir -p ~/.samp/ && cp ./.samp/* ~/.samp/
+        run: mkdir -p ~/.samp/ && cp ../.samp/* ~/.samp/
 
       - name: Build Gamemode
         run: (sampctl p build --forceEnsure --verbose || true) && cat ~/.samp/runtimes.json
