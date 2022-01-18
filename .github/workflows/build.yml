@@ -175,7 +175,7 @@ jobs:
           version: '1.9.1'
 
       - name: Build Gamemode
-        run: sampctl p build --forceEnsure --verbose && cat ~/.samp/runtimes.json
+        run: (sampctl p build --forceEnsure --verbose || true) && cat ~/.samp/runtimes.json
 
       - name: Save empty SA:MP gamemode file
         uses: actions/upload-artifact@v2.2.2
