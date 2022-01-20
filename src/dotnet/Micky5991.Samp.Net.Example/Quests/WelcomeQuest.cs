@@ -38,7 +38,7 @@ namespace Micky5991.Samp.Net.Example.Quests
                     new EnterCarTask(Vehicle.Comet, this, this.vehicleMeta, this.eventAggregator),
                     new EnterCarTask(Vehicle.Bus, this, this.vehicleMeta, this.eventAggregator),
 
-                    new QuestAnySuccessSequenceNode(this)
+                    new QuestAnySuccessNode(this)
                     {
                         new EnterCarTask(Vehicle.Andromada, this, this.vehicleMeta, this.eventAggregator),
                         new EnterCarTask(Vehicle.Raindance, this, this.vehicleMeta, this.eventAggregator),
