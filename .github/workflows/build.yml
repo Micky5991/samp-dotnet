@@ -62,6 +62,11 @@ jobs:
             5.0.x
             6.0.x
 
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: 'csharp'
+
       - name: Restore .NET dependencies
         run: dotnet restore
 
@@ -90,6 +95,8 @@ jobs:
           path: "${{github.workspace}}/src/dotnet/Micky5991.Samp.Net.Example/bin/Release/*"
           if-no-files-found: error
 
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
 
   cpp:
     name: Build Server Plugin
@@ -98,6 +105,11 @@ jobs:
     env:
       CC: "gcc-9"
       CXX: "g++-9"
+
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
 
     strategy:
       matrix:
@@ -127,6 +139,11 @@ jobs:
       - name: Install python dependencies
         run: python --version && pip --version && pip install ply cidl
 
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: 'cpp'
+
       - name: Create Build Environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
@@ -153,6 +170,9 @@ jobs:
           name: plugin-${{ matrix.platform }}
           path: "${{github.workspace}}/build/src/plugin/samp-dotnet/${{ matrix.plugin-file }}"
           if-no-files-found: error
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
 
   samp:
     name: "Build SA:MP gamemode"
