@@ -5,6 +5,7 @@
         <OutputType>Exe</OutputType>
         <Configurations>Debug;Release;Local</Configurations>
         <Platforms>AnyCPU</Platforms>
+        <LangVersion>9</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
