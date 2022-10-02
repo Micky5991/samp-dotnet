@@ -1,6 +1,7 @@
 build/*
 runtime/
 tmp/
+server*/
 
 server/*
 !server/pawn.json
