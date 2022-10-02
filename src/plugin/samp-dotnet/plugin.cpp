@@ -25,6 +25,7 @@ PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
     std::cout << "[SAMP.Net] Initializing SAMP.Net V1.0.0" << std::endl;
+    std::cout << "[SAMP.Net] Latest .NET Runtime Version: " << SAMPDOTNET_RUNTIME_VERSION << std::endl;
 
     samp_net = new sampdotnet::SampNet();
 
