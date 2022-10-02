@@ -191,7 +191,7 @@ jobs:
       - name: Install sampctl
         uses: AGraber/sampctl-action@v1
         with:
-          version: '1.9.1'
+          version: '1.10.0'
 
       - name: Move own runtimes.json file to .samp folder
         run: mkdir -p ~/.samp/ && cp ../.samp/* ~/.samp/
