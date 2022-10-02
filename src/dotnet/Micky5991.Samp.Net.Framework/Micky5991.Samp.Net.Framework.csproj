@@ -4,7 +4,6 @@
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Title>Samp.Net.Framework</Title>
@@ -15,6 +14,7 @@
         <RepositoryUrl>https://github.com/Micky5991/samp-dotnet</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <CodeAnalysisRuleSet>Micky5991.Samp.Net.Framework.ruleset</CodeAnalysisRuleSet>
+        <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,19 +27,19 @@
 
     <ItemGroup>
       <PackageReference Include="Dawn.Guard" Version="1.12.0" />
-      <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="5.0.6" />
-      <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+      <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.9" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
       <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
+      <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
     </ItemGroup>
 
 </Project>
