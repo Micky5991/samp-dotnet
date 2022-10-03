@@ -1,5 +1,6 @@
 ﻿using System;
 using Micky5991.Samp.Net.Commands;
+using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions;
 using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
 using Micky5991.Samp.Net.Framework.Utilities.Startup;
 using Micky5991.Samp.Net.NLogTarget;
@@ -21,6 +22,7 @@ namespace Micky5991.Samp.Net.Example
                                         .AddDefaultMappingProfiles()
                                         .AddDefaultCommands()
                                    )
+                .AddGamemodeBuilder(new AcceptAllPermissionExtension())
                 .Build()
                 .Start();
         }
