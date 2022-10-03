@@ -7,13 +7,13 @@ using Micky5991.Samp.Net.Framework.Interfaces;
 
 namespace Micky5991.Samp.Net.Example
 {
-    public class ExampleStarter : IEventListener
+    public class ExamplePlayerListener : IEventListener
     {
         private readonly IEventAggregator eventAggregator;
 
         private readonly ISampNatives sampNatives;
 
-        public ExampleStarter(
+        public ExamplePlayerListener(
             IEventAggregator eventAggregator,
             ISampNatives sampNatives)
         {
