@@ -372,7 +372,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                 typeof(IPlayer),
             }, x => { });
 
-            result.Should().ContainInOrder("TEST", 123, null);
+            result.Should().ContainInOrder("TEST", 123, null!);
         }
 
         [TestMethod]

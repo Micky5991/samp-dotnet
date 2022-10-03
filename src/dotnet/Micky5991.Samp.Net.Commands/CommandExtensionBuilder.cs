@@ -11,9 +11,9 @@ using Micky5991.Samp.Net.Commands.Elements.Listeners;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;
+using Micky5991.Samp.Net.Framework.Interfaces.Startup;
 using Micky5991.Samp.Net.Framework.Utilities.Startup;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly:InternalsVisibleTo("Micky5991.Samp.Net.Commands.Tests")]
 
@@ -43,7 +43,7 @@ namespace Micky5991.Samp.Net.Commands
         }
 
         /// <summary>
-        /// Adds an assembly to scan for <see cref="Profile"/> implementations. Recommendation: Use your main type or the <see cref="ISampExtensionStarter"/> implementation for your extension.
+        /// Adds an assembly to scan for <see cref="Profile"/> implementations. Recommendation: Use your main type or the <see cref="IGamemodeBuilder"/> implementation for your extension.
         /// </summary>
         /// <typeparam name="T">Any type of an assembly where profiles are created.</typeparam>
         /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
