@@ -16,7 +16,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
     /// </summary>
     public class HandlerCommand : Command
     {
-        private readonly Func<object[], object> executor;
+        private readonly Func<object[], Task> executor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HandlerCommand"/> class.
@@ -33,7 +33,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
             AuthorizeAttribute[] authorizeAttributes,
             string[] aliasNames,
             IReadOnlyList<ParameterDefinition> parameters,
-            Func<object[], object> executor)
+            Func<object[], Task> executor)
             : base(authorization, attribute, authorizeAttributes, aliasNames, parameters)
         {
             Guard.Argument(executor, nameof(executor)).NotNull();
@@ -79,7 +79,7 @@ namespace Micky5991.Samp.Net.Commands.Elements
 
             try
             {
-                this.executor(extendedArguments);
+                await this.executor(extendedArguments);
             }
             catch (Exception e)
             {

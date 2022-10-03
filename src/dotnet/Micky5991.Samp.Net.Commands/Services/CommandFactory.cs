@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Dawn;
 using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Elements;
@@ -59,7 +60,7 @@ namespace Micky5991.Samp.Net.Commands.Services
             return commands;
         }
 
-        private ICommand BuildCommandFromHandler(ICommandHandler handler, CommandAttribute attribute, IEnumerable<CommandAliasAttribute> aliasAttributes, AuthorizeAttribute[] authorizeAttributes, MethodBase methodInfo)
+        private ICommand BuildCommandFromHandler(ICommandHandler handler, CommandAttribute attribute, IEnumerable<CommandAliasAttribute> aliasAttributes, AuthorizeAttribute[] authorizeAttributes, MethodInfo methodInfo)
         {
             var parameters = methodInfo
                              .GetParameters()
@@ -72,7 +73,21 @@ namespace Micky5991.Samp.Net.Commands.Services
 
             var aliasNames = aliasAttributes.Select(x => x.Name).ToArray();
 
-            return new HandlerCommand(this.authorization, attribute, authorizeAttributes, aliasNames, parameters, x => methodInfo.Invoke(handler, x));
+            async Task Executor(object[] x)
+            {
+                var isAwaitable = methodInfo.ReturnType.GetMethod(nameof(Task.GetAwaiter)) != null;
+
+                if (isAwaitable)
+                {
+                    await (Task)methodInfo.Invoke(handler, x);
+
+                    return;
+                }
+
+                methodInfo.Invoke(handler, x);
+            }
+
+            return new HandlerCommand(this.authorization, attribute, authorizeAttributes, aliasNames, parameters, Executor);
         }
     }
 }

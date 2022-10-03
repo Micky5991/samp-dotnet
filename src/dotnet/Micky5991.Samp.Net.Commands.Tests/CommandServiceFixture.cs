@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using Micky5991.EventAggregator;
@@ -258,7 +259,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                   {
                                                       ParameterDefinition.Player(),
                                                   },
-                                                                     _ => null!),
+                                                                     _ => Task.CompletedTask),
                                               });
 
             this.RecreateCommandService();

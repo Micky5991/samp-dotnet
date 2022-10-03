@@ -53,8 +53,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                      x =>
                                                      {
                                                          this.fakeExecutor(x);
+                                                         this.passedArguments = x;
 
-                                                         return this.passedArguments = x;
+                                                         return Task.CompletedTask;
                                                      });
         }
 
@@ -65,7 +66,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
-                                                  _ => null!);
+                                                  _ => Task.CompletedTask);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*authorization*");
         }
@@ -77,7 +78,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
             {
                 new ParameterDefinition("player", typeof(IPlayer), false, null)
             },
-                                                  _ => null!);
+                                                  _ => Task.CompletedTask);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*attribute*");
         }
@@ -91,7 +92,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                                                   Array.Empty<AuthorizeAttribute>(),
                                                   Array.Empty<string>(),
                                                   null!,
-                                                  _ => null!);
+                                                  _ => Task.CompletedTask);
 
             act.Should().Throw<ArgumentNullException>().WithMessage("*parameters*");
         }
