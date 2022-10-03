@@ -18,7 +18,7 @@ using Micky5991.Samp.Net.Framework.Interfaces.TextDraws;
 
 namespace Micky5991.Samp.Net.Example.Player.Vehicle
 {
-    public class Speedometer : IEntityListener
+    public class Speedometer : IEventListener
     {
         private const bool UseMetricSystem = true;
 

@@ -8,7 +8,7 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Services
     /// <summary>
     /// Handler that simplifies request and response of a dialog.
     /// </summary>
-    public interface IDialogHandler : IEntityListener
+    public interface IDialogHandler : IEventListener
     {
         /// <summary>
         /// Shows a dialog to a player and waits for a response.

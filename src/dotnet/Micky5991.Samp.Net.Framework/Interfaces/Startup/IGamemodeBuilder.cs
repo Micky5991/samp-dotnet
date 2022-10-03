@@ -2,6 +2,7 @@
 // Copyright (c) Micky5991. All rights reserved.
 // </copyright>
 
+using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,5 +13,7 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Startup
         void RegisterServices(IServiceCollection serviceCollection);
 
         void ConfigureAuthorization(AuthorizationOptions options);
+
+        void Start(IServiceProvider serviceProvider);
     }
 }

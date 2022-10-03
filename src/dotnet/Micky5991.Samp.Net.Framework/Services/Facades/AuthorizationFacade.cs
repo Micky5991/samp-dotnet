@@ -3,8 +3,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Dawn;
 using Micky5991.Samp.Net.Framework.Interfaces.Facades;
+using Micky5991.Samp.Net.Framework.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Micky5991.Samp.Net.Framework.Services.Facades
 {
@@ -17,7 +19,7 @@ namespace Micky5991.Samp.Net.Framework.Services.Facades
 
         private readonly ILogger<AuthorizationFacade> logger;
 
-        private bool useDefaultPolicyForUnknownPolicies = false;
+        private readonly SampNetOptions sampNetOptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizationFacade"/> class.
@@ -25,14 +27,17 @@ namespace Micky5991.Samp.Net.Framework.Services.Facades
         /// <param name="policyProvider">Policy provider that holds all needed policies.</param>
         /// <param name="authorizationService">Service that executes checks if a <see cref="ClaimsPrincipal"/> has needed permission.</param>
         /// <param name="logger">Logger used in this type.</param>
+        /// <param name="sampNetOptions">Options that configure this facade.</param>
         public AuthorizationFacade(
             IAuthorizationPolicyProvider policyProvider,
             IAuthorizationService authorizationService,
-            ILogger<AuthorizationFacade> logger)
+            ILogger<AuthorizationFacade> logger,
+            IOptions<SampNetOptions> sampNetOptions)
         {
             this.policyProvider = policyProvider;
             this.authorizationService = authorizationService;
             this.logger = logger;
+            this.sampNetOptions = sampNetOptions.Value;
         }
 
         /// <inheritdoc />
@@ -50,7 +55,7 @@ namespace Micky5991.Samp.Net.Framework.Services.Facades
             }
             catch (InvalidOperationException)
             {
-                if (this.useDefaultPolicyForUnknownPolicies == false)
+                if (this.sampNetOptions.UseDefaultPolicyForUnknownPolicy == false)
                 {
                     throw;
                 }
@@ -70,14 +75,6 @@ namespace Micky5991.Samp.Net.Framework.Services.Facades
             }
 
             return await this.authorizationService.AuthorizeAsync(principal, resource, policy).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc />
-        public void UseDefaultPolicyForUnknownPolicies()
-        {
-            this.useDefaultPolicyForUnknownPolicies = true;
-
-            this.logger.LogInformation("Using default policy for unknown policies has been enabled.");
         }
     }
 }

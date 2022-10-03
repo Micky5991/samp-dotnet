@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Natives.Samp;
 using Micky5991.Samp.Net.Framework.Events.Samp;
+using Micky5991.Samp.Net.Framework.Interfaces;
 
 namespace Micky5991.Samp.Net.Example
 {
-    public class ExampleStarter
+    public class ExampleStarter : IEventListener
     {
         private readonly IEventAggregator eventAggregator;
 

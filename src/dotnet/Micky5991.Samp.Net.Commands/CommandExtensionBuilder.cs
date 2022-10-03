@@ -11,9 +11,7 @@ using Micky5991.Samp.Net.Commands.Elements.Listeners;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;
-using Micky5991.Samp.Net.Framework.Interfaces.Startup;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
+using Micky5991.Samp.Net.Framework.Utilities.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -24,7 +22,7 @@ namespace Micky5991.Samp.Net.Commands
     /// <summary>
     /// Registers all services for the Commands extension.
     /// </summary>
-    public class CommandExtensionBuilder : IGamemodeBuilder
+    public class CommandExtensionBuilder : GamemodeBuilder
     {
         private readonly IList<Assembly> scannableAssemblies = new List<Assembly>();
 
@@ -80,12 +78,11 @@ namespace Micky5991.Samp.Net.Commands
         }
 
         /// <inheritdoc/>
-        public void RegisterServices(IServiceCollection serviceCollection)
+        public override void RegisterServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.TryAddTransient<ISampExtensionStarter, CommandExtensionStarter>();
             serviceCollection.AddTransient<ICommandFactory, CommandFactory>();
             serviceCollection.AddSingleton<ICommandService, CommandService>();
-            serviceCollection.AddSingleton<ICommandListener, CommandListener>();
+            serviceCollection.AddSingleton<IEventListener, CommandListener>();
 
             serviceCollection.AddAutoMapper(this.scannableAssemblies.ToArray());
 
@@ -96,9 +93,11 @@ namespace Micky5991.Samp.Net.Commands
         }
 
         /// <inheritdoc />
-        public void ConfigureAuthorization(AuthorizationOptions options)
+        public override void Start(IServiceProvider serviceProvider)
         {
-            // Empty
+            var starter = serviceProvider.GetRequiredService<ICommandService>();
+
+            starter.Start();
         }
     }
 }

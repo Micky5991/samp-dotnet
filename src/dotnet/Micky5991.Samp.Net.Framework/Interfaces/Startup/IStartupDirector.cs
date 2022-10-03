@@ -26,7 +26,8 @@ namespace Micky5991.Samp.Net.Framework.Interfaces.Startup
         /// <summary>
         /// Prepares the gamemode before bootup like service registration and configuration parsing.
         /// </summary>
-        void Build();
+        /// <returns>Current <see cref="IStartupDirector"/> instance.</returns>
+        IStartupDirector Build();
 
         /// <summary>
         /// Starts the gamemode and its services.

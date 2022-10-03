@@ -14,7 +14,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Listeners
     /// Listener that subscribes to successful <see cref="NativeRconLoginAttemptEvent"/> events and attaches a role to
     /// the player.
     /// </summary>
-    public class RconEventListeners : IEntityListener
+    public class RconEventListeners : IEventListener
     {
         private readonly IEventAggregator eventAggregator;
 

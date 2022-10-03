@@ -2,9 +2,9 @@ using Micky5991.Samp.Net.Framework.Interfaces;
 
 namespace Micky5991.Samp.Net.Commands.Tests.Fakes
 {
-    public class FakeCommandSampExtensionStarter : ISampExtensionStarter
+    public class FakeCommandListener : IEventListener
     {
-        public void Start()
+        public void Attach()
         {
             throw new System.NotImplementedException();
         }

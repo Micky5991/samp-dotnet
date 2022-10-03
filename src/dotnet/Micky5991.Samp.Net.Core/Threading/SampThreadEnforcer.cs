@@ -29,6 +29,12 @@ namespace Micky5991.Samp.Net.Core.Threading
 
         public void EnforceMainThread(string callerMemberName = "")
         {
+            if (this.MainThread == null)
+            {
+                this.logger.LogError($"{nameof(ISampThreadEnforcer)} has not been properly set up with {nameof(this.SetMainThread)}. Aborting call.");
+                throw new InvalidThreadException($"{nameof(ISampThreadEnforcer)} has not been properly set up with {nameof(this.SetMainThread)}. Aborting call.");
+            }
+
             if (Thread.CurrentThread.ManagedThreadId == this.MainThread)
             {
                 return;

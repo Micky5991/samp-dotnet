@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace Micky5991.Samp.Net.Framework.Elements.Entities.Listeners
 {
     /// <inheritdoc />
-    public class PlayerPoolListener : IEntityListener
+    public class PlayerPoolListener : IEventListener
     {
         private readonly IEventAggregator eventAggregator;
 

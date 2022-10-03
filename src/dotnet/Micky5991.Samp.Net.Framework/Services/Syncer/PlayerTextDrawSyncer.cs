@@ -15,7 +15,7 @@ namespace Micky5991.Samp.Net.Framework.Services.Syncer
     /// <summary>
     /// Syncer that keeps the <see cref="ITextDraw"/> instance in sync with SA:MP.
     /// </summary>
-    public class PlayerTextDrawSyncer : IEntityListener
+    public class PlayerTextDrawSyncer : IEventListener
     {
         private readonly IEventAggregator eventAggregator;
 

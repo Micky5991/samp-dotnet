@@ -1,3 +1,4 @@
+using System;
 using Dawn;
 using Micky5991.EventAggregator.Interfaces;
 using Micky5991.EventAggregator.Services;
@@ -20,11 +21,10 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Micky5991.Samp.Net.Framework.Interfaces.Services;
-using Micky5991.Samp.Net.Framework.Interfaces.Startup;
 using Micky5991.Samp.Net.Framework.Services;
 using Micky5991.Samp.Net.Framework.Services.Facades;
 using Micky5991.Samp.Net.Framework.Services.Syncer;
-using Microsoft.AspNetCore.Authorization;
+using Micky5991.Samp.Net.Framework.Utilities.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -33,15 +33,14 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
     /// <summary>
     /// Type that registers typical core services to the service container.
     /// </summary>
-    public class CoreGamemodeBuilder : IGamemodeBuilder
+    public partial class CoreGamemodeBuilder : GamemodeBuilder
     {
         /// <inheritdoc />
-        public virtual void RegisterServices(IServiceCollection serviceCollection)
+        public override void RegisterServices(IServiceCollection serviceCollection)
         {
             Guard.Argument(serviceCollection, nameof(serviceCollection)).NotNull();
 
             this.AddCoreServices(serviceCollection);
-            this.AddGamemodeStarter(serviceCollection);
             this.AddLoggerHandler(serviceCollection);
             this.AddEventAggregator(serviceCollection);
             this.AddSynchronizationServices(serviceCollection);
@@ -56,12 +55,6 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.AddAuthorizationServices(serviceCollection);
         }
 
-        /// <inheritdoc />
-        public void ConfigureAuthorization(AuthorizationOptions options)
-        {
-            // empty
-        }
-
         /// <summary>
         /// Should register the core services needed for basic operation of the framework.
         /// </summary>
@@ -69,16 +62,6 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         protected void AddCoreServices(IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<ISampThreadEnforcer, SampThreadEnforcer>();
-        }
-
-        /// <summary>
-        /// Should register the gamemode starter that should boot up the gamemode. Override to replace the default
-        /// implementation with your custom starter.
-        /// </summary>
-        /// <param name="serviceCollection">Target to add the services to.</param>
-        protected virtual void AddGamemodeStarter(IServiceCollection serviceCollection)
-        {
-            serviceCollection.TryAddSingleton<IGamemodeStarter, GamemodeStarter>();
         }
 
         /// <summary>
@@ -180,11 +163,11 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <param name="serviceCollection">Target to add the services to.</param>
         protected virtual void AddEntityListeners(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IEntityListener, PlayerPoolListener>();
-            serviceCollection.AddTransient<IEntityListener, PlayerEventListener>();
-            serviceCollection.AddTransient<IEntityListener, VehicleEventListener>();
-            serviceCollection.AddSingleton<IEntityListener, RconEventListeners>();
-            serviceCollection.AddSingleton<IEntityListener, PlayerTextDrawSyncer>();
+            serviceCollection.AddTransient<IEventListener, PlayerPoolListener>();
+            serviceCollection.AddTransient<IEventListener, PlayerEventListener>();
+            serviceCollection.AddTransient<IEventListener, VehicleEventListener>();
+            serviceCollection.AddSingleton<IEventListener, RconEventListeners>();
+            serviceCollection.AddSingleton<IEventListener, PlayerTextDrawSyncer>();
         }
 
         /// <summary>
@@ -193,7 +176,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <param name="serviceCollection">Target to add the services to.</param>
         protected virtual void AddDialogHandler(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddSingleton<IEntityListener, DialogHandler>();
+            serviceCollection.AddSingleton<IEventListener, DialogHandler>();
             serviceCollection.AddSingleton<IDialogHandler, DialogHandler>();
         }
 

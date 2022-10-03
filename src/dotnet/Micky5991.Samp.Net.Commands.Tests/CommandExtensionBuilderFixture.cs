@@ -1,6 +1,6 @@
 using System;
-using System.Configuration;
 using FluentAssertions;
+using Micky5991.Samp.Net.Commands.Elements.Listeners;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Commands.Tests.Fakes;
@@ -16,9 +16,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
     {
         private readonly (Type Service, Type Implementation, Type FakeImplementation)[] services =
         {
-            CreatePair<ISampExtensionStarter, CommandExtensionStarter, FakeCommandSampExtensionStarter>(),
             CreatePair<ICommandFactory, CommandFactory, FakeCommandFactory>(),
             CreatePair<ICommandService, CommandService, FakeCommandService>(),
+            CreatePair<IEventListener, CommandListener, FakeCommandListener>(),
         };
 
         private static (Type Service, Type Implementation, Type FakeImplementation) CreatePair<TService, TImplementation, TFake>()

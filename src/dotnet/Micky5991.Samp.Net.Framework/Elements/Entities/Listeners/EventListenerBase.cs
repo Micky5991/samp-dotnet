@@ -6,7 +6,7 @@ namespace Micky5991.Samp.Net.Framework.Elements.Entities.Listeners
     /// <summary>
     /// Base that provides general methods for easy handling.
     /// </summary>
-    public abstract class EventListenerBase : IEntityListener
+    public abstract class EventListenerBase : IEventListener
     {
         private readonly IEventAggregator eventAggregator;
 

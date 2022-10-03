@@ -6,7 +6,7 @@ using Micky5991.Samp.Net.Framework.Interfaces;
 
 namespace Micky5991.Samp.Net.Example.Login.Services
 {
-    public class LoginScreen : IEntityListener
+    public class LoginScreen : IEventListener
     {
         private readonly IEventAggregator eventAggregator;
 

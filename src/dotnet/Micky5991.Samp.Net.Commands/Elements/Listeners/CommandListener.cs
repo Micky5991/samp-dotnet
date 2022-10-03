@@ -4,13 +4,14 @@ using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Commands.Events;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Extensions;
+using Micky5991.Samp.Net.Framework.Interfaces;
 
 namespace Micky5991.Samp.Net.Commands.Elements.Listeners
 {
     /// <summary>
     /// Starts listening to command related events.
     /// </summary>
-    public class CommandListener : ICommandListener
+    public class CommandListener : IEventListener
     {
         private readonly IEventAggregator eventAggregator;
 
@@ -24,7 +25,7 @@ namespace Micky5991.Samp.Net.Commands.Elements.Listeners
         }
 
         /// <inheritdoc />
-        public void Listen()
+        public void Attach()
         {
             this.eventAggregator.Subscribe<CommandExecutedEvent>(
                                                                  this.OnCommandExecuted,
