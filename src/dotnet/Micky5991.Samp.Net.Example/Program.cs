@@ -1,4 +1,5 @@
-﻿using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
+﻿using Micky5991.Samp.Net.Commands;
+using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
 using Micky5991.Samp.Net.Framework.Utilities.Startup;
 using Micky5991.Samp.Net.NLogTarget;
 
@@ -12,8 +13,12 @@ namespace Micky5991.Samp.Net.Example
 
             new StartupDirector(new ExampleServerBuilder())
                 .AddGamemodeBuilder(new CoreGamemodeBuilder())
+                .AddGamemodeBuilder(
+                                    new CommandExtensionBuilder()
+                                        .AddDefaultMappingProfiles()
+                                        .AddDefaultCommands()
+                                    )
                 .Build();
-
 
             // new GamemodeBuilder()
             //         .UseStartup<Startup>()

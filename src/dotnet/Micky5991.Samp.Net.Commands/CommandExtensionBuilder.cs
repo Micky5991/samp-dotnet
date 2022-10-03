@@ -11,6 +11,7 @@ using Micky5991.Samp.Net.Commands.Elements.Listeners;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Commands.Services;
 using Micky5991.Samp.Net.Framework.Interfaces;
+using Micky5991.Samp.Net.Framework.Interfaces.Startup;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,19 +24,11 @@ namespace Micky5991.Samp.Net.Commands
     /// <summary>
     /// Registers all services for the Commands extension.
     /// </summary>
-    public class CommandExtension : ISampExtension
+    public class CommandExtensionBuilder : IGamemodeBuilder
     {
         private readonly IList<Assembly> scannableAssemblies = new List<Assembly>();
 
-        private readonly IList<Action<IServiceCollection>> serviceCollectionChanges;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandExtension"/> class.
-        /// </summary>
-        public CommandExtension()
-        {
-            this.serviceCollectionChanges = new List<Action<IServiceCollection>>();
-        }
+        private bool addDefaultCommands;
 
         /// <summary>
         /// Gets a list of scannable assemblies for mapping.
@@ -43,21 +36,30 @@ namespace Micky5991.Samp.Net.Commands
         public IReadOnlyList<Assembly> ScannableAssemblies => new ReadOnlyCollection<Assembly>(this.scannableAssemblies);
 
         /// <summary>
+        /// Adds the default mapping profiles of the command extension.
+        /// </summary>
+        /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
+        public CommandExtensionBuilder AddDefaultMappingProfiles()
+        {
+            return this.AddMappingProfilesInAssembly<CommandExtensionBuilder>();
+        }
+
+        /// <summary>
         /// Adds an assembly to scan for <see cref="Profile"/> implementations. Recommendation: Use your main type or the <see cref="ISampExtensionStarter"/> implementation for your extension.
         /// </summary>
         /// <typeparam name="T">Any type of an assembly where profiles are created.</typeparam>
-        /// <returns>Current <see cref="CommandExtension"/> instance.</returns>
-        public CommandExtension AddProfilesInAssembly<T>()
+        /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
+        public CommandExtensionBuilder AddMappingProfilesInAssembly<T>()
         {
-            return this.AddProfilesInAssembly(typeof(T).Assembly);
+            return this.AddMappingProfilesInAssembly(typeof(T).Assembly);
         }
 
         /// <summary>
         /// Adds an assembly to scan for <see cref="Profile"/> implementations.
         /// </summary>
         /// <param name="assembly">Assembly to search for <see cref="Profile"/> implementations.</param>
-        /// <returns>Current <see cref="CommandExtension"/> instance.</returns>
-        public CommandExtension AddProfilesInAssembly(Assembly assembly)
+        /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
+        public CommandExtensionBuilder AddMappingProfilesInAssembly(Assembly assembly)
         {
             Guard.Argument(assembly, nameof(assembly)).NotNull();
 
@@ -69,20 +71,16 @@ namespace Micky5991.Samp.Net.Commands
         /// <summary>
         /// Adds default commands like /help.
         /// </summary>
-        /// <returns>Current <see cref="CommandExtension"/> instance.</returns>
-        public CommandExtension AddDefaultCommands()
+        /// <returns>Current <see cref="CommandExtensionBuilder"/> instance.</returns>
+        public CommandExtensionBuilder AddDefaultCommands()
         {
-            this.serviceCollectionChanges.Add(
-                                              x =>
-                                              {
-                                                  x.AddSingleton<ICommandHandler, HelpCommandHandler>();
-                                              });
+            this.addDefaultCommands = true;
 
             return this;
         }
 
         /// <inheritdoc/>
-        public void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration)
+        public void RegisterServices(IServiceCollection serviceCollection)
         {
             serviceCollection.TryAddTransient<ISampExtensionStarter, CommandExtensionStarter>();
             serviceCollection.AddTransient<ICommandFactory, CommandFactory>();
@@ -91,14 +89,14 @@ namespace Micky5991.Samp.Net.Commands
 
             serviceCollection.AddAutoMapper(this.scannableAssemblies.ToArray());
 
-            foreach (var collectionChange in this.serviceCollectionChanges)
+            if (this.addDefaultCommands)
             {
-                collectionChange(serviceCollection);
+                serviceCollection.AddSingleton<ICommandHandler, HelpCommandHandler>();
             }
         }
 
         /// <inheritdoc />
-        public void ConfigureAuthorization(AuthorizationOptions options, IConfiguration configuration)
+        public void ConfigureAuthorization(AuthorizationOptions options)
         {
             // Empty
         }

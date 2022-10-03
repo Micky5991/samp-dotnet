@@ -32,10 +32,10 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void CommandExtensionBuilderAddsAllNeededServices()
         {
             var collection = new ServiceCollection();
-            var builder = new CommandExtension();
+            var builder = new CommandExtensionBuilder();
             var configuration = new ConfigurationBuilder().Build();
 
-            builder.RegisterServices(collection, configuration);
+            builder.RegisterServices(collection);
 
             foreach (var (service, implementation, _) in this.services)
             {
@@ -47,9 +47,9 @@ namespace Micky5991.Samp.Net.Commands.Tests
         [TestMethod]
         public void AddingProfileToBuilderRegistersToServiceCollection()
         {
-            var builder = new CommandExtension();
+            var builder = new CommandExtensionBuilder();
 
-            builder.AddProfilesInAssembly<CommandExtensionBuilderFixture>();
+            builder.AddMappingProfilesInAssembly<CommandExtensionBuilderFixture>();
 
             builder.ScannableAssemblies.Should().Contain(typeof(CommandExtensionBuilderFixture).Assembly);
         }
@@ -58,7 +58,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void AddingServicesWillFailIfAlreadyRegistered()
         {
             var collection = new ServiceCollection();
-            var builder = new CommandExtension();
+            var builder = new CommandExtensionBuilder();
             var config = new ConfigurationBuilder().Build();
 
             foreach (var (service, _, fake) in this.services)
@@ -66,7 +66,7 @@ namespace Micky5991.Samp.Net.Commands.Tests
                 collection.AddSingleton(service, fake);
             }
 
-            builder.RegisterServices(collection, config);
+            builder.RegisterServices(collection);
 
             foreach (var (service, implementation, fake) in this.services)
             {

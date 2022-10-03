@@ -16,13 +16,6 @@ namespace Micky5991.Samp.Net.Framework.Interfaces
         public void SetupConfiguration(IConfigurationBuilder configurationBuilder);
 
         /// <summary>
-        /// Returns the list of activated extensions of this gamemode.
-        /// </summary>
-        /// <param name="configuration">Constructed configuration of this gamemode.</param>
-        /// <returns>List of extensions of this gamemode..</returns>
-        public IEnumerable<ISampExtension> SetupExtensions(IConfiguration configuration);
-
-        /// <summary>
         /// Starts the gamemode after core services have been already started.
         /// </summary>
         /// <param name="serviceProvider">Current service provider of this gamemode.</param>

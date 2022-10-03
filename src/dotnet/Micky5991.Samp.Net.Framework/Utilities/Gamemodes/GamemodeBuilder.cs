@@ -17,8 +17,6 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 
         private IStartup? startup;
 
-        private List<ISampExtension> extensions;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GamemodeBuilder"/> class.
         /// </summary>
@@ -34,7 +32,6 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         public GamemodeBuilder(IServiceCollection serviceCollection)
         {
             this.serviceCollection = serviceCollection;
-            this.extensions = new List<ISampExtension>();
         }
 
         /// <summary>
@@ -75,7 +72,6 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             }
 
             var config = this.BuildConfiguration(args);
-            this.extensions = this.startup.SetupExtensions(config).ToList();
 
             this.BuildServices(config);
             this.BuildAuthorization(config);
@@ -98,11 +94,6 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         {
             this.serviceCollection.AddSingleton(_ => this.startup!);
 
-            foreach (var extension in this.extensions)
-            {
-                extension.RegisterServices(this.serviceCollection, configuration);
-            }
-
             this.startup!.RegisterServices(this.serviceCollection, configuration);
         }
 
@@ -111,11 +102,6 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
             this.serviceCollection.AddAuthorizationCore(
                                                    x =>
                                                    {
-                                                       foreach (var sampExtension in this.extensions)
-                                                       {
-                                                           sampExtension.ConfigureAuthorization(x, configuration);
-                                                       }
-
                                                        this.startup!.ConfigureAuthorization(x, configuration);
                                                    });
         }

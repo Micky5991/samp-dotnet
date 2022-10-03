@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Example.Commands;
 using Micky5991.Samp.Net.Example.Login.Services;
@@ -11,8 +9,6 @@ using Micky5991.Samp.Net.Framework.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 
 namespace Micky5991.Samp.Net.Example
 {
@@ -24,26 +20,12 @@ namespace Micky5991.Samp.Net.Example
 
         public IEnumerable<ISampExtension> SetupExtensions(IConfiguration configuration)
         {
-            yield return new CommandExtension()
-                         .AddProfilesInAssembly<CommandExtension>()
-                         .AddProfilesInAssembly(Assembly.GetExecutingAssembly())
-                         .AddDefaultCommands();
-
-            // yield return new AcceptAllPermissionExtension();
+            yield break;
         }
 
         public void RegisterServices(IServiceCollection serviceCollection, IConfiguration configuration)
         {
             serviceCollection
-                .AddLogging(
-                            builder =>
-                            {
-                                builder.AddNLog();
-                                builder.SetMinimumLevel(LogLevel.Debug);
-                                // builder.AddFilter(
-                                //                   (category, _) =>
-                                //                       category != typeof(DefaultAuthorizationService).FullName);
-                            })
                 .AddSingleton<ExampleStarter>()
                 .AddSingleton<IEntityListener, LoginScreen>()
                 .AddSingleton<IEntityListener, Speedometer>()
