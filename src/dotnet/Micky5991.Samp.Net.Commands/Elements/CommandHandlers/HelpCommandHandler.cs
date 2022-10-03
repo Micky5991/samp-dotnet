@@ -7,6 +7,7 @@ using Micky5991.Samp.Net.Commands.Attributes;
 using Micky5991.Samp.Net.Commands.Interfaces;
 using Micky5991.Samp.Net.Framework.Extensions;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
@@ -14,6 +15,7 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
     /// <summary>
     /// Registers commands related to help.
     /// </summary>
+    [Authorize(Policy = "HelpCommand")]
     public class HelpCommandHandler : ICommandHandler
     {
         private readonly IServiceProvider serviceProvider;
