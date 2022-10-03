@@ -34,8 +34,9 @@ namespace Micky5991.Samp.Net.Commands.Elements.CommandHandlers
         /// Command that shows available commands.
         /// </summary>
         /// <param name="player">Player that executed this command.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Command("help", Description = "Shows all available commands")]
-        public virtual async void HelpCommand(IPlayer player)
+        public virtual async Task HelpCommand(IPlayer player)
         {
             var commandService = (ICommandService)this.serviceProvider.GetRequiredService(typeof(ICommandService));
 
