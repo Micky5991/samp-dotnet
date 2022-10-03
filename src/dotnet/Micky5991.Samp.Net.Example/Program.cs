@@ -1,4 +1,5 @@
 ﻿using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
+using Micky5991.Samp.Net.Framework.Utilities.Startup;
 using Micky5991.Samp.Net.NLogTarget;
 
 namespace Micky5991.Samp.Net.Example
@@ -9,10 +10,15 @@ namespace Micky5991.Samp.Net.Example
         {
             SampLogTarget.Register();
 
-            new GamemodeBuilder()
-                    .UseStartup<Startup>()
-                    .Build(args)
-                    .Start();
+            new StartupDirector(new ExampleServerBuilder())
+                .AddGamemodeBuilder(new CoreGamemodeBuilder())
+                .Build();
+
+
+            // new GamemodeBuilder()
+            //         .UseStartup<Startup>()
+            //         .Build(args)
+            //         .Start();
         }
     }
 }
