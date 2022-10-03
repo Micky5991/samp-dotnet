@@ -50,6 +50,7 @@ namespace Micky5991.Samp.Net.Example
                 .AddSingleton<IEntityListener, LoginScreen>()
                 .AddSingleton<IEntityListener, Speedometer>()
                 .AddSingleton<ICommandHandler, TestCommandHandler>()
+                .AddSingleton<ICommandHandler, VehicleCommandHandler>()
                 .AddSampCoreServices()
                 .Configure<GamemodeOptions>(x => x.LogRedirection = true);
         }
