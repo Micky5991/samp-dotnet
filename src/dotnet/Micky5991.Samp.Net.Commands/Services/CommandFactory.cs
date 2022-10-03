@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,8 +33,11 @@ namespace Micky5991.Samp.Net.Commands.Services
             Guard.Argument(commandHandler, nameof(commandHandler)).NotNull();
 
             var commands = new List<ICommand>();
+            var handlerType = commandHandler.GetType();
 
-            foreach (var method in commandHandler.GetType().GetMethods())
+            var handlerAuthorizationAttributes = handlerType.GetCustomAttributes<AuthorizeAttribute>(true).ToArray();
+
+            foreach (var method in handlerType.GetMethods())
             {
                 var attribute = method.GetCustomAttributes<CommandAttribute>().ToList().FirstOrDefault();
                 if (attribute == null)
@@ -49,7 +53,7 @@ namespace Micky5991.Samp.Net.Commands.Services
                                           .GetCustomAttributes<AuthorizeAttribute>(true)
                                           .ToArray();
 
-                commands.Add(this.BuildCommandFromHandler(commandHandler, attribute, aliasAttributes, authorizeAttributes, method));
+                commands.Add(this.BuildCommandFromHandler(commandHandler, attribute, aliasAttributes, authorizeAttributes.Concat(handlerAuthorizationAttributes).ToArray(), method));
             }
 
             return commands;
