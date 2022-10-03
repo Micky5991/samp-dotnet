@@ -23,7 +23,7 @@ namespace Micky5991.Samp.Net.Example
                                              builder.AddNLog();
                                              builder.SetMinimumLevel(LogLevel.Debug);
                                          })
-                             .AddSingleton<ExamplePlayerListener>()
+                             .AddSingleton<IEventListener, ExamplePlayerListener>()
                              .AddSingleton<IEventListener, LoginScreen>()
                              .AddSingleton<IEventListener, Speedometer>()
                              .AddSingleton<ICommandHandler, TestCommandHandler>()
