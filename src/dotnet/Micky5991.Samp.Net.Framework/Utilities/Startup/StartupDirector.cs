@@ -69,7 +69,13 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Startup
             }
 
             Console.WriteLine("[SAMP.Net] Setting up authorization...");
-            collection.AddAuthorizationCore(this.serverBuilder.ConfigureAuthorization);
+            collection.AddAuthorizationCore(options =>
+                                            {
+                                                foreach (var builder in this.serverAndGamemodeBuilders)
+                                                {
+                                                    builder.ConfigureAuthorization(options);
+                                                }
+                                            });
 
             Console.WriteLine("[SAMP.Net] Build service provider...");
             this.serviceProvider = this.serverBuilder.BuildServiceProvider(collection);
