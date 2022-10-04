@@ -21,46 +21,53 @@ using Micky5991.Samp.Net.Framework.Interfaces.Entities.Factories;
 using Micky5991.Samp.Net.Framework.Interfaces.Entities.Pools;
 using Micky5991.Samp.Net.Framework.Interfaces.Facades;
 using Micky5991.Samp.Net.Framework.Interfaces.Services;
+using Micky5991.Samp.Net.Framework.Interfaces.Startup;
 using Micky5991.Samp.Net.Framework.Services;
 using Micky5991.Samp.Net.Framework.Services.Facades;
 using Micky5991.Samp.Net.Framework.Services.Syncer;
-using Micky5991.Samp.Net.Framework.Utilities.Startup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
 {
     /// <summary>
     /// Type that registers typical core services to the service container.
     /// </summary>
-    public partial class CoreGamemodeBuilder : GamemodeBuilder
+    public class CoreHostBuilder : IExtendableHostBuilder
     {
         /// <inheritdoc />
-        public override void RegisterServices(IServiceCollection serviceCollection)
+        public virtual void ConfigureHost(IHostBuilder hostBuilder)
         {
-            Guard.Argument(serviceCollection, nameof(serviceCollection)).NotNull();
+            Guard.Argument(hostBuilder, nameof(hostBuilder)).NotNull();
 
-            this.AddCoreServices(serviceCollection);
-            this.AddLoggerHandler(serviceCollection);
-            this.AddEventAggregator(serviceCollection);
-            this.AddSynchronizationServices(serviceCollection);
-            this.AddNativeEventHandling(serviceCollection);
-            this.AddNativeEvents(serviceCollection);
-            this.AddNatives(serviceCollection);
-            this.AddEntityFactories(serviceCollection);
-            this.AddEntityPools(serviceCollection);
-            this.AddEntityListeners(serviceCollection);
-            this.AddDialogHandler(serviceCollection);
-            this.AddUtilityServices(serviceCollection);
-            this.AddAuthorizationServices(serviceCollection);
+            void ConfigureServices(HostBuilderContext context, IServiceCollection serviceCollection)
+            {
+                this.AddCoreServices(serviceCollection);
+                this.AddLoggerHandler(serviceCollection);
+                this.AddEventAggregator(serviceCollection);
+                this.AddSynchronizationServices(serviceCollection);
+                this.AddNativeEventHandling(serviceCollection);
+                this.AddNativeEvents(serviceCollection);
+                this.AddNatives(serviceCollection);
+                this.AddEntityFactories(serviceCollection);
+                this.AddEntityPools(serviceCollection);
+                this.AddEntityListeners(serviceCollection);
+                this.AddDialogHandler(serviceCollection);
+                this.AddUtilityServices(serviceCollection);
+                this.AddAuthorizationServices(serviceCollection);
+            }
+
+            hostBuilder.ConfigureServices(ConfigureServices);
         }
 
         /// <summary>
         /// Should register the core services needed for basic operation of the framework.
         /// </summary>
         /// <param name="serviceCollection">Target to add the services to.</param>
-        protected void AddCoreServices(IServiceCollection serviceCollection)
+        protected virtual void AddCoreServices(IServiceCollection serviceCollection)
         {
+            serviceCollection.AddHostedService<CoreGamemodeHostedService>();
             serviceCollection.AddSingleton<ISampThreadEnforcer, SampThreadEnforcer>();
         }
 

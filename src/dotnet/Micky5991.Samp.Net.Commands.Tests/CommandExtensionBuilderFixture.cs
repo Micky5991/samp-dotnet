@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Micky5991.Samp.Net.Commands.Elements.Listeners;
 using Micky5991.Samp.Net.Commands.Interfaces;
@@ -7,7 +8,9 @@ using Micky5991.Samp.Net.Commands.Tests.Fakes;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Micky5991.Samp.Net.Commands.Tests
 {
@@ -32,10 +35,14 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void CommandExtensionBuilderAddsAllNeededServices()
         {
             var collection = new ServiceCollection();
-            var builder = new CommandExtensionBuilder();
-            var configuration = new ConfigurationBuilder().Build();
+            var hostBuilderMock = new Mock<IHostBuilder>();
+            hostBuilderMock.Setup(x => x.ConfigureServices(It.IsAny<Action<HostBuilderContext, IServiceCollection>>()))
+                           .Callback<Action<HostBuilderContext, IServiceCollection>>(x => x(new HostBuilderContext(new Dictionary<object, object>()), collection));
 
-            builder.RegisterServices(collection);
+
+            var builder = new CommandExtensionBuilder();
+
+            builder.ConfigureHost(hostBuilderMock.Object);
 
             foreach (var (service, implementation, _) in this.services)
             {
@@ -58,15 +65,19 @@ namespace Micky5991.Samp.Net.Commands.Tests
         public void AddingServicesWillFailIfAlreadyRegistered()
         {
             var collection = new ServiceCollection();
+
+            var hostBuilderMock = new Mock<IHostBuilder>();
+            hostBuilderMock.Setup(x => x.ConfigureServices(It.IsAny<Action<HostBuilderContext, IServiceCollection>>()))
+                           .Callback<Action<HostBuilderContext, IServiceCollection>>(x => x(new HostBuilderContext(new Dictionary<object, object>()), collection));
+
             var builder = new CommandExtensionBuilder();
-            var config = new ConfigurationBuilder().Build();
 
             foreach (var (service, _, fake) in this.services)
             {
                 collection.AddSingleton(service, fake);
             }
 
-            builder.RegisterServices(collection);
+            builder.ConfigureHost(hostBuilderMock.Object);
 
             foreach (var (service, implementation, fake) in this.services)
             {
