@@ -37,7 +37,7 @@ namespace Micky5991.Samp.Net.Example
             }
 
             var logger = new LoggerConfiguration()
-                         .MinimumLevel.Verbose()
+                         .MinimumLevel.Debug()
                          .WriteTo.Console()
                          .CreateLogger();
 
