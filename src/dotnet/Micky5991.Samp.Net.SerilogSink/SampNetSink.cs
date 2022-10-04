@@ -22,7 +22,7 @@ namespace Micky5991.Samp.Net.SerilogSink
                 return;
             }
 
-            Native.LogMessage("TEST");
+            Native.LogMessage(message);
         }
     }
 }
