@@ -6,10 +6,8 @@ using Micky5991.Samp.Net.Example.Player.Vehicle;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Options;
 using Micky5991.Samp.Net.Framework.Utilities.Startup;
-using Micky5991.Samp.Net.SerilogSink;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Micky5991.Samp.Net.Example
@@ -19,14 +17,14 @@ namespace Micky5991.Samp.Net.Example
         public override void RegisterServices(IServiceCollection serviceCollection)
         {
             var logger = new LoggerConfiguration()
-                         .WriteTo.SampLogFile()
+                         .MinimumLevel.Verbose()
+                         .WriteTo.Console()
                          .CreateLogger();
 
             serviceCollection.AddLogging(
                                          builder =>
                                          {
                                              builder.AddSerilog(logger, true);
-                                             builder.SetMinimumLevel(LogLevel.Debug);
                                          })
                              .AddSingleton<IEventListener, ExamplePlayerListener>()
                              .AddSingleton<IEventListener, LoginScreen>()
@@ -36,7 +34,7 @@ namespace Micky5991.Samp.Net.Example
                              .Configure<SampNetOptions>(
                                                          x =>
                                                          {
-                                                             x.LogRedirection = false;
+                                                             x.LogRedirection = true;
                                                          });
         }
 
