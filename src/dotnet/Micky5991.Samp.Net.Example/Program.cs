@@ -49,16 +49,17 @@ namespace Micky5991.Samp.Net.Example
                                                  options.AddSerilog(logger, true);
                                              })
                            .AddCoreGamemodeServices(
-                                                    x =>
+                                                    options =>
                                                     {
-                                                        x.LogRedirection = true;
+                                                        options.LogRedirection = true;
                                                     })
-                           .SetFallbackAuthorizationPolicy(true)
                            .AddCommandExtension(
                                                 options =>
                                                 {
                                                     options.EnableHelpCommand = true;
                                                 })
+                           .AddDefaultHelpCommand()
+                           .SetFallbackAuthorizationPolicy(true)
                            .ConfigureServices(ConfigureServices)
                            .Build();
 
