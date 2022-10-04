@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="2.12.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Micky5991.Samp.Net.Core\Micky5991.Samp.Net.Core.csproj" />
+    </ItemGroup>
+
+</Project>

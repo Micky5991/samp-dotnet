@@ -26,13 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Micky5991.Samp.Net.Commands\Micky5991.Samp.Net.Commands.csproj" />
       <ProjectReference Include="..\Micky5991.Samp.Net.Framework\Micky5991.Samp.Net.Framework.csproj" />
-      <ProjectReference Include="..\Micky5991.Samp.Net.NLogTarget\Micky5991.Samp.Net.NLogTarget.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="NLog.config">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      <ProjectReference Include="..\Micky5991.Samp.Net.SerilogSink\Micky5991.Samp.Net.SerilogSink.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -44,6 +38,10 @@
       <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
       <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
+      <PackageReference Include="Serilog" Version="2.12.0" />
+      <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+      <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     </ItemGroup>
 
 </Project>
