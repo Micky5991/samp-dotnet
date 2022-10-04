@@ -27,8 +27,6 @@ namespace Micky5991.Samp.Net.Commands
         /// <inheritdoc />
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine($"STart {nameof(CommandExtensionLifecycle)}");
-
             this.commandService.Start();
 
             return Task.CompletedTask;

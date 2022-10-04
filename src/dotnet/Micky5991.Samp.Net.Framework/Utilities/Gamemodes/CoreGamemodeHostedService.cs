@@ -66,8 +66,6 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <inheritdoc />
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine($"STart {nameof(CoreGamemodeHostedService)}");
-
             if (this.sampnetOptions.LogRedirection)
             {
                 this.StartLogRedirection(this.loggerHandler);
