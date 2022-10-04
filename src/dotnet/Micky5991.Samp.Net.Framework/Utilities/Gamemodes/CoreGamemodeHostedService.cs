@@ -10,7 +10,6 @@ using Micky5991.EventAggregator.Interfaces;
 using Micky5991.Samp.Net.Core.Interfaces.Events;
 using Micky5991.Samp.Net.Core.Interfaces.Interop;
 using Micky5991.Samp.Net.Core.Interfaces.Logging;
-using Micky5991.Samp.Net.Core.Threading;
 using Micky5991.Samp.Net.Framework.Interfaces;
 using Micky5991.Samp.Net.Framework.Options;
 using Microsoft.Extensions.Hosting;
