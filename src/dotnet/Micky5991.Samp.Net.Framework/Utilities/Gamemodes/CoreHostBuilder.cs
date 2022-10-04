@@ -67,6 +67,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         /// <param name="serviceCollection">Target to add the services to.</param>
         protected virtual void AddCoreServices(IServiceCollection serviceCollection)
         {
+            serviceCollection.AddHostedService<ServerLifecycleHostedService>();
             serviceCollection.AddHostedService<CoreGamemodeHostedService>();
             serviceCollection.AddSingleton<ISampThreadEnforcer, SampThreadEnforcer>();
         }
