@@ -1,5 +1,6 @@
 #include <string>
 #include <cstdarg>
+#include <iostream>
 
 #include "subhook/subhook.h"
 #include "samp-dotnet/samp-dotnet.h"
@@ -82,6 +83,12 @@ namespace sampdotnet {
     }
 
     void SampNet::print_samp(const char* format) {
+        if (_samp_logger != nullptr) {
+            _samp_logger(format);
+
+            return;
+        }
+
         ((logprintf) _logprintf_hook->GetTrampoline())(format);
     }
 
