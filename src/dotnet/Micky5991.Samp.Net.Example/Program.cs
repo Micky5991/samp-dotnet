@@ -3,7 +3,6 @@ using Micky5991.Samp.Net.Commands;
 using Micky5991.Samp.Net.Framework.Extensions.FrameworkExtensions.Permissions.AcceptAllPermissions;
 using Micky5991.Samp.Net.Framework.Utilities.Gamemodes;
 using Micky5991.Samp.Net.Framework.Utilities.Startup;
-using Micky5991.Samp.Net.NLogTarget;
 
 namespace Micky5991.Samp.Net.Example
 {
@@ -11,8 +10,6 @@ namespace Micky5991.Samp.Net.Example
     {
         public static void Main(string[] args)
         {
-            SampLogTarget.Register();
-
             Console.WriteLine("Starting Example");
 
             new StartupDirector(new ExampleServerBuilder())
