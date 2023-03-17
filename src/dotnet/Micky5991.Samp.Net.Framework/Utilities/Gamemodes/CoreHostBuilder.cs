@@ -69,6 +69,7 @@ namespace Micky5991.Samp.Net.Framework.Utilities.Gamemodes
         {
             serviceCollection.AddHostedService<ServerLifecycleHostedService>();
             serviceCollection.AddHostedService<CoreGamemodeHostedService>();
+
             serviceCollection.AddSingleton<ISampThreadEnforcer, SampThreadEnforcer>();
         }
 

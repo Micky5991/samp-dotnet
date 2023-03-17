@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
         <OutputType>Exe</OutputType>
         <Configurations>Debug;Release;Local</Configurations>
         <Platforms>AnyCPU</Platforms>
-        <LangVersion>9</LangVersion>
+        <LangVersion>10</LangVersion>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
