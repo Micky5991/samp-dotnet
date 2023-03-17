@@ -26,21 +26,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: 'Get previous tag'
         id: previoustag
-        uses: WyriHaximus/github-action-get-previous-tag@1.0.0
+        uses: WyriHaximus/github-action-get-previous-tag@v1
 
       - id: vars
         name: Set variables
         run: |
-          echo ::set-output name=ref::${GITHUB_REF#refs/*/}
-          echo ::set-output name=is_tag::${{ startsWith(github.ref, 'refs/tags/') }}
-          echo ::set-output name=version::${{ steps.previoustag.outputs.tag }}
-          echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
+          echo "ref=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+          echo "is_tag=${{ startsWith(github.ref, 'refs/tags/') }}" >> $GITHUB_OUTPUT
+          echo "version=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short=8 ${{ github.sha }})" >> $GITHUB_OUTPUT
 
   dotnet:
     name: Build .NET Libraries
@@ -52,14 +52,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup .NET Core versions
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: | 
-            3.1.x
             6.0.x
+            7.0.x
+            8.0.x
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
@@ -81,14 +82,14 @@ jobs:
         run: dotnet test --no-restore -v normal
 
       - name: Save NuGet artifacts
-        uses: actions/upload-artifact@v2.2.2
+        uses: actions/upload-artifact@v3
         with:
           name: package-nuget
           path: "${{github.workspace}}/src/dotnet/*/bin/Release/*.nupkg"
           if-no-files-found: error
 
       - name: Save example .NET gamemode
-        uses: actions/upload-artifact@v2.2.2
+        uses: actions/upload-artifact@v3
         with:
           name: gamemode-dotnet
           path: "${{github.workspace}}/src/dotnet/Micky5991.Samp.Net.Example/bin/Release/*"
@@ -115,19 +116,19 @@ jobs:
         platform: [ windows, linux ]
         include:
           - platform: windows
-            os: windows-latest
+            os: windows-2022
             plugin-file: 'Release/samp-dotnet.dll'
           - platform: linux
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             plugin-file: 'samp-dotnet.so'
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: '2.x'
 
@@ -164,7 +165,7 @@ jobs:
         run: cmake --build . --config $BUILD_TYPE
 
       - name: Save plugin file
-        uses: actions/upload-artifact@v2.2.2
+        uses: actions/upload-artifact@v3
         with:
           name: plugin-${{ matrix.platform }}
           path: "${{github.workspace}}/build/src/plugin/samp-dotnet/${{ matrix.plugin-file }}"
@@ -184,14 +185,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
       - name: Install sampctl
-        uses: AGraber/sampctl-action@v1
+        uses: AGraber/sampctl-action@v2
         with:
-          version: '1.10.0'
+          version: '1.11.0'
 
       - name: Move own runtimes.json file to .samp folder
         run: mkdir -p ~/.samp/ && cp ../.samp/* ~/.samp/
@@ -200,14 +201,14 @@ jobs:
         run: sampctl p build --forceEnsure --verbose
 
       - name: Save empty SA:MP gamemode file
-        uses: actions/upload-artifact@v2.2.2
+        uses: actions/upload-artifact@v3
         with:
           name: gamemode-samp
           path: "${{github.workspace}}/server/*/main.amx"
           if-no-files-found: error
 
       - name: Save raw SA:MP gamemode file
-        uses: actions/upload-artifact@v2.2.2
+        uses: actions/upload-artifact@v3
         with:
           name: gamemode-samp
           path: "${{github.workspace}}/src/samp/"
@@ -229,12 +230,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: 'repo'
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: "${{github.workspace}}/artifacts"
 
@@ -254,12 +255,12 @@ jobs:
           cp -r ${{github.workspace}}/artifacts/gamemode-dotnet/* ${{github.workspace}}/package/dotnet/gamemodes/
           cp ${{github.workspace}}/artifacts/plugin-${{matrix.platform}}/${{matrix.plugin-file}} ${{github.workspace}}/package/plugins/
 
-      - name: Download .NET 6.0.9 Windows x86 runtime
+      - name: Download .NET 8.0.0-preview.2 Windows x86 runtime
         if: matrix.platform == 'windows'
         working-directory: ${{github.workspace}}
         run: |
-          wget https://download.visualstudio.microsoft.com/download/pr/e4730ab7-3379-4b9c-8a17-3ce7d44cc82a/96d03e97775b7ca28c1a6fdc745e7ef2/dotnet-runtime-6.0.9-win-x86.zip
-          unzip -j dotnet-runtime-6.0.9-win-x86.zip "shared/Microsoft.NETCore.App/6.0.9/*" -d "${{github.workspace}}/package/dotnet/runtime/"
+          wget https://download.visualstudio.microsoft.com/download/pr/3c3735db-0143-4999-a28e-b1500ed60057/fd6fefa4583e6324762ad1299cdeab6a/dotnet-runtime-8.0.0-preview.2.23128.3-win-x86.zip
+          unzip -j dotnet-runtime-8.0.0-preview.2.23128.3-win-x86.zip "shared/Microsoft.NETCore.App/8.0.0-preview.2.23128.3/*" -d "${{github.workspace}}/package/dotnet/runtime/"
 
       - name: Create ZIP
         if: needs.variables.outputs.istag == 'false'
@@ -272,7 +273,7 @@ jobs:
         run: zip -r samp-dotnet-${{ needs.variables.outputs.ref }}-${{matrix.platform}}.zip .
 
       - name: Upload plugin artifact
-        uses: actions/upload-artifact@v2.2.2
+        uses: actions/upload-artifact@v3
         with:
           name: "package-${{matrix.platform}}"
           path: "${{github.workspace}}/package/*.zip"
@@ -294,19 +295,19 @@ jobs:
           flags: gmi
 
       - name: Download Linux package
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v3
         with:
           name: package-linux
           path: "${{github.workspace}}/artifacts"
 
       - name: Download Windows package
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v3
         with:
           name: package-windows
           path: "${{github.workspace}}/artifacts"
 
       - name: Download NuGet package
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v3
         with:
           name: package-nuget
           path: "${{github.workspace}}/artifacts"
