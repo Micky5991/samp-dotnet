@@ -234,7 +234,7 @@ jobs:
           path: 'repo'
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.1.7
         with:
           path: "${{github.workspace}}/artifacts"
 
@@ -294,19 +294,19 @@ jobs:
           flags: gmi
 
       - name: Download Linux package
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v4.1.7
         with:
           name: package-linux
           path: "${{github.workspace}}/artifacts"
 
       - name: Download Windows package
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v4.1.7
         with:
           name: package-windows
           path: "${{github.workspace}}/artifacts"
 
       - name: Download NuGet package
-        uses: actions/download-artifact@v2.0.8
+        uses: actions/download-artifact@v4.1.7
         with:
           name: package-nuget
           path: "${{github.workspace}}/artifacts"
